@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include<unistd.h> 
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -87,6 +88,8 @@ int main (int argc, char *argv[])
 	Background* background = loadBackground(renderer);
     Character* character = loadCharacter(renderer);
 	
+	chdir("..");
+
 	// main loop
 	while (waiting()) {
         
@@ -94,7 +97,7 @@ int main (int argc, char *argv[])
 
 	}
 	
-	SDL_DestroyTexture(background);
+	SDL_DestroyTexture(background->backgroundImage.backgroundImage);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(win);
 	
