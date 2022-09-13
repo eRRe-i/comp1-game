@@ -4,5 +4,16 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"sdl_image.h": "c"
+		},
+		"makefile.launchConfigurations": [
+			{
+				"cwd": "/home/gnomo/Documentos/dev/comp1-game/bin",
+				"binaryPath": "/home/gnomo/Documentos/dev/comp1-game/bin/main",
+				"binaryArgs": []
+			}
+		]
+	}
 }
