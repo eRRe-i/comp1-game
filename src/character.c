@@ -23,10 +23,16 @@ Character* loadCharacter(SDL_Renderer* renderer) {
 
     character->characterImage.frame = 0;
 
-    character->characterImage.displayRect.x=WINDOW_WIDTH/2 - 50/2;
-    character->characterImage.displayRect.y=WINDOW_HEIGHT/2 - 75/2;
-    character->characterImage.displayRect.w=50;
-    character->characterImage.displayRect.h=75;
+    character->characterImage.displayRect.x=WINDOW_WIDTH/2 - 48/2;
+    character->characterImage.displayRect.y=WINDOW_HEIGHT/2 - 72/2;
+    character->characterImage.displayRect.w=48;
+    character->characterImage.displayRect.h=72;
 
     return character;
+}
+
+void move_Character(Character* character) {
+
+    character->characterImage.frame = (character->characterImage.frame + 1)%4;
+
 }

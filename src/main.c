@@ -32,6 +32,7 @@ int main (int argc, char *argv[])
 	// main loop
 	while (waiting()) {
         
+		move_Character(character);
         updateScreen(renderer, background, character);
 
 	}
@@ -64,14 +65,18 @@ void updateScreen(SDL_Renderer* renderer, Background* background, Character* cha
         // clear the screen
 		SDL_RenderClear(renderer);
 		// copy the texture to the rendering context
-		SDL_RenderCopy(renderer, background->backgroundImage.backgroundImage, NULL, &background->backgroundImage.displayRect);
+		SDL_RenderCopy(	renderer, 
+						background->backgroundImage.backgroundImage, 
+						NULL, 
+						&background->backgroundImage.displayRect);
 		// flip the backbuffer  
 		// this means that everything that we prepared behind the screens is actually shown
-        SDL_RenderCopy(renderer, character->characterImage.characterSheet, &character->characterImage.spritePosition[CHARACTER_FRONT][1], &character->characterImage.displayRect);
+        SDL_RenderCopy	(renderer, 
+						character->characterImage.characterSheet,
+						&character->characterImage.spritePosition[CHARACTER_FRONT][character->characterImage.frame], 
+						&character->characterImage.displayRect);
         
 
 		SDL_RenderPresent(renderer);
 
 }
-
-void eventListener(SDL_Event e){}

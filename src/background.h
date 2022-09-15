@@ -2,7 +2,7 @@
 #define BACKGROUND
 
 #include "common.h"
-#define IMG_PATH "assets/gaia.jpeg"
+#define IMG_PATH "assets/Map1.png"
 
 typedef struct backgroundImage {
 	
