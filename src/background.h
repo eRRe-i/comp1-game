@@ -20,6 +20,6 @@ typedef struct background {
 
 } Background;
 
-Background* loadBackground(SDL_Renderer* renderer);
+
 
 #endif //BACKGROUND

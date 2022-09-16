@@ -4,38 +4,23 @@
 #include "common.h"
 
 #define CHARA_PATH "assets/chara.png"
+#define MAP "assets/map.png"
 #define CHARACTER_FRONT 0
 #define CHARACTER_BACK 1
 #define CHARACTER_LEFT 2
-#define cHARACTER_RIGHT 3
+#define CHARACTER_RIGHT 3
+#define CHARACTER_FRAME_RATE 200
 
-typedef struct characterImage {
+typedef struct player {
+    
+    int life;
+    int score;
 
-	SDL_Texture* characterSheet;
-    SDL_Rect spritePosition[4][4];
-
-    int spriteWidth;
-    int spriteHeight;
-
-    int frame;
-    SDL_Rect displayRect;
-
-} CharacterImage;
-
-typedef struct characterStats {
-
-	int life;
-
-} CharacterStats;
+    int currentCharacterSide;
 
 
-typedef struct chara {
+} Player;
 
-	CharacterImage characterImage;
-	CharacterStats characterStats;
-
-} Character;
-
-Character* loadCharacter(SDL_Renderer* renderer);
+void movePlayer(Player* player);
 
 #endif //CHARACTER

@@ -9,6 +9,4 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
-SDL_Texture* loadImage(SDL_Renderer* renderer, const char* imgPath);
-
 #endif //COMMON
