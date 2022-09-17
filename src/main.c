@@ -31,10 +31,12 @@ int main (int argc, char *argv[])
 
 	chdir("..");
 
-	
+	KeyboardInput* keyboardInput = loadKeyBoardInput();
+
 	// main loop
-	while (waiting()) {
+	while (keyboardInput->gameStateKeyboardInput.quitGame == 0) {
         
+		listenEvent(keyboardInput);
 		moveCharacter(characterTexture);
         updateScreen(renderer, mapTexture, characterTexture);
 
@@ -46,20 +48,6 @@ int main (int argc, char *argv[])
 	SDL_Quit();
 
 	return 0;
-}
-
-int waiting(void)
-{
-	// event handling
-	SDL_Event e;
-	if(SDL_PollEvent(&e))
-	{
-		if (e.type == SDL_QUIT)
-			return 0;
-		else if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE)
-			return 0;
-	}
-	return 1;
 }
 
 void updateScreen(SDL_Renderer* renderer, MapTexture* map, CharacterTexture* character) {
