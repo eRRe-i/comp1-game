@@ -8,8 +8,9 @@
 #define CHARACTER_RIGHT 3
 #define CHARACTER_FRAME_RATE 200
 
-#define MAP_PATH "assets/Map1.png"
-
+#define MAP_PATH "assets/Map%d.png"
+#define MAP_PATH2 "assets/Map2.png"
+  
 #include "common.h"
 
 typedef struct characterTexture {
@@ -39,6 +40,7 @@ typedef struct mapTexture {
 } MapTexture;
 
 
+
 typedef struct textureContext {
 
     CharacterTexture* characterTexture;
@@ -50,7 +52,7 @@ typedef struct textureContext {
 } TextureContext;
 
 
-MapTexture* loadMapTexture(SDL_Renderer* renderer);
+MapTexture* loadMapTexture(SDL_Renderer* renderer, const char* imgPath);
 CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer);
 SDL_Texture* loadImage(SDL_Renderer* renderer, const char* imgPath);
 void moveCharacter(CharacterTexture* characterTexture);

@@ -1,1 +1,4 @@
 *.code-workspace
+src/SDL2
+SDL*/
+SDL.h

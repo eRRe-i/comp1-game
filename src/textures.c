@@ -7,8 +7,8 @@ SDL_Texture* loadImage(SDL_Renderer* renderer, const char* imgPath) {
 	if(texture == NULL){
 
 		printf("Erro no Carregamento da imagem %s\n", imgPath);
-	} 
-
+	}  
+ 
 	return texture;
 
 }
@@ -44,11 +44,11 @@ CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer) {
     return characterTexture;
 }
 
-MapTexture* loadMapTexture(SDL_Renderer* renderer) {
+MapTexture* loadMapTexture(SDL_Renderer* renderer, const char* imgPath) {
 
 	MapTexture* mapTexture = (MapTexture*)malloc(sizeof(MapTexture));
 
-	mapTexture->mapTexture = loadImage(renderer, MAP_PATH);
+	mapTexture->mapTexture = loadImage(renderer, imgPath);
 	
 	SDL_QueryTexture(mapTexture->mapTexture, NULL, NULL, &mapTexture->width, &mapTexture->height);
 

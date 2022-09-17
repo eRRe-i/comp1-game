@@ -11,7 +11,7 @@ typedef struct backgroundImage {
 
 	int width;
 	int height;
-
+  
 } BackgroundImage;
 
 typedef struct background {
@@ -19,7 +19,6 @@ typedef struct background {
 	BackgroundImage backgroundImage;
 
 } Background;
-
 
 
 #endif //BACKGROUND
