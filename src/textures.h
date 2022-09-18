@@ -2,8 +2,8 @@
 #define TEXTURES
 
 #define CHARA_PATH "assets/chara.png"
-#define CHARACTER_FRONT 0
-#define CHARACTER_BACK 1
+#define CHARACTER_DOWN 0
+#define CHARACTER_UP 1
 #define CHARACTER_LEFT 2
 #define CHARACTER_RIGHT 3
 #define CHARACTER_FRAME_RATE 200
@@ -19,9 +19,6 @@ typedef struct characterTexture {
 
     int spriteWidth;
     int spriteHeight;
-
-    int frame;
-    int isMoving;
 
     SDL_Rect displayRect;
 
@@ -53,6 +50,6 @@ typedef struct textureContext {
 MapTexture* loadMapTexture(SDL_Renderer* renderer);
 CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer);
 SDL_Texture* loadImage(SDL_Renderer* renderer, const char* imgPath);
-void moveCharacter(CharacterTexture* characterTexture);
+
 
 #endif //TEXTURES

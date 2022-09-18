@@ -1,8 +1,8 @@
 #include "common.h"
+#include "textures.h"
 
 void listenEvent(KeyboardInput* keyboardInput) {
 
-	cleanMovementInput(keyboardInput);
 
     SDL_Event event;
 
@@ -12,9 +12,8 @@ void listenEvent(KeyboardInput* keyboardInput) {
 		
             case SDL_QUIT: keyboardInput->gameStateKeyboardInput.quitGame = 1; break;
             case SDL_KEYDOWN: handleKeyBoardInput(keyboardInput, &event.key); break;
-            case SDL_KEYUP: handleKeyBoardInput(keyboardInput, &event.key); break;
+            
         }
-		// printKeyboardState(keyboardInput);
     }
 }
 
@@ -24,10 +23,6 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 		
 		case SDL_KEYDOWN:{	keyboardInput->keyPressed = 1;
 							keyboardInput->keyReleased = 0;
-							break;
-		}
-		case SDL_KEYUP: {	keyboardInput->keyReleased = 1;
-							keyboardInput->keyPressed = 0;
 							break;
 		}
 	}
@@ -40,22 +35,22 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 							SDL_Log("SpacePressed");
 							break;
 		}
-		case SDLK_UP: 	{	keyboardInput->movePlayerKeyboardInput.up = 1;
+		case SDLK_UP: 	{	keyboardInput->movePlayerKeyboardInput.moveInput = CHARACTER_UP;
 							SDL_Log("UpPressed");
 							break;
 		}
-		case SDLK_DOWN: {	keyboardInput->movePlayerKeyboardInput.down = 1;
+		case SDLK_DOWN: {	keyboardInput->movePlayerKeyboardInput.moveInput = CHARACTER_DOWN;
 							SDL_Log("DownPressed"); 
 							break;
 		}
-		case SDLK_LEFT: {	keyboardInput->movePlayerKeyboardInput.left = 1;
+		case SDLK_LEFT: {	keyboardInput->movePlayerKeyboardInput.moveInput = CHARACTER_LEFT;
 							SDL_Log("LeftPressed");
 							break;
 		}
-		case SDLK_RIGHT:{	keyboardInput->movePlayerKeyboardInput.right = 1;
+		case SDLK_RIGHT:{	keyboardInput->movePlayerKeyboardInput.moveInput = CHARACTER_RIGHT;
 							SDL_Log("RightPressed");
 							break;
-		} 
+		}
 	}
 }
 
@@ -63,16 +58,17 @@ KeyboardInput* loadKeyBoardInput() {
 
 	KeyboardInput* keyboardInput = (KeyboardInput*)malloc(sizeof(KeyboardInput));
 
+	keyboardInput->gameStateKeyboardInput.pauseGame = 0;
+	keyboardInput->gameStateKeyboardInput.quitGame=0;
+	keyboardInput->movePlayerKeyboardInput.moveInput=CHARACTER_DOWN;
+
 	return keyboardInput;
 
 }
 
 void cleanMovementInput(KeyboardInput* keyboardInput) {
 
-	keyboardInput->movePlayerKeyboardInput.up = 0;
-	keyboardInput->movePlayerKeyboardInput.down = 0;
-	keyboardInput->movePlayerKeyboardInput.right = 0;
-	keyboardInput->movePlayerKeyboardInput.left = 0;
+	keyboardInput->movePlayerKeyboardInput.moveInput = 0;
 	keyboardInput->keyPressed = 0;
 	keyboardInput->keyReleased = 0;
 
@@ -81,10 +77,8 @@ void cleanMovementInput(KeyboardInput* keyboardInput) {
 
 void printKeyboardState(KeyboardInput* input) {
 
-	printf("KEYBOARDSTATE:\n KEY PRESSED: %i\n UP: %i\n DOWN: %i\n LEFT: %i\n RIGHT: %i\n", input->keyPressed,
-																			input->movePlayerKeyboardInput.up, 
-																			input->movePlayerKeyboardInput.down,
-																			input->movePlayerKeyboardInput.left, 
-																			input->movePlayerKeyboardInput.right);
+	if(input->movePlayerKeyboardInput.moveInput == CHARACTER_DOWN)
+		printf("KEYBOARDSTATE:\n KEY PRESSED: %i\n KEY_TYPE: %i\n", input->keyPressed, input->movePlayerKeyboardInput.moveInput);
 
 }
+

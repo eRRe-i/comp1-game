@@ -1,3 +1,4 @@
+#include "common.h"
 #include "textures.h"
 
 SDL_Texture* loadImage(SDL_Renderer* renderer, const char* imgPath) {
@@ -33,8 +34,6 @@ CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer) {
         }
     }
 
-    characterTexture->frame = 0;
-    characterTexture->isMoving = 1;
 
     characterTexture->displayRect.x=WINDOW_WIDTH/2 - 48/2;
     characterTexture->displayRect.y=WINDOW_HEIGHT/2 - 72/2;
@@ -67,11 +66,3 @@ SDL_Rect fillRect(int x, int y, int w, int h) {
     return rect;
 }
 
-void moveCharacter(CharacterTexture* characterTexture) {
-
-    if(characterTexture->isMoving)
-        characterTexture->frame = (int)(SDL_GetTicks() / CHARACTER_FRAME_RATE)%4;
-    else
-        return;
-
-}

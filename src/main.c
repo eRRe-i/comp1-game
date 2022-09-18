@@ -1,8 +1,9 @@
 #include "common.h"
 #include "textures.h"
+#include "player.h"
 
 int waiting(void);
-void updateScreen(SDL_Renderer* renderer, MapTexture* map, CharacterTexture* character);
+void updateScreen(SDL_Renderer* renderer, MapTexture* map, Player* player);
 // int handleEvent(Player* Player, Background* background);
 
 int main (int argc, char *argv[])
@@ -26,20 +27,41 @@ int main (int argc, char *argv[])
 
 	MapTexture* mapTexture =  loadMapTexture(renderer);
     CharacterTexture* characterTexture = loadCharacterTexture(renderer);
-	// mapTexture->mapTexture = loadMap(renderer);
-	// characterTexture->characterSheet = loadCharacter(renderer);
+
 
 	chdir("..");
 
 	KeyboardInput* keyboardInput = loadKeyBoardInput();
+	Player* player = loadPlayerInitialState(characterTexture);
+
+
+	int flag = 0;
+
+	printf("FACING SIDE: %i, FRAME: %i\n", player->facingSide, player->frame);
+	printf("%p\n\n", &player->characterTexture->spritePosition[player->facingSide][player->frame].x);
+
 
 	// main loop
 	while (keyboardInput->gameStateKeyboardInput.quitGame == 0) {
+
         
 		listenEvent(keyboardInput);
-		moveCharacter(characterTexture);
-        updateScreen(renderer, mapTexture, characterTexture);
+		if(flag==0) {
+		printf("FACING SIDE: %i, FRAME: %i\n", player->facingSide, player->frame);
+		printf("%p\n", &player->characterTexture->spritePosition[player->facingSide][player->frame].x);
+		}
+		updatePlayerState(player, keyboardInput);
+		if(flag==0) {
+		printf("FACING SIDE: %i, FRAME: %i\n", player->facingSide, player->frame);
+		printf("%p\n", &player->characterTexture->spritePosition[player->facingSide][player->frame].x);
+		}
+        updateScreen(renderer, mapTexture, player);
 
+		if(flag==0) {
+			flag = 1;
+		printf("FACING SIDE: %i, FRAME: %i\n", player->facingSide, player->frame);
+		printf("%p\n", &player->characterTexture->spritePosition[player->facingSide][player->frame].x);
+		}
 	}
 	
 	SDL_DestroyRenderer(renderer);
@@ -50,7 +72,7 @@ int main (int argc, char *argv[])
 	return 0;
 }
 
-void updateScreen(SDL_Renderer* renderer, MapTexture* map, CharacterTexture* character) {
+void updateScreen(SDL_Renderer* renderer, MapTexture* map, Player* player) {
 
                 
         // clear the screen
@@ -60,12 +82,11 @@ void updateScreen(SDL_Renderer* renderer, MapTexture* map, CharacterTexture* cha
 						map->mapTexture, 
 						NULL, 
 						&map->displayRect);
-		// flip the backbuffer  
-		// this means that everything that we prepared behind the screens is actually shown
+
         SDL_RenderCopy	(renderer, 
-						character->characterSheet,
-						&character->spritePosition[CHARACTER_FRONT][character->frame], 
-						&character->displayRect);
+						player->characterTexture->characterSheet,
+						&player->characterTexture->spritePosition[player->facingSide][player->frame], 
+						&player->characterTexture->displayRect);
         
 
 		SDL_RenderPresent(renderer);
