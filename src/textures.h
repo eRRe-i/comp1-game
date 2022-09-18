@@ -2,6 +2,10 @@
 #define TEXTURES
 
 #define CHARA_PATH "assets/chara.png"
+#define BASIC_Enemy_PATH "assets/basic_monster.png"
+#define MEDIUM_Enemy_PATH "assets/medium_monster.png"
+#define HIGH_Enemy_PATH "assets/high_monster.png"
+
 #define CHARACTER_FRONT 0
 #define CHARACTER_BACK 1
 #define CHARACTER_LEFT 2
@@ -27,6 +31,22 @@ typedef struct characterTexture {
     SDL_Rect displayRect;
 
 } CharacterTexture;
+
+typedef struct EnemyTexture {
+
+	SDL_Texture* EnemySheet;
+    SDL_Rect spritePosition[2][6];
+
+    int spriteWidth;
+    int spriteHeight;
+
+    int frame;
+    int isMoving;
+
+    SDL_Rect displayRect;
+
+} EnemyTexture;
+
 
 
 typedef struct mapTexture {
@@ -54,7 +74,9 @@ typedef struct textureContext {
 
 MapTexture* loadMapTexture(SDL_Renderer* renderer, const char* imgPath);
 CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer);
+EnemyTexture* loadEnemyTexture(SDL_Renderer* renderer, int type);
 SDL_Texture* loadImage(SDL_Renderer* renderer, const char* imgPath);
 void moveCharacter(CharacterTexture* characterTexture);
+void moveEnemy(EnemyTexture* characterTexture);
 
 #endif //TEXTURES

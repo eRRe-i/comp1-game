@@ -1,4 +1,5 @@
 #include "textures.h"
+#include <stdlib.h>
 
 SDL_Texture* loadImage(SDL_Renderer* renderer, const char* imgPath) {
 
@@ -74,4 +75,57 @@ void moveCharacter(CharacterTexture* characterTexture) {
     else
         return;
 
+}
+
+void moveEnemy(EnemyTexture* enemyTexture) {
+
+    if(enemyTexture->isMoving)
+        enemyTexture->frame = (int)(SDL_GetTicks() / CHARACTER_FRAME_RATE)%4;
+    else
+        return;
+
+}
+
+/*
+* TYPE = 1 -> BASIC_Enemy
+* TYPE = 2 -> MEDIUM_Enemy
+* TYPE = 3 -> HIGH_Enemy
+*/
+EnemyTexture* loadEnemyTexture(SDL_Renderer* renderer, int type) {
+
+    EnemyTexture* enemyTexture = (EnemyTexture*)malloc(sizeof(EnemyTexture));
+
+    if(type == 1){
+        enemyTexture->EnemySheet = loadImage(renderer, BASIC_Enemy_PATH);
+    }
+    if(type == 2){
+        enemyTexture->EnemySheet = loadImage(renderer, MEDIUM_Enemy_PATH);
+    }
+    if(type == 3){
+        enemyTexture->EnemySheet = loadImage(renderer, HIGH_Enemy_PATH);
+    }
+    
+    enemyTexture->spriteWidth = 472;
+    enemyTexture->spriteHeight = 430;
+    
+
+    for(int i=0; i<2; i++) {
+        for(int j=0; j<6; j++) {
+
+            enemyTexture->spritePosition[i][j].x = enemyTexture->spriteWidth*j;
+            enemyTexture->spritePosition[i][j].y = enemyTexture->spriteHeight*i;
+            enemyTexture->spritePosition[i][j].w = enemyTexture->spriteWidth;
+            enemyTexture->spritePosition[i][j].h = enemyTexture->spriteHeight;
+        }
+    }
+
+    enemyTexture->frame = 0;
+    enemyTexture->isMoving = 1;
+
+    enemyTexture->displayRect.x= rand() % WINDOW_WIDTH + 20;
+    enemyTexture->displayRect.y= rand() % WINDOW_HEIGHT + 20;
+    enemyTexture->displayRect.w=48;
+    enemyTexture->displayRect.h=41;
+
+    return enemyTexture;
 }
