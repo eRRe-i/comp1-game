@@ -6,19 +6,17 @@
 
 int readmatrix(size_t rows, size_t cols, int (*a)[cols], const char* filename)
 {
-
     FILE *pf;
     pf = fopen (filename, "r");
     if (pf == NULL)
         return 0;
 
-    for(size_t i = 0; i < rows; ++i)
-    {
+    for(size_t i = 0; i < rows; ++i){
         for(size_t j = 0; j < cols; ++j)
             fscanf(pf, "%d", a[i] + j);
     }
 
-
+    
     fclose (pf); 
     return 1; 
 }
@@ -26,13 +24,20 @@ int readmatrix(size_t rows, size_t cols, int (*a)[cols], const char* filename)
 Map* generateMaps(SDL_Renderer* renderer){
 
     Map *arrayMaps = malloc(sizeof(Map) *MAP_LIST_SIZE);
-    char path[100];
-
+    char pathImg[100];
+    char pathTxt[100];
     for(int i = 0; i< MAP_LIST_SIZE; i++){
         int num = i+1;
-        sprintf(path, "assets/Map%d.png",num);
-        MapTexture* mapTexture  = loadMapTexture(renderer, path);
+        sprintf(pathImg, "assets/Map%d.png",num);
+        sprintf(pathTxt, "assets/maps/map%d.txt",num);
+
+        MapTexture* mapTexture  = loadMapTexture(renderer, pathImg);
+
+        readmatrix(MATRIX_SIZE,MATRIX_SIZE,arrayMaps[i].matrix, pathTxt);
+
+        /*TODO: MELHORAR QTDE DE INIMIGOS*/
         int randomMax = 5+(1*i);
+
         arrayMaps[i].mapTexture = mapTexture;
         arrayMaps[i].basicEnemy = rand() % randomMax + 5;
         arrayMaps[i].mediumEnemy = 0;
@@ -44,8 +49,6 @@ Map* generateMaps(SDL_Renderer* renderer){
         if(arrayMaps[i].highEnemy <= 0){
             arrayMaps[i].highEnemy = 0;
         }
-
-        printf("MAP: BasicEnemy = %i, MediumEnemy= %i, HighEnemy= %i\n", arrayMaps[i].basicEnemy,arrayMaps[i].mediumEnemy, arrayMaps[i].highEnemy);
-    }
+      }
     return arrayMaps;
 }

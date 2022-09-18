@@ -16,7 +16,6 @@ int main (int argc, char *argv[])
 
 	
 	int w, h; // texture width & height
-	// MapTexture *arrayMapsTexture[2];
 	
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -27,13 +26,8 @@ int main (int argc, char *argv[])
 	win = SDL_CreateWindow("Image Loading", 100, 100, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
 	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	Map *mapas = generateMaps(renderer);
-	// arrayMapsTexture[0] = (MapTexture*)malloc(sizeof(MapTexture));
-	// arrayMapsTexture[1] = (MapTexture*)malloc(sizeof(MapTexture));
-	// arrayMapsTexture[0] = loadMapTexture(renderer, MAP_PATH);
-	// arrayMapsTexture[1] = loadMapTexture(renderer, MAP_PATH2);
     characterTexture = loadCharacterTexture(renderer);
-	// mapTexture->mapTexture = loadMap(renderer);
-	// characterTexture->characterSheet = loadCharacter(renderer);
+
 
 	chdir("..");
 
@@ -67,21 +61,17 @@ int waiting(void)
 		else if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_F1){
 			if(mapIndex > 0)
 				mapIndex -= 1;
-			printf("INDEX_SIZE= %i\n", mapIndex);
 		}
 		else if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_F2){
 			if(mapIndex < MAP_LIST_SIZE-1)
 				mapIndex += 1;
-			printf("INDEX_SIZE= %i\n", mapIndex);
 		}
-
 	}
 	return 1;
 }
  
 void updateScreen(SDL_Renderer* renderer, MapTexture* map, CharacterTexture* character) {
 
-                
         // clear the screen
 		SDL_RenderClear(renderer);
 		// copy the texture to the rendering context

@@ -5,12 +5,13 @@
 #define MAP_DIM_Y 32
 
 #define MAP_LIST_SIZE 10
+#define MATRIX_SIZE 70
 
 typedef struct map {
 
 	MapTexture * mapTexture;
 
-    int matrix[35][35];
+    int matrix[MATRIX_SIZE][MATRIX_SIZE];
     int basicEnemy;
     int mediumEnemy;
     int highEnemy;
