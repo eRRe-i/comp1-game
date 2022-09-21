@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "map2.h"
+#include "map.h"
 #include "textures.h"
 #include <stdlib.h>
 #include <string.h>

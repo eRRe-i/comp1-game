@@ -1,5 +1,3 @@
-#ifndef ENEMY
-#define ENEMY
 
 #include "common.h"
 #include "textures.h"
@@ -15,5 +13,3 @@ typedef struct enemy {
 
 void generateEnemy(SDL_Renderer* renderer, Enemy* enemy, int type);
 void geraPosicao(int (*matrix)[70],Enemy *enemy);
-
-#endif //ENEMY
