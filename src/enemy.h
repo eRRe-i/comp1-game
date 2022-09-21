@@ -12,3 +12,4 @@ typedef struct enemy {
 } Enemy;
 
 void generateEnemy(SDL_Renderer* renderer, Enemy* enemy, int type);
+void geraPosicao(int (*matrix)[70],Enemy *enemy);

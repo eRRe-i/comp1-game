@@ -13,7 +13,6 @@
 #define CHARACTER_FRAME_RATE 200
 
 #define MAP_PATH "assets/Map%d.png"
-#define MAP_PATH2 "assets/Map2.png"
   
 #include "common.h"
 
@@ -72,7 +71,7 @@ typedef struct textureContext {
 } TextureContext;
 
 
-MapTexture* loadMapTexture(SDL_Renderer* renderer, const char* imgPath);
+MapTexture* loadMapTexture(SDL_Renderer* renderer, int id);
 CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer);
 EnemyTexture* loadEnemyTexture(SDL_Renderer* renderer, int type);
 SDL_Texture* loadImage(SDL_Renderer* renderer, const char* imgPath);

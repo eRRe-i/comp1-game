@@ -1,11 +1,16 @@
 #include "common.h"
 #include "textures.h"
 #include "map.h"
+#include <stdbool.h>
 
 int waiting(void);
-void updateScreen(SDL_Renderer* renderer, Map* map, CharacterTexture* character, EnemyTexture* EnemyTexture);
+void updateScreen(SDL_Renderer* renderer, Map* map, CharacterTexture* character);
 void updateMap(SDL_Renderer* renderer, Map* map);
 void updateEnemy(SDL_Renderer* renderer, EnemyTexture* enemyTexture);
+void cleanMap(Map* map);
+
+
+bool loadFromRenderedText( const char* textureText, SDL_Color textColor, SDL_Renderer* gRenderer);
 
 // int handleEvent(Player* Player, Background* background);
 // variable declarations
@@ -18,11 +23,19 @@ int mapIndex = 0;
 int actionFrame = 0;
 SDL_RendererFlip flipType = SDL_FLIP_NONE;
 
+//Image dimensions
+int mWidth = 0;
+int mHeight = 0;
+
+TTF_Font *gFont = NULL;
+SDL_Texture* font_texture = NULL;
+
+
+bool loadMedia(SDL_Renderer* gRenderer);
+
+
 int main (int argc, char *argv[]) 
 {
-
-	
-	int w, h; // texture width & height
 	
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -37,17 +50,15 @@ int main (int argc, char *argv[])
 	updateMap(renderer, mapas[0]);
     characterTexture = loadCharacterTexture(renderer);
 
-	enemyTexture = loadEnemyTexture(renderer,1);
+	// enemyTexture = loadEnemyTexture(renderer,1);
 
-	chdir("..");
-
+	// chdir("..");
 	
 	// main loop
 	while (waiting()) {
         
 		moveCharacter(characterTexture);
-		moveEnemy(enemyTexture);
-        updateScreen(renderer, mapas[mapIndex], characterTexture, enemyTexture);
+        updateScreen(renderer, mapas[mapIndex], characterTexture);
 
 	}
 	
@@ -71,14 +82,14 @@ int waiting(void)
 			return 0;
 		else if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_F1){
 			if(mapIndex > 0){
+				// cleanMap(mapas[mapIndex]);
 				mapIndex -= 1;
-				updateMap(renderer, mapas[mapIndex]);
 			}
 		}
 		else if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_F2){
 			if(mapIndex < MAP_LIST_SIZE-1){
+				// cleanMap(mapas[mapIndex]);
 				mapIndex += 1;
-				updateMap(renderer, mapas[mapIndex]);
 			}
 		}
 		else if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_F3){
@@ -94,46 +105,55 @@ int waiting(void)
 	return 1;
 }
  
-void updateScreen(SDL_Renderer* renderer, Map* map, CharacterTexture* character, EnemyTexture* enemyTexture) {
+void updateScreen(SDL_Renderer* renderer, Map* map, CharacterTexture* character) {
 
-        // clear the screen
 		SDL_RenderClear(renderer);
-		// copy the texture to the rendering context
-		// SDL_RenderCopy(	renderer, 
-		// 				map->mapTexture, 
-		// 				NULL, 
-		// 				&map->displayRect);
+
 		updateMap(renderer, map);
-		// flip the backbuffer  
-		// this means that everything that we prepared behind the screens is actually shown
-        SDL_RenderCopy	(renderer, 
+
+        SDL_RenderCopy	(renderer,
 						character->characterSheet,
-						&character->spritePosition[CHARACTER_FRONT][character->frame], 
+						&character->spritePosition[CHARACTER_FRONT][character->frame],
 						&character->displayRect);
 
 		SDL_RenderPresent(renderer);
-
 }
 
-
-
 void updateMap(SDL_Renderer* renderer, Map* map){
+	if(map->mapTexture == NULL){
+		readmatrix(MATRIX_SIZE,MATRIX_SIZE,map->matrix, map->id);
+        map->mapTexture = loadMapTexture(renderer, map->id);
+        geraMonstrosParaMapa(renderer, map);
+	}
 
 	SDL_RenderCopy(renderer,
 		map->mapTexture->mapTexture,
 		NULL,
 		&map->mapTexture->displayRect);
-	for(int i = 0; i < (map->basicEnemy + map->mediumEnemy + map->highEnemy); i++){
+	for(int i = 0; i < map->total_enemy; i++){
 		updateEnemy(renderer, map->Enemys[i]->enemyTexture);
 	}
 }
+
 void updateEnemy(SDL_Renderer* renderer, EnemyTexture* enemyTexture){
 	moveEnemy(enemyTexture);
-	SDL_RenderCopyEx	(renderer, 
+	SDL_RenderCopyEx(renderer, 
 			enemyTexture->EnemySheet,
 			&enemyTexture->spritePosition[actionFrame][enemyTexture->frame], 
 			&enemyTexture->displayRect,
 			0,
 			NULL,
 			flipType);
+}
+
+void cleanMap(Map* map){
+	SDL_DestroyTexture(map->mapTexture->mapTexture);
+	free(map->mapTexture);
+	if(map->total_enemy < 100){
+		for(int i = 0; i < map->total_enemy; i++){
+			SDL_DestroyTexture(map->Enemys[i]->enemyTexture->EnemySheet);
+			free(map->Enemys[i]->enemyTexture);
+			free(map->Enemys[i]);
+		}
+	}
 }

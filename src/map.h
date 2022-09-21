@@ -2,26 +2,22 @@
 #include "textures.h"
 #include "enemy.h"
 
-#define MAP_DIM_X 32
-#define MAP_DIM_Y 32
-
-#define MAP_LIST_SIZE 10
-#define MATRIX_SIZE 70
 
 typedef struct map {
 
 	MapTexture * mapTexture;
-
+    int id;
     int matrix[MATRIX_SIZE][MATRIX_SIZE];
     int basicEnemy;
     int mediumEnemy;
     int highEnemy;
-    Enemy* Enemys[100];
-
+    int total_enemy;
+    int state;
+    Enemy* Enemys[MAX_ENEMY_ARRAY];
 
 } Map;
 
-int readmatrix(size_t rows, size_t cols, int (*a)[cols], const char* filename);
+int readmatrix(size_t rows, size_t cols, int (*a)[cols], int id);
 
 void generateMaps(SDL_Renderer* renderer, Map **arrayMaps);
-void geraMonstrosParaMapa(SDL_Renderer* renderer, Map* map);//int basicEnemy, int mediumEnemy, int highEnemy );
+void geraMonstrosParaMapa(SDL_Renderer* renderer, Map* map);

@@ -45,8 +45,9 @@ CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer) {
     return characterTexture;
 }
 
-MapTexture* loadMapTexture(SDL_Renderer* renderer, const char* imgPath) {
-
+MapTexture* loadMapTexture(SDL_Renderer* renderer, int id) {
+    char imgPath[MAX_SIZE];
+    sprintf(imgPath, "assets/Map%d.png",id);
 	MapTexture* mapTexture = (MapTexture*)malloc(sizeof(MapTexture));
 
 	mapTexture->mapTexture = loadImage(renderer, imgPath);
@@ -95,15 +96,18 @@ EnemyTexture* loadEnemyTexture(SDL_Renderer* renderer, int type) {
 
     EnemyTexture* enemyTexture = (EnemyTexture*)malloc(sizeof(EnemyTexture));
 
-    if(type == 1){
+    switch (type){
+        case 1:
         enemyTexture->EnemySheet = loadImage(renderer, BASIC_Enemy_PATH);
-    }
-    if(type == 2){
+        break;
+        case 2:
         enemyTexture->EnemySheet = loadImage(renderer, MEDIUM_Enemy_PATH);
-    }
-    if(type == 3){
+        break;
+        case 3:
         enemyTexture->EnemySheet = loadImage(renderer, HIGH_Enemy_PATH);
+        break;
     }
+
     
     enemyTexture->spriteWidth = 472;
     enemyTexture->spriteHeight = 430;
@@ -122,8 +126,6 @@ EnemyTexture* loadEnemyTexture(SDL_Renderer* renderer, int type) {
     enemyTexture->frame = 0;
     enemyTexture->isMoving = 1;
 
-    enemyTexture->displayRect.x= rand() % WINDOW_WIDTH + 20;
-    enemyTexture->displayRect.y= rand() % WINDOW_HEIGHT + 20;
     enemyTexture->displayRect.w=48;
     enemyTexture->displayRect.h=41;
 
