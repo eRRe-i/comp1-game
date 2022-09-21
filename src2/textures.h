@@ -2,9 +2,6 @@
 #define TEXTURES
 
 #define CHARA_PATH "assets/chara.png"
-#define NO_KEYBOARD_INPUT -1
-#define CHARACTER_DOWN 0
-#define CHARACTER_UP 1
 #define BASIC_Enemy_PATH "assets/basic_monster.png"
 #define MEDIUM_Enemy_PATH "assets/medium_monster.png"
 #define HIGH_Enemy_PATH "assets/high_monster.png"
@@ -14,7 +11,6 @@
 #define CHARACTER_LEFT 2
 #define CHARACTER_RIGHT 3
 #define CHARACTER_FRAME_RATE 200
-#define BLOCKSIZE 32
 
 #define MAP_PATH "assets/Map%d.png"
   
@@ -27,6 +23,9 @@ typedef struct characterTexture {
 
     int spriteWidth;
     int spriteHeight;
+
+    int frame;
+    int isMoving;
 
     SDL_Rect displayRect;
 
@@ -78,7 +77,5 @@ EnemyTexture* loadEnemyTexture(SDL_Renderer* renderer, int type);
 SDL_Texture* loadImage(SDL_Renderer* renderer, const char* imgPath);
 void moveCharacter(CharacterTexture* characterTexture);
 void moveEnemy(EnemyTexture* characterTexture);
-SDL_Rect fillRect(int x, int y, int w, int h);
-
 
 #endif //TEXTURES

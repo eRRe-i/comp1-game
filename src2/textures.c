@@ -1,4 +1,3 @@
-#include "common.h"
 #include "textures.h"
 #include <stdlib.h>
 
@@ -35,9 +34,11 @@ CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer) {
         }
     }
 
+    characterTexture->frame = 0;
+    characterTexture->isMoving = 1;
 
     characterTexture->displayRect.x=WINDOW_WIDTH/2 - 48/2;
-    characterTexture->displayRect.y=WINDOW_HEIGHT/2 - 72/2 + 20;
+    characterTexture->displayRect.y=WINDOW_HEIGHT/2 - 72/2;
     characterTexture->displayRect.w=48;
     characterTexture->displayRect.h=72;
 
@@ -48,7 +49,8 @@ MapTexture* loadMapTexture(SDL_Renderer* renderer, int id) {
     char imgPath[MAX_SIZE];
     sprintf(imgPath, "assets/Map%d.png",id);
 	MapTexture* mapTexture = (MapTexture*)malloc(sizeof(MapTexture));
-	mapTexture->mapTexture = loadImage(renderer, MAP_PATH);
+
+	mapTexture->mapTexture = loadImage(renderer, imgPath);
 	
 	SDL_QueryTexture(mapTexture->mapTexture, NULL, NULL, &mapTexture->width, &mapTexture->height);
 
@@ -56,7 +58,7 @@ MapTexture* loadMapTexture(SDL_Renderer* renderer, int id) {
 	mapTexture->displayRect.y = 0;
 	mapTexture->displayRect.w = mapTexture->width;
 	mapTexture->displayRect.h = mapTexture->height;
- 
+
 	return mapTexture;
 }
 
@@ -67,6 +69,7 @@ SDL_Rect fillRect(int x, int y, int w, int h) {
     return rect;
 }
 
+void moveCharacter(CharacterTexture* characterTexture) {
 
     if(characterTexture->isMoving)
         characterTexture->frame = (int)(SDL_GetTicks() / CHARACTER_FRAME_RATE)%4;
