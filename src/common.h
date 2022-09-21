@@ -20,7 +20,8 @@ typedef struct gameStateKeyboardInput {
 
 typedef struct movePlayerKeyboardInput {
 
-    int moveInput;
+    int previousInput;
+    int currentInput;
 
 } MovePlayerKeyboardInput;
 

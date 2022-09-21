@@ -13,10 +13,6 @@ void listenEvent(KeyboardInput* keyboardInput) {
             case SDL_QUIT: keyboardInput->gameStateKeyboardInput.quitGame = 1; break;
             case SDL_KEYDOWN: handleKeyBoardInput(keyboardInput, &event.key); break;
 			case SDL_KEYUP:handleKeyBoardInput(keyboardInput, &event.key); break;
-			default: {
-			keyboardInput->movePlayerKeyboardInput.moveInput = NO_KEYBOARD_INPUT;
-			break;
-			}
             
         }
     }
@@ -28,13 +24,13 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 		
 		case SDL_KEYDOWN:{	keyboardInput->keyPressed = 1;
 							keyboardInput->keyReleased = 0;
-							SDL_Log("KeyPressed");
-
 							break;
 		}
 		case SDL_KEYUP:{ 	keyboardInput->keyPressed = 0;
 							keyboardInput->keyReleased = 1;
-							SDL_Log("KeyReleased");
+							keyboardInput->movePlayerKeyboardInput.currentInput = NO_KEYBOARD_INPUT;
+							break;
+
 		}
 	}
 
@@ -43,23 +39,22 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 							break;
 		}
 		case SDLK_SPACE: {	keyboardInput->gameStateKeyboardInput.pauseGame = 1;
-							SDL_Log("SpacePressed");
 							break;
 		}
-		case SDLK_UP: 	{	keyboardInput->movePlayerKeyboardInput.moveInput = CHARACTER_UP;
-							SDL_Log("UpPressed");
+		case SDLK_UP: 	{	keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
+							keyboardInput->movePlayerKeyboardInput.currentInput = CHARACTER_UP;
 							break;
 		}
-		case SDLK_DOWN: {	keyboardInput->movePlayerKeyboardInput.moveInput = CHARACTER_DOWN;
-							SDL_Log("DownPressed"); 
+		case SDLK_DOWN: {	keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
+							keyboardInput->movePlayerKeyboardInput.currentInput = CHARACTER_DOWN;
 							break;
 		}
-		case SDLK_LEFT: {	keyboardInput->movePlayerKeyboardInput.moveInput = CHARACTER_LEFT;
-							SDL_Log("LeftPressed");
+		case SDLK_LEFT: {	keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
+							keyboardInput->movePlayerKeyboardInput.currentInput = CHARACTER_LEFT;
 							break;
 		}
-		case SDLK_RIGHT:{	keyboardInput->movePlayerKeyboardInput.moveInput = CHARACTER_RIGHT;
-							SDL_Log("RightPressed");
+		case SDLK_RIGHT:{	keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
+							keyboardInput->movePlayerKeyboardInput.currentInput = CHARACTER_RIGHT;
 							break;
 		}
 	}
@@ -71,7 +66,9 @@ KeyboardInput* loadKeyBoardInput() {
 
 	keyboardInput->gameStateKeyboardInput.pauseGame = 0;
 	keyboardInput->gameStateKeyboardInput.quitGame=0;
-	keyboardInput->movePlayerKeyboardInput.moveInput=0;
+	keyboardInput->movePlayerKeyboardInput.currentInput=0;
+	keyboardInput->movePlayerKeyboardInput.previousInput=0;
+
 
 	return keyboardInput;
 
@@ -79,7 +76,8 @@ KeyboardInput* loadKeyBoardInput() {
 
 void cleanMovementInput(KeyboardInput* keyboardInput) {
 
-	keyboardInput->movePlayerKeyboardInput.moveInput = 0;
+	keyboardInput->movePlayerKeyboardInput.currentInput = 0;
+	keyboardInput->movePlayerKeyboardInput.previousInput=0;
 	keyboardInput->keyPressed = 0;
 	keyboardInput->keyReleased = 0;
 

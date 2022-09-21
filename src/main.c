@@ -98,25 +98,21 @@ void updatePlayerState(Player* player, Map* map, KeyboardInput* keyboardInput) {
 	if(player->isMoving) {
 
 		if(map->dstX == map->x && map->dstY == map->y) {
-
-			if(keyboardInput->movePlayerKeyboardInput.moveInput != player->facingSide) {
-				SDL_Log("case01");
-				player->isMoving = TRUE;
-				player->facingSide = keyboardInput->movePlayerKeyboardInput.moveInput;
-				updateDstBlock(player, map);
-				moveCharacter(player, map);
-			} else if(keyboardInput->movePlayerKeyboardInput.moveInput == player->facingSide && keyboardInput->keyPressed) {
-				SDL_Log("case02");
-				player->isMoving = TRUE;
-				player->facingSide = keyboardInput->movePlayerKeyboardInput.moveInput;
-				updateDstBlock(player, map);
-				moveCharacter(player, map);
-			} else {
-				SDL_Log("case03");
+			if(keyboardInput->keyReleased){
 				player->isMoving = FALSE;
+			} else if(keyboardInput->movePlayerKeyboardInput.currentInput != keyboardInput->movePlayerKeyboardInput.previousInput) {
+				player->isMoving = TRUE;
+				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
+				updateDstBlock(player, map);
+				moveCharacter(player, map);
+			} else if(keyboardInput->movePlayerKeyboardInput.currentInput == keyboardInput->movePlayerKeyboardInput.previousInput && keyboardInput->keyPressed) {
+				player->isMoving = TRUE;
+				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
+				updateDstBlock(player, map);
+				moveCharacter(player, map);
 			}
+			
 		} else {
-			SDL_Log("case04");
 			moveCharacter(player, map);
 			updateCharacterFrame(player);
 		}
@@ -124,23 +120,22 @@ void updatePlayerState(Player* player, Map* map, KeyboardInput* keyboardInput) {
 		
 		if(keyboardInput->keyReleased){
 			return;
-		} else if(player->facingSide == keyboardInput->movePlayerKeyboardInput.moveInput) {
+		} else if(player->facingSide == keyboardInput->movePlayerKeyboardInput.currentInput) {
 			player->isMoving = TRUE;
 			updateDstBlock(player, map);
 			moveCharacter(player, map);
 		
-		} else if(player->facingSide != keyboardInput->movePlayerKeyboardInput.moveInput) {
+		} else if(player->facingSide != keyboardInput->movePlayerKeyboardInput.currentInput) {
 
 			if(keyboardInput->keyReleased) {
 
-			player->facingSide = keyboardInput->movePlayerKeyboardInput.moveInput;
+			player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
 			player->isMoving = FALSE;
-			SDL_Delay(50);
 
 			} else if (keyboardInput->keyPressed) {
 
 				player->isMoving = TRUE;
-				player->facingSide = keyboardInput->movePlayerKeyboardInput.moveInput;
+				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
 				updateDstBlock(player, map);
 				moveCharacter(player, map);
 				
