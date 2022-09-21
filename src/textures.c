@@ -36,7 +36,7 @@ CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer) {
 
 
     characterTexture->displayRect.x=WINDOW_WIDTH/2 - 48/2;
-    characterTexture->displayRect.y=WINDOW_HEIGHT/2 - 72/2;
+    characterTexture->displayRect.y=WINDOW_HEIGHT/2 - 72/2 + 20;
     characterTexture->displayRect.w=48;
     characterTexture->displayRect.h=72;
 
@@ -46,7 +46,6 @@ CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer) {
 MapTexture* loadMapTexture(SDL_Renderer* renderer) {
 
 	MapTexture* mapTexture = (MapTexture*)malloc(sizeof(MapTexture));
-
 	mapTexture->mapTexture = loadImage(renderer, MAP_PATH);
 	
 	SDL_QueryTexture(mapTexture->mapTexture, NULL, NULL, &mapTexture->width, &mapTexture->height);
@@ -55,7 +54,7 @@ MapTexture* loadMapTexture(SDL_Renderer* renderer) {
 	mapTexture->displayRect.y = 0;
 	mapTexture->displayRect.w = mapTexture->width;
 	mapTexture->displayRect.h = mapTexture->height;
-
+ 
 	return mapTexture;
 }
 

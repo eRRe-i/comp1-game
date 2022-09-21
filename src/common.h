@@ -36,7 +36,8 @@ typedef struct keyboardInput {
 
 typedef struct timer {
 
-    Uint32 startTime;
+    Uint32 currentTime;
+    Uint32 elapsedTime;
     Uint32 pausedTime;
 
 } Timer;

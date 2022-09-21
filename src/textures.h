@@ -2,11 +2,13 @@
 #define TEXTURES
 
 #define CHARA_PATH "assets/chara.png"
+#define NO_KEYBOARD_INPUT -1
 #define CHARACTER_DOWN 0
 #define CHARACTER_UP 1
 #define CHARACTER_LEFT 2
 #define CHARACTER_RIGHT 3
 #define CHARACTER_FRAME_RATE 200
+#define BLOCKSIZE 32
 
 #define MAP_PATH "assets/Map1.png"
 
@@ -50,6 +52,7 @@ typedef struct textureContext {
 MapTexture* loadMapTexture(SDL_Renderer* renderer);
 CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer);
 SDL_Texture* loadImage(SDL_Renderer* renderer, const char* imgPath);
+SDL_Rect fillRect(int x, int y, int w, int h);
 
 
 #endif //TEXTURES

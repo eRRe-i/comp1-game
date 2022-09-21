@@ -12,6 +12,11 @@ void listenEvent(KeyboardInput* keyboardInput) {
 		
             case SDL_QUIT: keyboardInput->gameStateKeyboardInput.quitGame = 1; break;
             case SDL_KEYDOWN: handleKeyBoardInput(keyboardInput, &event.key); break;
+			case SDL_KEYUP:handleKeyBoardInput(keyboardInput, &event.key); break;
+			default: {
+			keyboardInput->movePlayerKeyboardInput.moveInput = NO_KEYBOARD_INPUT;
+			break;
+			}
             
         }
     }
@@ -23,7 +28,13 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 		
 		case SDL_KEYDOWN:{	keyboardInput->keyPressed = 1;
 							keyboardInput->keyReleased = 0;
+							SDL_Log("KeyPressed");
+
 							break;
+		}
+		case SDL_KEYUP:{ 	keyboardInput->keyPressed = 0;
+							keyboardInput->keyReleased = 1;
+							SDL_Log("KeyReleased");
 		}
 	}
 
@@ -60,7 +71,7 @@ KeyboardInput* loadKeyBoardInput() {
 
 	keyboardInput->gameStateKeyboardInput.pauseGame = 0;
 	keyboardInput->gameStateKeyboardInput.quitGame=0;
-	keyboardInput->movePlayerKeyboardInput.moveInput=CHARACTER_DOWN;
+	keyboardInput->movePlayerKeyboardInput.moveInput=0;
 
 	return keyboardInput;
 
@@ -74,11 +85,3 @@ void cleanMovementInput(KeyboardInput* keyboardInput) {
 
 	return;
 }
-
-void printKeyboardState(KeyboardInput* input) {
-
-	if(input->movePlayerKeyboardInput.moveInput == CHARACTER_DOWN)
-		printf("KEYBOARDSTATE:\n KEY PRESSED: %i\n KEY_TYPE: %i\n", input->keyPressed, input->movePlayerKeyboardInput.moveInput);
-
-}
-
