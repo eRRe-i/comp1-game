@@ -5,13 +5,19 @@
 #define NO_KEYBOARD_INPUT -1
 #define CHARACTER_DOWN 0
 #define CHARACTER_UP 1
+#define BASIC_Enemy_PATH "assets/basic_monster.png"
+#define MEDIUM_Enemy_PATH "assets/medium_monster.png"
+#define HIGH_Enemy_PATH "assets/high_monster.png"
+
+#define CHARACTER_FRONT 0
+#define CHARACTER_BACK 1
 #define CHARACTER_LEFT 2
 #define CHARACTER_RIGHT 3
 #define CHARACTER_FRAME_RATE 200
 #define BLOCKSIZE 32
 
-#define MAP_PATH "assets/Map1.png"
-
+#define MAP_PATH "assets/Map%d.png"
+  
 #include "common.h"
 
 typedef struct characterTexture {
@@ -26,6 +32,22 @@ typedef struct characterTexture {
 
 } CharacterTexture;
 
+typedef struct EnemyTexture {
+
+	SDL_Texture* EnemySheet;
+    SDL_Rect spritePosition[2][6];
+
+    int spriteWidth;
+    int spriteHeight;
+
+    int frame;
+    int isMoving;
+
+    SDL_Rect displayRect;
+
+} EnemyTexture;
+
+
 
 typedef struct mapTexture {
 
@@ -36,6 +58,7 @@ typedef struct mapTexture {
 	int height;
 
 } MapTexture;
+
 
 
 typedef struct textureContext {
@@ -49,9 +72,12 @@ typedef struct textureContext {
 } TextureContext;
 
 
-MapTexture* loadMapTexture(SDL_Renderer* renderer);
+MapTexture* loadMapTexture(SDL_Renderer* renderer, int id);
 CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer);
+EnemyTexture* loadEnemyTexture(SDL_Renderer* renderer, int type);
 SDL_Texture* loadImage(SDL_Renderer* renderer, const char* imgPath);
+void moveCharacter(CharacterTexture* characterTexture);
+void moveEnemy(EnemyTexture* characterTexture);
 SDL_Rect fillRect(int x, int y, int w, int h);
 
 
