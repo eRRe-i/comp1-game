@@ -2,13 +2,14 @@
 #include "textures.h"
 #include "player.h"
 #include "map.h"
+#include "phaseManager.h"
 
 int waiting(void);
-void updateScreen(SDL_Renderer* renderer, Map* map, Player* player);
-void updatePlayerState(Player* player, Map* map, KeyboardInput* keyboardInput);
-void moveCharacter(Player* player, Map* map); 
+void updateScreen(SDL_Renderer* renderer, PhaseManager* phaseManager);
+void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput);
+void moveCharacter(PhaseManager* phaseManager); 
 void updateCharacterFrame(Player* player);
-void updateDstBlock(Player* player, Map* map);
+void updateDstBlock(PhaseManager* phaseManager);
 
 
 int main (int argc, char *argv[])
@@ -39,6 +40,10 @@ int main (int argc, char *argv[])
 	KeyboardInput* keyboardInput = loadKeyBoardInput();
 	Player* player = loadPlayerInitialState(characterTexture);
 	Map* map = loadMapInitialState(mapTexture);
+	PhaseManager* phaseManager = loadPhaseManager();
+
+	phaseManager->map = map;
+	phaseManager->player = player;
 
 
 	printf("Player moving: %i\n", player->isMoving);
@@ -53,8 +58,8 @@ int main (int argc, char *argv[])
     	map->timer.elapsedTime = SDL_GetTicks();
 
 		listenEvent(keyboardInput);
-		updatePlayerState(player, map, keyboardInput);
-        updateScreen(renderer, map, player);
+		updatePlayerState(phaseManager, keyboardInput);
+        updateScreen(renderer, phaseManager);
 
 		t.elapsedTime = SDL_GetTicks();
 		if(t.elapsedTime - t.currentTime > 1000) {
@@ -72,8 +77,10 @@ int main (int argc, char *argv[])
 	return 0;
 }
 
-void updateScreen(SDL_Renderer* renderer, Map* map, Player* player) {
+void updateScreen(SDL_Renderer* renderer, PhaseManager* phaseManager) {
 
+		Map* map = phaseManager->map;
+		Player* player = phaseManager->player;
         
         // clear the screen
 		SDL_RenderClear(renderer);
@@ -93,7 +100,10 @@ void updateScreen(SDL_Renderer* renderer, Map* map, Player* player) {
 
 }
 
-void updatePlayerState(Player* player, Map* map, KeyboardInput* keyboardInput) {
+void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput) {
+
+	Map* map = phaseManager->map;
+	Player* player = phaseManager->player;
 
 	if(player->isMoving) {
 
@@ -103,18 +113,18 @@ void updatePlayerState(Player* player, Map* map, KeyboardInput* keyboardInput) {
 			} else if(keyboardInput->movePlayerKeyboardInput.currentInput != keyboardInput->movePlayerKeyboardInput.previousInput) {
 				player->isMoving = TRUE;
 				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
-				updateDstBlock(player, map);
-				moveCharacter(player, map);
+				updateDstBlock(phaseManager);
+				moveCharacter(phaseManager);
 			} else if(keyboardInput->movePlayerKeyboardInput.currentInput == keyboardInput->movePlayerKeyboardInput.previousInput && keyboardInput->keyPressed) {
 				player->isMoving = TRUE;
 				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
-				updateDstBlock(player, map);
-				moveCharacter(player, map);
+				updateDstBlock(phaseManager);
+				moveCharacter(phaseManager);
 			}
 			
 		} else {
-			moveCharacter(player, map);
-			updateCharacterFrame(player);
+			moveCharacter(phaseManager);
+			updateCharacterFrame(phaseManager->player);
 		}
 	} else {
 		
@@ -122,8 +132,8 @@ void updatePlayerState(Player* player, Map* map, KeyboardInput* keyboardInput) {
 			return;
 		} else if(player->facingSide == keyboardInput->movePlayerKeyboardInput.currentInput) {
 			player->isMoving = TRUE;
-			updateDstBlock(player, map);
-			moveCharacter(player, map);
+			updateDstBlock(phaseManager);
+			moveCharacter(phaseManager);
 		
 		} else if(player->facingSide != keyboardInput->movePlayerKeyboardInput.currentInput) {
 
@@ -136,8 +146,8 @@ void updatePlayerState(Player* player, Map* map, KeyboardInput* keyboardInput) {
 
 				player->isMoving = TRUE;
 				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
-				updateDstBlock(player, map);
-				moveCharacter(player, map);
+				updateDstBlock(phaseManager);
+				moveCharacter(phaseManager);
 				
 			}
 		}
@@ -146,8 +156,10 @@ void updatePlayerState(Player* player, Map* map, KeyboardInput* keyboardInput) {
 
 }
 
-void updateDstBlock(Player* player, Map* map) {
+void updateDstBlock(PhaseManager* phaseManager) {
 
+	Map* map = phaseManager->map;
+	Player* player = phaseManager->player;
 
 	switch(player->facingSide) {
 		case CHARACTER_DOWN:{
@@ -182,8 +194,10 @@ void updateCharacterFrame(Player* player) {
 
 }
 
-void moveCharacter(Player* player, Map* map) {
+void moveCharacter(PhaseManager* phaseManager) {
 
+	Map* map = phaseManager->map;
+	Player* player = phaseManager->player;
 
 	if(map->x != map->dstX) {
 		map->x += player->moveMultiplier * player->moveSpeed;
