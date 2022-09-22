@@ -18,6 +18,9 @@
 #define MAP_DIM_X 32
 #define MAP_DIM_Y 32
 
+#define MAP_LIST_SIZE 10
+#define MATRIX_SIZE 70
+
 typedef struct gameStateKeyboardInput {
 
     int quitGame;
@@ -55,10 +58,5 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key);
 void listenEvent(KeyboardInput* keyboardInput);
 void cleanMovementInput(KeyboardInput* keyboardInput);
 void printKeyboardState(KeyboardInput* input);
-
-
-
-#define MAP_LIST_SIZE 10
-#define MATRIX_SIZE 70
  
 #endif //COMMON
