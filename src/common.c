@@ -6,7 +6,7 @@ void listenEvent(KeyboardInput* keyboardInput) {
 
     SDL_Event event;
 
-    while(SDL_PollEvent(&event)) {
+    while('SDL_PollEvent(&event)') {
 
         switch(event.type){
 		
@@ -15,6 +15,22 @@ void listenEvent(KeyboardInput* keyboardInput) {
 			case SDL_KEYUP:handleKeyBoardInput(keyboardInput, &event.key); break;
             
         }
+		if(event.type == SDL_KEYUP){
+			switch(event.key.keysym.sym) {
+				case SDLK_F1:{
+					if(keyboardInput->gameStateKeyboardInput.currentMapID > 0){
+						keyboardInput->gameStateKeyboardInput.currentMapID = keyboardInput->gameStateKeyboardInput.currentMapID - 1;
+					}
+					break;
+				}
+				case SDLK_F2:{
+					if(keyboardInput->gameStateKeyboardInput.currentMapID < MAP_LIST_SIZE-1){
+						keyboardInput->gameStateKeyboardInput.currentMapID = keyboardInput->gameStateKeyboardInput.currentMapID + 1;
+					}
+					break;
+				}
+			}
+		}
     }
 }
 
@@ -66,6 +82,7 @@ KeyboardInput* loadKeyBoardInput() {
 
 	keyboardInput->gameStateKeyboardInput.pauseGame = 0;
 	keyboardInput->gameStateKeyboardInput.quitGame=0;
+	keyboardInput->gameStateKeyboardInput.currentMapID=0;
 	keyboardInput->movePlayerKeyboardInput.currentInput=0;
 	keyboardInput->movePlayerKeyboardInput.previousInput=0;
 

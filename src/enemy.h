@@ -17,5 +17,5 @@ typedef struct enemy {
 } Enemy;
 
 void generateEnemy(SDL_Renderer* renderer, Enemy* enemy, int type);
-void updateCharacterFrame(Player* player);
-void geraPosicao(int (*matrix)[70],Enemy *enemy);
+void updateEnemyFrame(Enemy* enemy);
+void geraPosicao(int (*matrix)[70], Enemy *enemy);

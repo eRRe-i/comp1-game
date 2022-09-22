@@ -43,10 +43,12 @@ CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer) {
     return characterTexture;
 }
 
-MapTexture* loadMapTexture(SDL_Renderer* renderer) {
+MapTexture* loadMapTexture(SDL_Renderer* renderer, int id) {
 
+    char imgPath[MAX_SIZE];
+    sprintf(imgPath, "assets/Map%d.png",id);
 	MapTexture* mapTexture = (MapTexture*)malloc(sizeof(MapTexture));
-	mapTexture->mapTexture = loadImage(renderer, MAP_PATH);
+	mapTexture->mapTexture = loadImage(renderer, imgPath);
 	
 	SDL_QueryTexture(mapTexture->mapTexture, NULL, NULL, &mapTexture->width, &mapTexture->height);
 
@@ -63,4 +65,46 @@ SDL_Rect fillRect(int x, int y, int w, int h) {
     SDL_Rect rect = {.x = x, .y = y, .w = w, .h = h};
 
     return rect;
+}
+
+/*
+* TYPE = 1 -> BASIC_Enemy
+* TYPE = 2 -> MEDIUM_Enemy
+* TYPE = 3 -> HIGH_Enemy
+*/
+EnemyTexture* loadEnemyTexture(SDL_Renderer* renderer, int type) {
+
+    EnemyTexture* enemyTexture = (EnemyTexture*)malloc(sizeof(EnemyTexture));
+
+    switch (type){
+        case 1:
+        enemyTexture->EnemySheet = loadImage(renderer, BASIC_Enemy_PATH);
+        break;
+        case 2:
+        enemyTexture->EnemySheet = loadImage(renderer, MEDIUM_Enemy_PATH);
+        break;
+        case 3:
+        enemyTexture->EnemySheet = loadImage(renderer, HIGH_Enemy_PATH);
+        break;
+    }
+
+    
+    enemyTexture->spriteWidth = 472;
+    enemyTexture->spriteHeight = 430;
+    
+
+    for(int i=0; i<2; i++) {
+        for(int j=0; j<6; j++) {
+
+            enemyTexture->spritePosition[i][j].x = enemyTexture->spriteWidth*j;
+            enemyTexture->spritePosition[i][j].y = enemyTexture->spriteHeight*i;
+            enemyTexture->spritePosition[i][j].w = enemyTexture->spriteWidth;
+            enemyTexture->spritePosition[i][j].h = enemyTexture->spriteHeight;
+        }
+    }
+
+    enemyTexture->displayRect.w=48;
+    enemyTexture->displayRect.h=41;
+
+    return enemyTexture;
 }

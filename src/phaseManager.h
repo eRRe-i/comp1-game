@@ -5,7 +5,8 @@
 
 
 typedef struct phaseManager {
-
+    
+    int currentMapId;
     Map* map;
     Player* player;
     AttackManager* attackManager; 

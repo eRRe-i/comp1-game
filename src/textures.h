@@ -2,6 +2,9 @@
 #define TEXTURES
 
 #define CHARA_PATH "assets/chara.png"
+#define BASIC_Enemy_PATH "assets/basic_monster.png"
+#define MEDIUM_Enemy_PATH "assets/medium_monster.png"
+#define HIGH_Enemy_PATH "assets/high_monster.png"
 #define NO_KEYBOARD_INPUT -1
 #define CHARACTER_DOWN 0
 #define CHARACTER_UP 1
@@ -48,11 +51,26 @@ typedef struct textureContext {
 
 } TextureContext;
 
+typedef struct enemyTexture {
 
-MapTexture* loadMapTexture(SDL_Renderer* renderer);
+	SDL_Texture* EnemySheet;
+    SDL_Rect spritePosition[2][6];
+
+    int spriteWidth;
+    int spriteHeight;
+
+    SDL_Rect displayRect;
+
+} EnemyTexture;
+
+
+
+
+MapTexture* loadMapTexture(SDL_Renderer* renderer, int id);
 CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer);
 SDL_Texture* loadImage(SDL_Renderer* renderer, const char* imgPath);
 SDL_Rect fillRect(int x, int y, int w, int h);
+EnemyTexture* loadEnemyTexture(SDL_Renderer* renderer, int type);
 
 
 #endif //TEXTURES
