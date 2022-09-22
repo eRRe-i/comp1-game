@@ -49,11 +49,15 @@ int main (int argc, char *argv[])
 
 	KeyboardInput* keyboardInput = loadKeyBoardInput();
 	Player* player = loadPlayerInitialState(characterTexture);
+	AttackManager* attackManager = loadAttackManager();
+
 	PhaseManager* phaseManager = loadPhaseManager();
 
 	phaseManager->map = mapas[mapIndex];
 	phaseManager->player = player;
 	phaseManager->attackManager = attackManager;
+
+	phaseManager->attackManager->firstAttackTexture = firstAttackTexture;
 
 	Timer t;
 	t.currentTime = 0;

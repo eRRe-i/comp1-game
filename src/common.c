@@ -6,7 +6,7 @@ void listenEvent(KeyboardInput* keyboardInput) {
 
     SDL_Event event;
 
-    while('SDL_PollEvent(&event)') {
+    while(SDL_PollEvent(&event)) {
 
         switch(event.type){
 		
