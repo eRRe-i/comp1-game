@@ -15,6 +15,7 @@ void updateMap(SDL_Renderer* renderer, Map* map);
 void updateEnemy(SDL_Renderer* renderer, Enemy* enemy);
 void cleanMap(Map* map);
 void moveEnemy(Enemy* enemy);
+int checkIfObjectInsideRenderArea(SDL_Rect windowRenderArea, SDL_Rect ObjectRenderArea);
 
 
 int main (int argc, char *argv[])
@@ -43,7 +44,6 @@ int main (int argc, char *argv[])
 
     CharacterTexture* characterTexture = loadCharacterTexture(renderer);
 	AttackTexture* firstAttackTexture = loadAttackTexture(renderer, FIRST_ATK_PATH, 40, 40);
-
 
 	//chdir("..");
 
@@ -271,6 +271,17 @@ void updateEnemy(SDL_Renderer* renderer, Enemy* enemy){
 void moveEnemy(Enemy* enemy) {
     if(enemy->isMoving)
         enemy->frame = (int)(SDL_GetTicks() / CHARACTER_FRAME_RATE)%4;
+}
+
+
+int checkIfObjectInsideRenderArea(SDL_Rect windowRenderArea, SDL_Rect ObjectRenderArea) {
+
+	int a = (ObjectRenderArea.x + ObjectRenderArea.w > windowRenderArea.x);
+	int b = (ObjectRenderArea.y + ObjectRenderArea.h > windowRenderArea.y);
+	int c = (windowRenderArea.x + windowRenderArea.w > ObjectRenderArea.x);
+	int d = (windowRenderArea.y + windowRenderArea.h > ObjectRenderArea.y);
+
+	return a && b && c && d;
 }
 
 // void cleanMap(Map* map){
