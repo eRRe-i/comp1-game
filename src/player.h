@@ -5,6 +5,7 @@
 #include "map.h"
 #include "textures.h"
 
+
 typedef struct Player {
 
 

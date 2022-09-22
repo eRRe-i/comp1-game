@@ -2,6 +2,7 @@
 #include "textures.h"
 #include "player.h"
 #include "map.h"
+#include "attack.h"
 #include "phaseManager.h"
 
 int waiting(void);
@@ -33,6 +34,7 @@ int main (int argc, char *argv[])
 
 	MapTexture* mapTexture =  loadMapTexture(renderer);
     CharacterTexture* characterTexture = loadCharacterTexture(renderer);
+	AttackTexture* firstAttackTexture = loadAttackTexture(renderer, FIRST_ATK_PATH, 40, 40);
 
 
 	chdir("..");
@@ -40,16 +42,25 @@ int main (int argc, char *argv[])
 	KeyboardInput* keyboardInput = loadKeyBoardInput();
 	Player* player = loadPlayerInitialState(characterTexture);
 	Map* map = loadMapInitialState(mapTexture);
+	AttackManager* attackManager = loadAttackManager();
 	PhaseManager* phaseManager = loadPhaseManager();
+
 
 	phaseManager->map = map;
 	phaseManager->player = player;
+	phaseManager->attackManager = attackManager;
 
+	phaseManager->attackManager->firstAttackTexture = firstAttackTexture;
 
 	printf("Player moving: %i\n", player->isMoving);
 
 	Timer t;
 	t.currentTime = 0;
+
+	{
+		phaseManager->attackManager->attackList[0] = loadAttack(phaseManager->attackManager->firstAttackTexture, 2, 2);
+		
+	}
 
 	// main loop
 	while (keyboardInput->gameStateKeyboardInput.quitGame == 0) {
@@ -60,6 +71,8 @@ int main (int argc, char *argv[])
 		listenEvent(keyboardInput);
 		updatePlayerState(phaseManager, keyboardInput);
         updateScreen(renderer, phaseManager);
+
+		
 
 		t.elapsedTime = SDL_GetTicks();
 		if(t.elapsedTime - t.currentTime > 1000) {
@@ -81,6 +94,7 @@ void updateScreen(SDL_Renderer* renderer, PhaseManager* phaseManager) {
 
 		Map* map = phaseManager->map;
 		Player* player = phaseManager->player;
+		AttackManager* attackManager = phaseManager->attackManager;
         
         // clear the screen
 		SDL_RenderClear(renderer);
@@ -94,6 +108,14 @@ void updateScreen(SDL_Renderer* renderer, PhaseManager* phaseManager) {
 						player->characterTexture->characterSheet,
 						&player->characterTexture->spritePosition[player->facingSide][player->frame], 
 						&player->characterTexture->displayRect);
+
+
+		
+			SDL_RenderCopy (	renderer,
+								attackManager->attackList[0]->atkTexture->texture,
+								NULL,
+								&attackManager->attackList[0]->dstRect);
+		
         
 
 		SDL_RenderPresent(renderer);
