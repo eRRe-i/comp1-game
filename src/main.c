@@ -2,13 +2,14 @@
 #include "textures.h"
 #include "player.h"
 #include "map.h"
+#include "phaseManager.h"
 
 int waiting(void);
-void updateScreen(SDL_Renderer* renderer, Map* map, Player* player);
-void updatePlayerState(Player* player, Map* map, KeyboardInput* keyboardInput);
-void moveCharacter(Player* player, Map* map); 
+void updateScreen(SDL_Renderer* renderer, PhaseManager* phaseManager);
+void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput);
+void moveCharacter(PhaseManager* phaseManager); 
 void updateCharacterFrame(Player* player);
-void updateDstBlock(Player* player, Map* map);
+void updateDstBlock(PhaseManager* phaseManager);
 void updateMap(SDL_Renderer* renderer, Map* map);
 void updateEnemy(SDL_Renderer* renderer, Enemy* enemy);
 void cleanMap(Map* map);
@@ -23,7 +24,6 @@ int main (int argc, char *argv[])
 
 	
 	int w, h; // texture width & height
-	int mapIndex = 0;
 	
 	// Initialize SDL.
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -34,12 +34,12 @@ int main (int argc, char *argv[])
 	win = SDL_CreateWindow("Image Loading", 100, 100, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
 	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
+	int mapIndex = 0;
 	Map *mapas[MAP_LIST_SIZE];
 	generateMaps(renderer, mapas);
 
 	updateMap(renderer, mapas[mapIndex]);
 
-	// MapTexture* mapTexture =  loadMapTexture(renderer);
     CharacterTexture* characterTexture = loadCharacterTexture(renderer);
 
 
@@ -47,24 +47,29 @@ int main (int argc, char *argv[])
 
 	KeyboardInput* keyboardInput = loadKeyBoardInput();
 	Player* player = loadPlayerInitialState(characterTexture);
-	// Map* map = loadMapInitialState(mapTexture);
+	PhaseManager* phaseManager = loadPhaseManager();
 
-
-	printf("Player moving: %i\n", player->isMoving);
+	phaseManager->map = mapas[mapIndex];
+	phaseManager->player = player;
 
 	Timer t;
 	t.currentTime = 0;
 
 	// main loop
 	while (keyboardInput->gameStateKeyboardInput.quitGame == 0) {
-		fprintf(stderr, "inicio do while\n");
+
         mapas[mapIndex]->timer.currentTime = mapas[mapIndex]->timer.elapsedTime;
     	mapas[mapIndex]->timer.elapsedTime = SDL_GetTicks();
-		fprintf(stderr, "SDL_GetTicks\n");
+
 		listenEvent(keyboardInput);
-		updatePlayerState(player, mapas[mapIndex], keyboardInput);
-        updateScreen(renderer, mapas[mapIndex], player);
-		fprintf(stderr, "updates\n");
+		updatePlayerState(phaseManager, keyboardInput);
+		if(keyboardInput->gameStateKeyboardInput.currentMapID != mapIndex){
+			mapIndex = keyboardInput->gameStateKeyboardInput.currentMapID;
+			phaseManager->map = mapas[mapIndex];
+		}
+        updateScreen(renderer, phaseManager);
+
+
 		t.elapsedTime = SDL_GetTicks();
 		if(t.elapsedTime - t.currentTime > 1000) {
 			t.currentTime = t.elapsedTime;
@@ -82,8 +87,10 @@ int main (int argc, char *argv[])
 	return 0;
 }
 
-void updateScreen(SDL_Renderer* renderer, Map* map, Player* player) {
+void updateScreen(SDL_Renderer* renderer, PhaseManager* phaseManager) {
 
+		Map* map = phaseManager->map;
+		Player* player = phaseManager->player;
         
         // clear the screen
 		SDL_RenderClear(renderer);
@@ -105,7 +112,10 @@ void updateScreen(SDL_Renderer* renderer, Map* map, Player* player) {
 
 }
 
-void updatePlayerState(Player* player, Map* map, KeyboardInput* keyboardInput) {
+void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput) {
+
+	Map* map = phaseManager->map;
+	Player* player = phaseManager->player;
 
 	if(player->isMoving) {
 
@@ -115,18 +125,18 @@ void updatePlayerState(Player* player, Map* map, KeyboardInput* keyboardInput) {
 			} else if(keyboardInput->movePlayerKeyboardInput.currentInput != keyboardInput->movePlayerKeyboardInput.previousInput) {
 				player->isMoving = TRUE;
 				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
-				updateDstBlock(player, map);
-				moveCharacter(player, map);
+				updateDstBlock(phaseManager);
+				moveCharacter(phaseManager);
 			} else if(keyboardInput->movePlayerKeyboardInput.currentInput == keyboardInput->movePlayerKeyboardInput.previousInput && keyboardInput->keyPressed) {
 				player->isMoving = TRUE;
 				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
-				updateDstBlock(player, map);
-				moveCharacter(player, map);
+				updateDstBlock(phaseManager);
+				moveCharacter(phaseManager);
 			}
 			
 		} else {
-			moveCharacter(player, map);
-			updateCharacterFrame(player);
+			moveCharacter(phaseManager);
+			updateCharacterFrame(phaseManager->player);
 		}
 	} else {
 		
@@ -134,8 +144,8 @@ void updatePlayerState(Player* player, Map* map, KeyboardInput* keyboardInput) {
 			return;
 		} else if(player->facingSide == keyboardInput->movePlayerKeyboardInput.currentInput) {
 			player->isMoving = TRUE;
-			updateDstBlock(player, map);
-			moveCharacter(player, map);
+			updateDstBlock(phaseManager);
+			moveCharacter(phaseManager);
 		
 		} else if(player->facingSide != keyboardInput->movePlayerKeyboardInput.currentInput) {
 
@@ -148,8 +158,8 @@ void updatePlayerState(Player* player, Map* map, KeyboardInput* keyboardInput) {
 
 				player->isMoving = TRUE;
 				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
-				updateDstBlock(player, map);
-				moveCharacter(player, map);
+				updateDstBlock(phaseManager);
+				moveCharacter(phaseManager);
 				
 			}
 		}
@@ -158,8 +168,10 @@ void updatePlayerState(Player* player, Map* map, KeyboardInput* keyboardInput) {
 
 }
 
-void updateDstBlock(Player* player, Map* map) {
+void updateDstBlock(PhaseManager* phaseManager) {
 
+	Map* map = phaseManager->map;
+	Player* player = phaseManager->player;
 
 	switch(player->facingSide) {
 		case CHARACTER_DOWN:{
@@ -194,8 +206,10 @@ void updateCharacterFrame(Player* player) {
 
 }
 
-void moveCharacter(Player* player, Map* map) {
+void moveCharacter(PhaseManager* phaseManager) {
 
+	Map* map = phaseManager->map;
+	Player* player = phaseManager->player;
 
 	if(map->x != map->dstX) {
 		map->x += player->moveMultiplier * player->moveSpeed;
@@ -207,22 +221,19 @@ void moveCharacter(Player* player, Map* map) {
 }
 void updateMap(SDL_Renderer* renderer, Map* map){
 	if(map->mapTexture == NULL){
-		fprintf(stderr, "TEXTURA MAP NULL\n");
 		readmatrix(MATRIX_SIZE,MATRIX_SIZE,map->map_matrix, map->id);
         map->mapTexture = loadMapTexture(renderer, map->id);
         geraMonstrosParaMapa(renderer, map);
-		fprintf(stderr, "FIM TEXTURA MAP NULL\n");
 	}
 
 	SDL_RenderCopy(renderer,
 		map->mapTexture->mapTexture,
-		NULL,
-		&map->mapTexture->displayRect);
-	fprintf(stderr, "UPDATE INIMIGOS\n");
+		&map->srcRect,
+		&map->dstRect);
+
 	for(int i = 0; i < map->total_enemy; i++){
 		updateEnemy(renderer, map->Enemys[i]);
 	}
-	fprintf(stderr, "FIM UPDATE INIMIGOS\n");
 }
 
 void updateEnemy(SDL_Renderer* renderer, Enemy* enemy){

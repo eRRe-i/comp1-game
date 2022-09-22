@@ -24,7 +24,7 @@ void generateEnemy(SDL_Renderer* renderer, Enemy* enemy, int type){
     
     enemy->isMoving = 1;
 
-    enemy->facingSide = 0;
+    enemy->facingSide = 1;
     enemy->frame = 1;
     enemy->moveMultiplier = 1;
 

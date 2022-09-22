@@ -25,6 +25,7 @@ typedef struct gameStateKeyboardInput {
 
     int quitGame;
     int pauseGame;
+    int currentMapID;
 
 } GameStateKeyboardInput;
 
