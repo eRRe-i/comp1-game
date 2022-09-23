@@ -46,7 +46,7 @@ int main(int argc, char ** argv)
 
 
 	SDL_Surface* superficieTexto = TTF_RenderText_Solid(fonteJogo,"Jogo Foda", preto);
-	SDL_Surface* superficieScore = TTF_RenderText_Solid(fonteScore,"Scores:", branco);
+	SDL_Surface* superficieScore = TTF_RenderText_Solid(fonteScore,"Ranking:", branco);
 	
 
 
@@ -65,15 +65,15 @@ int main(int argc, char ** argv)
 	retangulo.w = 400;
 	retangulo.h = 100;*/
 
-    SDL_Rect src = { SCREEN_WIDTH/2 - 340/2, 0 , 340, 148};// 340/2 - metade da imagem para ficar centralizado
-    SDL_Rect src1 = { SCREEN_WIDTH/2 -340, 148 , 150, 75};
+    SDL_Rect src = { SCREEN_WIDTH/2 - 340/2,50 , 350, 100};// 340/2 - metade da imagem para ficar centralizado
+    //SDL_Rect src1 = { SCREEN_WIDTH/2 -340, 148 , 150, 75};
     
 
     SDL_Rect dstrect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
     SDL_RenderCopy(renderer, fundo, NULL, &dstrect);
    // SDL_RenderCopy(renderer, nomejogo, NULL, &src); // Titulo jogo png
-    SDL_RenderCopy(renderer, texturaTexto, NULL, &src);
-    SDL_RenderCopy(renderer, texturaScore, NULL, &src1);
+    //SDL_RenderCopy(renderer, texturaTexto, NULL, &src);
+    SDL_RenderCopy(renderer, texturaScore, NULL, &src);
     
     SDL_RenderPresent(renderer);
 
@@ -90,7 +90,7 @@ int main(int argc, char ** argv)
     	line[strcspn(line, "\n")] = '\0';
     	SDL_Surface* superficieRecords = TTF_RenderText_Solid(fonteRecord,line, branco);
     	SDL_Texture* texturaRecords= SDL_CreateTextureFromSurface(renderer, superficieRecords);
-    	SDL_Rect src2 = { SCREEN_WIDTH/2 -340/2, 98 +(50 * i), superficieRecords->w, superficieRecords->h};
+    	SDL_Rect src2 = { SCREEN_WIDTH/2 -340/1.4, 98 +(50 * i), superficieRecords->w, superficieRecords->h};
     	i++;
     	SDL_FreeSurface(superficieRecords);
 
