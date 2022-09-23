@@ -10,13 +10,17 @@ Map* loadMapInitialState() {
 
     map->mapTexture = NULL;
 
-    map->x = 320;
-    map->y = 0;
+    map->mapCurrentPosition.x = 320;
+    map->mapCurrentPosition.y = 0;
     
-    map->dstX = 320;
-    map->dstY = 0;
+    map->mapDestinationPosition.x = 320;
+    map->mapDestinationPosition.y = 0;
 
-    map->srcRect = fillRect(map->x, map->y, WINDOW_WIDTH, WINDOW_HEIGHT);
+    map->srcRect = fillRect(map->mapCurrentPosition.x,
+                            map->mapCurrentPosition.y, 
+                            WINDOW_WIDTH, 
+                            WINDOW_HEIGHT);
+
     map->dstRect = fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     return map;

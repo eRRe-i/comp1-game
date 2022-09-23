@@ -17,10 +17,23 @@
 #define MAX_SIZE 100
 #define MAP_DIM_X 32
 #define MAP_DIM_Y 32
+#define IMMOVABLE_BOARD_ID 1
 #define ENEMY_MAP_ID 3
+#define FIRST_ATTACK 1
 
 #define MAP_LIST_SIZE 10
 #define MATRIX_SIZE 70
+
+typedef struct vector {
+    int x;
+    int y;
+} Vector;
+
+
+typedef struct boardIndex {
+    int i;
+    int j;
+} BoardIndex;
 
 typedef struct gameStateKeyboardInput {
 
@@ -29,6 +42,12 @@ typedef struct gameStateKeyboardInput {
     int currentMapID;
 
 } GameStateKeyboardInput;
+
+typedef struct attackKeyboardInput {
+
+    int attack;
+
+} AttackKeyboardInput;
 
 typedef struct movePlayerKeyboardInput {
 
@@ -44,6 +63,7 @@ typedef struct keyboardInput {
 
     GameStateKeyboardInput gameStateKeyboardInput;
     MovePlayerKeyboardInput movePlayerKeyboardInput;
+    AttackKeyboardInput attackKeyboardInput;
 
 } KeyboardInput;
 

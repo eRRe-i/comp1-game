@@ -59,19 +59,35 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 		}
 		case SDLK_UP: 	{	keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
 							keyboardInput->movePlayerKeyboardInput.currentInput = CHARACTER_UP;
+							keyboardInput->attackKeyboardInput.attack = NO_KEYBOARD_INPUT;
 							break;
 		}
 		case SDLK_DOWN: {	keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
 							keyboardInput->movePlayerKeyboardInput.currentInput = CHARACTER_DOWN;
+							keyboardInput->attackKeyboardInput.attack = NO_KEYBOARD_INPUT;
 							break;
 		}
 		case SDLK_LEFT: {	keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
 							keyboardInput->movePlayerKeyboardInput.currentInput = CHARACTER_LEFT;
+							keyboardInput->attackKeyboardInput.attack = NO_KEYBOARD_INPUT;
 							break;
 		}
 		case SDLK_RIGHT:{	keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
 							keyboardInput->movePlayerKeyboardInput.currentInput = CHARACTER_RIGHT;
+							keyboardInput->attackKeyboardInput.attack = NO_KEYBOARD_INPUT;
 							break;
+		}
+		case SDLK_a: {		keyboardInput->attackKeyboardInput.attack = FIRST_ATTACK;
+							keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
+							keyboardInput->movePlayerKeyboardInput.currentInput = NO_KEYBOARD_INPUT;
+							break;
+		}
+		default: {
+
+			keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
+			keyboardInput->movePlayerKeyboardInput.currentInput = NO_KEYBOARD_INPUT;
+			keyboardInput->attackKeyboardInput.attack = NO_KEYBOARD_INPUT;
+
 		}
 	}
 }
@@ -85,6 +101,8 @@ KeyboardInput* loadKeyBoardInput() {
 	keyboardInput->gameStateKeyboardInput.currentMapID=0;
 	keyboardInput->movePlayerKeyboardInput.currentInput=0;
 	keyboardInput->movePlayerKeyboardInput.previousInput=0;
+	keyboardInput->attackKeyboardInput.attack=0;
+
 
 
 	return keyboardInput;

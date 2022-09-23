@@ -14,11 +14,10 @@ typedef struct map {
     Timer timer;
     float dt;
 
-    int x;
-    int y;
-    
-    int dstX;
-    int dstY;
+
+    Vector mapCurrentPosition; 
+    Vector mapDestinationPosition;
+
 
     SDL_Rect srcRect;
     SDL_Rect dstRect;

@@ -11,6 +11,8 @@ typedef struct Player {
 
 	int life;
 
+    BoardIndex boardIndex;
+
 	int isMoving;
     float moveSpeed;
 
@@ -24,7 +26,6 @@ typedef struct Player {
 } Player;
 
 Player* loadPlayerInitialState(CharacterTexture* texture);
-void updateCharacterFrame(Player* player);
 
 
 #endif //PLAYER
