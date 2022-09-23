@@ -13,7 +13,7 @@ typedef struct map {
     int highEnemy;
     int total_enemy;
     int state;
-    Enemy* Enemys[MAX_ENEMY_ARRAY];
+    Enemy* Enemies[MAX_ENEMY_ARRAY];
 
 } Map;
 

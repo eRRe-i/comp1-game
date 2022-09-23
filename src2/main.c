@@ -131,14 +131,14 @@ void updateMap(SDL_Renderer* renderer, Map* map){
 		NULL,
 		&map->mapTexture->displayRect);
 	for(int i = 0; i < map->total_enemy; i++){
-		updateEnemy(renderer, map->Enemys[i]->enemyTexture);
+		updateEnemy(renderer, map->Enemies[i]->enemyTexture);
 	}
 }
 
 void updateEnemy(SDL_Renderer* renderer, EnemyTexture* enemyTexture){
 	moveEnemy(enemyTexture);
 	SDL_RenderCopyEx(renderer, 
-			enemyTexture->EnemySheet,
+			enemyTexture->Enemiesheet,
 			&enemyTexture->spritePosition[actionFrame][enemyTexture->frame], 
 			&enemyTexture->displayRect,
 			0,
@@ -151,9 +151,9 @@ void cleanMap(Map* map){
 	free(map->mapTexture);
 	if(map->total_enemy < 100){
 		for(int i = 0; i < map->total_enemy; i++){
-			SDL_DestroyTexture(map->Enemys[i]->enemyTexture->EnemySheet);
-			free(map->Enemys[i]->enemyTexture);
-			free(map->Enemys[i]);
+			SDL_DestroyTexture(map->Enemies[i]->enemyTexture->Enemiesheet);
+			free(map->Enemies[i]->enemyTexture);
+			free(map->Enemies[i]);
 		}
 	}
 }

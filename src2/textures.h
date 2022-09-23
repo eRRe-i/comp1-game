@@ -33,7 +33,7 @@ typedef struct characterTexture {
 
 typedef struct EnemyTexture {
 
-	SDL_Texture* EnemySheet;
+	SDL_Texture* Enemiesheet;
     SDL_Rect spritePosition[2][6];
 
     int spriteWidth;

@@ -10,7 +10,7 @@
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
-#define MIN_ENEMYS 5
+#define MIN_Enemies 5
 #define MAX_ENEMY_ARRAY 100
 #define MAX_SIZE 100
 #define MAP_DIM_X 32

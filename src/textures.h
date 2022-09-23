@@ -53,7 +53,7 @@ typedef struct textureContext {
 
 typedef struct enemyTexture {
 
-	SDL_Texture* EnemySheet;
+	SDL_Texture* Enemiesheet;
     SDL_Rect spritePosition[2][6];
 
     int spriteWidth;

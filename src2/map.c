@@ -31,8 +31,8 @@ void generateMaps(SDL_Renderer* renderer, Map **arrayMaps){
         arrayMaps[i] = loadMapInitialState();
         arrayMaps[i]->id=num;
         /*TODO: MELHORAR QTDE DE INIMIGOS*/
-        int randomMax = MIN_ENEMYS+(1*i);
-        arrayMaps[i]->basicEnemy = rand() % randomMax + MIN_ENEMYS;
+        int randomMax = MIN_Enemies+(1*i);
+        arrayMaps[i]->basicEnemy = rand() % randomMax + MIN_Enemies;
         arrayMaps[i]->mediumEnemy = 0;
         arrayMaps[i]->highEnemy = 0;
         arrayMaps[i]->total_enemy = (arrayMaps[i]->basicEnemy + arrayMaps[i]->mediumEnemy + arrayMaps[i]->highEnemy);
@@ -48,22 +48,22 @@ void generateMaps(SDL_Renderer* renderer, Map **arrayMaps){
 void geraMonstrosParaMapa(SDL_Renderer* renderer, Map* map){
     int size = map->total_enemy;
 	for(int i = 0; i < map->basicEnemy; i++){
-        map->Enemys[i] = (Enemy*)malloc(sizeof(Enemy));
-		generateEnemy(renderer,map->Enemys[i], 1);
-        geraPosicao(map->matrix, map->Enemys[i]);
+        map->Enemies[i] = (Enemy*)malloc(sizeof(Enemy));
+		generateEnemy(renderer,map->Enemies[i], 1);
+        geraPosicao(map->matrix, map->Enemies[i]);
 	}
 	if(map->mediumEnemy > 0){
 		for(int i = map->basicEnemy; i < (map->basicEnemy + map->mediumEnemy); i++){
-            map->Enemys[i] = (Enemy*)malloc(sizeof(Enemy));
-			generateEnemy(renderer,map->Enemys[i], 2);
-            geraPosicao(map->matrix, map->Enemys[i]);
+            map->Enemies[i] = (Enemy*)malloc(sizeof(Enemy));
+			generateEnemy(renderer,map->Enemies[i], 2);
+            geraPosicao(map->matrix, map->Enemies[i]);
 		}
 	}
 	if(map->highEnemy > 0){
 		for(int i = (map->basicEnemy + map->mediumEnemy); i < size; i++){
-            map->Enemys[i] = (Enemy*)malloc(sizeof(Enemy));
-			generateEnemy(renderer,map->Enemys[i], 3);
-            geraPosicao(map->matrix, map->Enemys[i]);
+            map->Enemies[i] = (Enemy*)malloc(sizeof(Enemy));
+			generateEnemy(renderer,map->Enemies[i], 3);
+            geraPosicao(map->matrix, map->Enemies[i]);
 		}
 	}
 }

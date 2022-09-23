@@ -78,13 +78,13 @@ EnemyTexture* loadEnemyTexture(SDL_Renderer* renderer, int type) {
 
     switch (type){
         case 1:
-        enemyTexture->EnemySheet = loadImage(renderer, BASIC_Enemy_PATH);
+        enemyTexture->Enemiesheet = loadImage(renderer, BASIC_Enemy_PATH);
         break;
         case 2:
-        enemyTexture->EnemySheet = loadImage(renderer, MEDIUM_Enemy_PATH);
+        enemyTexture->Enemiesheet = loadImage(renderer, MEDIUM_Enemy_PATH);
         break;
         case 3:
-        enemyTexture->EnemySheet = loadImage(renderer, HIGH_Enemy_PATH);
+        enemyTexture->Enemiesheet = loadImage(renderer, HIGH_Enemy_PATH);
         break;
     }
 

@@ -14,7 +14,6 @@ typedef struct phaseManager {
     AttackManager* attackManager;
     EnemyManager* enemyManager;
 
-
 } PhaseManager;
 
 PhaseManager* loadPhaseManager();

@@ -11,5 +11,6 @@ typedef struct board {
 } Board;
 
 int readmatrix(size_t rows, size_t cols, int (*a)[cols], int id);
+Board* loadBoardInitialState(int idMap);
 
 #endif //BOARD

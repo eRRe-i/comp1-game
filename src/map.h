@@ -4,7 +4,6 @@
 #include "common.h"
 #include "textures.h"
 #include "player.h"
-#include "enemy.h"
 
 typedef struct map {
 
@@ -24,9 +23,11 @@ typedef struct map {
     SDL_Rect srcRect;
     SDL_Rect dstRect;
 
+    int id;
 } Map;
 
 Map* loadMapInitialState();
-// void generateMaps(SDL_Renderer* renderer, Map **arrayMaps);
+void generateMaps(SDL_Renderer* renderer, Map **arrayMaps);
+
 
 #endif //MAP
