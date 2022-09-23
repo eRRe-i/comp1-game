@@ -1,3 +1,5 @@
+#ifndef ENEMY
+#define ENEMY
 
 #include "common.h"
 #include "textures.h"
@@ -28,6 +30,9 @@ typedef struct enemyManager {
 
 } EnemyManager;
 
+EnemyManager* loadEnemyManager();
 void generateEnemy(SDL_Renderer* renderer, Enemy* enemy, int type);
 void updateEnemyFrame(Enemy* enemy);
 void geraPosicao(int (*matrix)[70], Enemy *enemy);
+
+#endif //ENEMY

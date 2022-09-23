@@ -3,6 +3,7 @@
 #include "player.h"
 #include "map.h"
 #include "attack.h"
+#include "enemy.h"
 #include "phaseManager.h"
 
 int waiting(void);
@@ -11,11 +12,12 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 void moveCharacter(PhaseManager* phaseManager); 
 void updateCharacterFrame(Player* player);
 void updateDstBlock(PhaseManager* phaseManager);
-void updateMap(SDL_Renderer* renderer, Map* map);
+// void updateMap(SDL_Renderer* renderer, Map* map);
 void updateEnemy(SDL_Renderer* renderer, Enemy* enemy);
 void cleanMap(Map* map);
 void moveEnemy(Enemy* enemy);
 int checkIfObjectInsideRenderArea(SDL_Rect windowRenderArea, SDL_Rect ObjectRenderArea);
+void geraMonstrosParaMapa(SDL_Renderer* renderer, PhaseManager* phaseManager);
 
 
 int main (int argc, char *argv[])
@@ -37,10 +39,10 @@ int main (int argc, char *argv[])
 	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 	int mapIndex = 0;
-	Map *mapas[MAP_LIST_SIZE];
-	generateMaps(renderer, mapas);
+	// Map *mapas[MAP_LIST_SIZE];
+	// generateMaps(renderer, mapas);
 
-	updateMap(renderer, mapas[mapIndex]);
+	// updateMap(renderer, mapas[mapIndex]);
 
     CharacterTexture* characterTexture = loadCharacterTexture(renderer);
 	AttackTexture* firstAttackTexture = loadAttackTexture(renderer, FIRST_ATK_PATH, 40, 40);
@@ -50,12 +52,15 @@ int main (int argc, char *argv[])
 	KeyboardInput* keyboardInput = loadKeyBoardInput();
 	Player* player = loadPlayerInitialState(characterTexture);
 	AttackManager* attackManager = loadAttackManager();
+	EnemyManager* enemyManager =  loadEnemyManager();
+	Map* map = loadMapInitialState();
 
 	PhaseManager* phaseManager = loadPhaseManager();
 
-	phaseManager->map = mapas[mapIndex];
+	phaseManager->map = map;
 	phaseManager->player = player;
 	phaseManager->attackManager = attackManager;
+	phaseManager->enemyManager = enemyManager;
 
 	phaseManager->attackManager->firstAttackTexture = firstAttackTexture;
 
@@ -70,23 +75,23 @@ int main (int argc, char *argv[])
 	// main loop
 	while (keyboardInput->gameStateKeyboardInput.quitGame == 0) {
 
-        mapas[mapIndex]->timer.currentTime = mapas[mapIndex]->timer.elapsedTime;
-    	mapas[mapIndex]->timer.elapsedTime = SDL_GetTicks();
+        // mapas[mapIndex]->timer.currentTime = mapas[mapIndex]->timer.elapsedTime;
+    	// mapas[mapIndex]->timer.elapsedTime = SDL_GetTicks();
 
 		listenEvent(keyboardInput);
 		updatePlayerState(phaseManager, keyboardInput);
-		if(keyboardInput->gameStateKeyboardInput.currentMapID != mapIndex){
-			mapIndex = keyboardInput->gameStateKeyboardInput.currentMapID;
-			phaseManager->map = mapas[mapIndex];
-		}
+		// if(keyboardInput->gameStateKeyboardInput.currentMapID != mapIndex){
+		// 	mapIndex = keyboardInput->gameStateKeyboardInput.currentMapID;
+		// 	phaseManager->map = mapas[mapIndex];
+		// }
         updateScreen(renderer, phaseManager);
 
 
 		t.elapsedTime = SDL_GetTicks();
-		if(t.elapsedTime - t.currentTime > 1000) {
-			t.currentTime = t.elapsedTime;
-			fprintf(stderr, "currentPoint: (%i, %i)\n dstPoint: (%i, %i)\n\n", mapas[mapIndex]->x, mapas[mapIndex]->y, mapas[mapIndex]->dstX, mapas[mapIndex]->dstY);
-		}
+		// if(t.elapsedTime - t.currentTime > 1000) {
+		// 	t.currentTime = t.elapsedTime;
+		// 	fprintf(stderr, "currentPoint: (%i, %i)\n dstPoint: (%i, %i)\n\n", mapas[mapIndex]->x, mapas[mapIndex]->y, mapas[mapIndex]->dstX, mapas[mapIndex]->dstY);
+		// }
 
 	}
 
@@ -113,7 +118,7 @@ void updateScreen(SDL_Renderer* renderer, PhaseManager* phaseManager) {
 		// 				&map->srcRect,
 		// 				&map->dstRect);
 
-		updateMap(renderer, map);
+		// updateMap(renderer, map);
 
         SDL_RenderCopy	(renderer, 
 						player->characterTexture->characterSheet,
@@ -241,22 +246,22 @@ void moveCharacter(PhaseManager* phaseManager) {
 		map->srcRect = fillRect(map->x, map->y, WINDOW_WIDTH, WINDOW_HEIGHT);
 	}
 }
-void updateMap(SDL_Renderer* renderer, Map* map){
-	if(map->mapTexture == NULL){
-		readmatrix(MATRIX_SIZE,MATRIX_SIZE,map->map_matrix, map->id);
-        map->mapTexture = loadMapTexture(renderer, map->id);
-        geraMonstrosParaMapa(renderer, map);
-	}
+// void updateMap(SDL_Renderer* renderer, Map* map){
+// 	if(map->mapTexture == NULL){
+// 		readmatrix(MATRIX_SIZE,MATRIX_SIZE,map->map_matrix, map->id);
+//         map->mapTexture = loadMapTexture(renderer, map->id);
+//         geraMonstrosParaMapa(renderer, map);
+// 	}
 
-	SDL_RenderCopy(renderer,
-		map->mapTexture->mapTexture,
-		&map->srcRect,
-		&map->dstRect);
+// 	SDL_RenderCopy(renderer,
+// 		map->mapTexture->mapTexture,
+// 		&map->srcRect,
+// 		&map->dstRect);
 
-	for(int i = 0; i < map->total_enemy; i++){
-		updateEnemy(renderer, map->Enemys[i]);
-	}
-}
+// 	for(int i = 0; i < map->total_enemy; i++){
+// 		updateEnemy(renderer, map->Enemys[i]);
+// 	}
+// }
 
 void updateEnemy(SDL_Renderer* renderer, Enemy* enemy){
 	moveEnemy(enemy);
@@ -296,3 +301,31 @@ int checkIfObjectInsideRenderArea(SDL_Rect windowRenderArea, SDL_Rect ObjectRend
 // 		}
 // 	}
 // }
+
+void geraMonstrosParaMapa(SDL_Renderer* renderer, PhaseManager* phaseManager){
+
+    Map* map = phaseManager->map;
+    Board* board = phaseManager->board;
+    EnemyManager* enemyManager = phaseManager->enemyManager;
+
+    int size = enemyManager->total_enemy;
+	for(int i = 0; i < enemyManager->basicEnemy; i++){
+        enemyManager->Enemies[i] = (Enemy*)malloc(sizeof(Enemy));
+		generateEnemy(renderer,enemyManager->Enemies[i], 1);
+        geraPosicao(board->map_matrix, enemyManager->Enemies[i]);
+	}
+	if(enemyManager->mediumEnemy > 0){
+		for(int i = enemyManager->basicEnemy; i < (enemyManager->basicEnemy + enemyManager->mediumEnemy); i++){
+            enemyManager->Enemies[i] = (Enemy*)malloc(sizeof(Enemy));
+			generateEnemy(renderer,enemyManager->Enemies[i], 2);
+            geraPosicao(board->map_matrix, enemyManager->Enemies[i]);
+		}
+	}
+	if(enemyManager->highEnemy > 0){
+		for(int i = (enemyManager->basicEnemy + enemyManager->mediumEnemy); i < size; i++){
+            enemyManager->Enemies[i] = (Enemy*)malloc(sizeof(Enemy));
+			generateEnemy(renderer,enemyManager->Enemies[i], 3);
+            geraPosicao(board->map_matrix, enemyManager->Enemies[i]);
+		}
+	}
+}

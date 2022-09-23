@@ -1,6 +1,7 @@
 #include "common.h"
 #include "textures.h"
 #include "map.h"
+#include "phaseManager.h"
 
 
 Map* loadMapInitialState() {
@@ -45,26 +46,3 @@ Map* loadMapInitialState() {
 //             arrayMaps[i]->highEnemy = 0;
 //     }
 // }
-
-void geraMonstrosParaMapa(SDL_Renderer* renderer, Map* map){
-    int size = map->total_enemy;
-	for(int i = 0; i < map->basicEnemy; i++){
-        map->Enemys[i] = (Enemy*)malloc(sizeof(Enemy));
-		generateEnemy(renderer,map->Enemys[i], 1);
-        geraPosicao(map->map_matrix, map->Enemys[i]);
-	}
-	if(map->mediumEnemy > 0){
-		for(int i = map->basicEnemy; i < (map->basicEnemy + map->mediumEnemy); i++){
-            map->Enemys[i] = (Enemy*)malloc(sizeof(Enemy));
-			generateEnemy(renderer,map->Enemys[i], 2);
-            geraPosicao(map->map_matrix, map->Enemys[i]);
-		}
-	}
-	if(map->highEnemy > 0){
-		for(int i = (map->basicEnemy + map->mediumEnemy); i < size; i++){
-            map->Enemys[i] = (Enemy*)malloc(sizeof(Enemy));
-			generateEnemy(renderer,map->Enemys[i], 3);
-            geraPosicao(map->map_matrix, map->Enemys[i]);
-		}
-	}
-}

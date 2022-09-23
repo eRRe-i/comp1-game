@@ -18,11 +18,11 @@ EnemyManager* loadEnemyManager() {
         enemyManager->Enemies[i] = NULL;
     }
 
-    return EnemyManager;
+    return enemyManager;
 }
 
 void generateEnemy(SDL_Renderer* renderer, Enemy* enemy, int type){
-    
+
     if(type == 1){
         enemy->life = 10;
         enemy->moveSpeed = 2;

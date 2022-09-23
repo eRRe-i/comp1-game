@@ -2,15 +2,18 @@
 #include "map.h"
 #include "player.h"
 #include "attack.h"
+#include "board.h"
+#include "enemy.h"
 
 
 typedef struct phaseManager {
     
-    int currentMapId;
     Map* map;
+    Board* board;
     Player* player;
-    AttackManager* attackManager; 
-    
+    AttackManager* attackManager;
+    EnemyManager* enemyManager;
+
 
 } PhaseManager;
 

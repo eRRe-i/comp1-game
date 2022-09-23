@@ -28,6 +28,5 @@ typedef struct map {
 
 Map* loadMapInitialState();
 // void generateMaps(SDL_Renderer* renderer, Map **arrayMaps);
-void geraMonstrosParaMapa(SDL_Renderer* renderer, Map* map);
 
 #endif //MAP
