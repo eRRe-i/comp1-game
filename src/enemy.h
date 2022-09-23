@@ -19,7 +19,12 @@ typedef struct enemy {
 
 typedef struct enemyManager {
 
-    //DESACLOPAR OS OBJETOS ASSOCIADOS AOS INIMIGOS. ESSA STRUCT VAI VIVER EM PHASEMANAGER
+    int basicEnemy;
+    int mediumEnemy;
+    int highEnemy;
+    int total_enemy;
+
+    Enemy* Enemies[MAX_ENEMY_ARRAY];
 
 } EnemyManager;
 

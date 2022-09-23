@@ -8,9 +8,9 @@
 
 typedef struct map {
 
-    int map_matrix[MATRIX_SIZE][MATRIX_SIZE];
-
     MapTexture* mapTexture;
+
+    int mapId;
 
     Timer timer;
     float dt;
@@ -24,17 +24,10 @@ typedef struct map {
     SDL_Rect srcRect;
     SDL_Rect dstRect;
 
-    int id;
-    int basicEnemy;
-    int mediumEnemy;
-    int highEnemy;
-    int total_enemy;
-    Enemy* Enemys[MAX_ENEMY_ARRAY];
 } Map;
 
 Map* loadMapInitialState();
-int readmatrix(size_t rows, size_t cols, int (*a)[cols], int id);
-void generateMaps(SDL_Renderer* renderer, Map **arrayMaps);
+// void generateMaps(SDL_Renderer* renderer, Map **arrayMaps);
 void geraMonstrosParaMapa(SDL_Renderer* renderer, Map* map);
 
 #endif //MAP

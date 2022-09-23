@@ -8,23 +8,37 @@
 * TYPE = 2 -> MEDIUM_Enemy
 * TYPE = 3 -> HIGH_Enemy
 */
+
+EnemyManager* loadEnemyManager() {
+
+    EnemyManager* enemyManager = (EnemyManager*)malloc(sizeof(EnemyManager));
+
+    for(int i=0; i< MAX_ENEMY_ARRAY; i++) {
+
+        enemyManager->Enemies[i] = NULL;
+    }
+
+    return EnemyManager;
+}
+
 void generateEnemy(SDL_Renderer* renderer, Enemy* enemy, int type){
+    
     if(type == 1){
         enemy->life = 10;
         enemy->moveSpeed = 2;
     }
     if(type == 2){
         enemy->life = 20;
-        enemy->moveSpeed = 3;
+        enemy->moveSpeed = 2;
     }
     if(type == 3){
         enemy->life = 30;
-        enemy->moveSpeed = 4;
+        enemy->moveSpeed = 2;
     }
     
-    enemy->isMoving = 1;
+    enemy->isMoving = TRUE;
 
-    enemy->facingSide = 1;
+    enemy->facingSide = CHARACTER_DOWN;
     enemy->frame = 1;
     enemy->moveMultiplier = 1;
 

@@ -125,8 +125,9 @@ void updateScreen(SDL_Renderer* renderer, PhaseManager* phaseManager) {
 			SDL_RenderCopy (	renderer,
 								attackManager->attackList[0]->atkTexture->texture,
 								NULL,
-								&attackManager->attackList[0]->dstRect);
-		
+								&attackManager->attackList[0]->dstRect
+							);
+
         
 
 		SDL_RenderPresent(renderer);
