@@ -33,11 +33,11 @@ void listenEvent(KeyboardInput* keyboardInput) {
 					}
 					break;
 				}
-				case SDLK_a: {
-					fprintf(stderr, "Ataque!\n");
-					keyboardInput->attackKeyboardInput.attack = FIRST_ATTACK;
-					break;
-				}
+				// case SDLK_a: {
+				// 	fprintf(stderr, "Ataque!\n");
+				// 	keyboardInput->attackKeyboardInput.attack = FIRST_ATTACK;
+				// 	break;
+				// }
 			}
 		}
     }
@@ -86,9 +86,8 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 							keyboardInput->attackKeyboardInput.attack = NO_KEYBOARD_INPUT;
 							break;
 		}
-	 default: {
-							keyboardInput->movePlayerKeyboardInput.currentInput = NO_KEYBOARD_INPUT;
-							keyboardInput->attackKeyboardInput.attack = NO_KEYBOARD_INPUT;
+		case SDLK_a: {		keyboardInput->attackKeyboardInput.attack = FIRST_ATTACK;
+							break;
 		}
 	}
 }
