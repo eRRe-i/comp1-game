@@ -301,15 +301,13 @@ void moveCharacter(PhaseManager* phaseManager) {
 
 	Map* map = phaseManager->map;
 	Player* player = phaseManager->player;
-	int x = 0;
-	int y = 0;
 	if(map->mapCurrentPosition.x != map->mapDestinationPosition.x) {
-		x = player->moveMultiplier * player->moveSpeed;
-		map->mapCurrentPosition.x += x;
+		player->movementVector = setVector(player->moveMultiplier * player->moveSpeed, 0);
+		map->mapCurrentPosition = addVector(map->mapCurrentPosition, player->movementVector);
 		map->srcRect = fillRect(map->mapCurrentPosition.x, map->mapCurrentPosition.y, WINDOW_WIDTH, WINDOW_HEIGHT);
 	} else if (map->mapCurrentPosition.y != map->mapDestinationPosition.y) {
-		y = player->moveMultiplier * player->moveSpeed;
-		map->mapCurrentPosition.y += player->moveMultiplier * player->moveSpeed;
+		player->movementVector = setVector(0, player->moveMultiplier * player->moveSpeed);
+		map->mapCurrentPosition = addVector(map->mapCurrentPosition, player->movementVector);
 		map->srcRect = fillRect(map->mapCurrentPosition.x, map->mapCurrentPosition.y, WINDOW_WIDTH, WINDOW_HEIGHT);
 	}
 	// if(x != 0 || y != 0)

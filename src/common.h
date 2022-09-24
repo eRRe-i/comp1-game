@@ -80,5 +80,7 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key);
 void listenEvent(KeyboardInput* keyboardInput);
 void cleanMovementInput(KeyboardInput* keyboardInput);
 void printKeyboardState(KeyboardInput* input);
+Vector addVector(Vector vec1, Vector vec2);
+Vector setVector(int x, int y);
  
 #endif //COMMON
