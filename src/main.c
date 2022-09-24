@@ -239,9 +239,11 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 		//se o input é pra um lado diferente;
 		} else if(player->facingSide != keyboardInput->movePlayerKeyboardInput.currentInput && keyboardInput->keyPressed) {
 
+			if(keyboardInput->movePlayerKeyboardInput.currentInput >= 0){
+				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
+				player->isMoving = FALSE;
 
-			player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
-			player->isMoving = FALSE;
+			}				
 
 		//se for outro move que não o input de move
 		} else if (keyboardInput->movePlayerKeyboardInput.currentInput == player->facingSide && keyboardInput->keyPressed) {

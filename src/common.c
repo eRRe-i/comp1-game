@@ -87,7 +87,12 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 							break;
 		}
 		case SDLK_a: {		keyboardInput->attackKeyboardInput.attack = FIRST_ATTACK;
+							keyboardInput->movePlayerKeyboardInput.currentInput = NO_KEYBOARD_INPUT;
 							break;
+		}
+		default: {
+			keyboardInput->movePlayerKeyboardInput.currentInput = NO_KEYBOARD_INPUT;
+			break;
 		}
 	}
 }
