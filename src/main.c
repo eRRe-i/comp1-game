@@ -23,6 +23,8 @@ void setPlayerPosition(PhaseManager* phaseManager);
 Vector getGlobalPositionFromBoardIndex(BoardIndex boardIndex);
 Vector getObjectViewPosfromGlobalPos(Vector viewPos, Vector globalPos);
 BoardIndex getCharacterBoardIndex(Vector mapCurrentPosition);
+int checkIfPlayerMoveIsValid(PhaseManager* phaseManager);
+int checkIfWall(Board* board, int i, int j);
 
 int main (int argc, char *argv[])
 {
@@ -153,15 +155,6 @@ void updateScreen(SDL_Renderer* renderer, PhaseManager* phaseManager) {
 						&player->characterTexture->spritePosition[player->facingSide][player->frame], 
 						&player->characterTexture->displayRect);
 
-
-
-		// SDL_RenderCopy (renderer,
-		// 			attackManager->attackList[0]->atkTexture->texture,
-		// 			NULL,
-		// 			&attackManager->attackList[0]->dstRect);
-
-        
-
 		SDL_RenderPresent(renderer);
 }
 
@@ -201,20 +194,26 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 	if(player->isMoving) {
 
 		if(map->mapDestinationPosition.x == map->mapCurrentPosition.x && map->mapDestinationPosition.y == map->mapCurrentPosition.y) {
-			if(keyboardInput->keyReleased){
-				player->isMoving = FALSE;
-			} else if(keyboardInput->movePlayerKeyboardInput.currentInput != keyboardInput->movePlayerKeyboardInput.previousInput) {
-				player->isMoving = TRUE;
-				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
-				updateDstBlock(phaseManager);
-				moveCharacter(phaseManager);
-			} else if(keyboardInput->movePlayerKeyboardInput.currentInput == keyboardInput->movePlayerKeyboardInput.previousInput && keyboardInput->keyPressed) {
-				player->isMoving = TRUE;
-				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
-				updateDstBlock(phaseManager);
-				moveCharacter(phaseManager);
-			}
+		
+				if(keyboardInput->movePlayerKeyboardInput.currentInput != keyboardInput->movePlayerKeyboardInput.previousInput) {
+					player->isMoving = TRUE;
+					player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
+					updateDstBlock(phaseManager);
+					moveCharacter(phaseManager);
+					SDL_Log("Bug, entra aqui duas vezes quando deveria entrar uma");					
+
+				} else if(keyboardInput->movePlayerKeyboardInput.currentInput == keyboardInput->movePlayerKeyboardInput.previousInput && keyboardInput->keyPressed) {
+					player->isMoving = TRUE;
+					player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
+					updateDstBlock(phaseManager);
+					moveCharacter(phaseManager);
 			
+				} else if(keyboardInput->keyReleased){
+					player->isMoving = FALSE;
+				}
+			 else {
+				updateCharacterFrame(phaseManager->player);
+			}
 		} else {
 			moveCharacter(phaseManager);
 			updateCharacterFrame(phaseManager->player);
@@ -225,18 +224,17 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 			return;
 
 		} else if(player->facingSide == keyboardInput->movePlayerKeyboardInput.currentInput) {
-
-			player->isMoving = TRUE;
-			updateDstBlock(phaseManager);
-			moveCharacter(phaseManager);
-		
+			
+				player->isMoving = TRUE;
+				updateDstBlock(phaseManager);
+				moveCharacter(phaseManager);
+			
 		} else if(player->facingSide != keyboardInput->movePlayerKeyboardInput.currentInput) {
 
 			if(keyboardInput->keyReleased) {
 
 			player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
 			player->isMoving = FALSE;
-			SDL_Delay(100);
 
 			} else if (keyboardInput->keyPressed && keyboardInput->movePlayerKeyboardInput.currentInput != NO_KEYBOARD_INPUT) {
 
@@ -248,7 +246,6 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 			}
 		}
 	}
-	
 
 }
 
@@ -427,4 +424,40 @@ Vector getObjectViewPosfromGlobalPos(Vector viewPos, Vector globalPos) {
 	vector.y = globalPos.y - viewPos.y;
 
 	return vector;
+}
+
+int checkIfPlayerMoveIsValid(PhaseManager*phaseManager) {
+
+	Board* board = phaseManager->board;
+	Player* player = phaseManager->player;
+
+	BoardIndex playerIndex = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
+
+	int isValid;
+
+	switch(player->facingSide) {
+		case CHARACTER_DOWN: { 
+			isValid = checkIfWall(board, playerIndex.i, playerIndex.j + 1);
+			break;
+		}
+		case CHARACTER_UP: {
+			isValid = checkIfWall(board, playerIndex.i, playerIndex.j - 1);
+			break;
+		}
+		case CHARACTER_LEFT: {
+			isValid = checkIfWall(board, playerIndex.i - 1, playerIndex.j);
+			break;
+		}
+		case CHARACTER_RIGHT: {
+			isValid = checkIfWall(board, playerIndex.i + 1, playerIndex.j);
+			break;
+		}
+	}
+
+	return isValid;
+}
+
+int checkIfWall(Board* board, int i, int j) {
+
+	return board->map_matrix[i][j] == IMMOVABLE_MAP_ID;
 }
