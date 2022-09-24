@@ -88,7 +88,6 @@ int main (int argc, char *argv[])
 	while (keyboardInput->gameStateKeyboardInput.quitGame == 0) {
 
 		listenEvent(keyboardInput);
-		updateAttackState(phaseManager, keyboardInput);
 		updatePlayerState(phaseManager, keyboardInput);
 		if(keyboardInput->gameStateKeyboardInput.currentMapID != mapIndex){
 			mapIndex = keyboardInput->gameStateKeyboardInput.currentMapID;
@@ -154,37 +153,33 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 	Player* player = phaseManager->player;
 
 	int reachedDestination = map->mapDestinationPosition.x == map->mapCurrentPosition.x && map->mapDestinationPosition.y == map->mapCurrentPosition.y;
-
-
+	
 	if(player->isMoving) {
 
 		if(map->mapDestinationPosition.x == map->mapCurrentPosition.x && map->mapDestinationPosition.y == map->mapCurrentPosition.y) {
 		
-				if(keyboardInput->movePlayerKeyboardInput.currentInput != keyboardInput->movePlayerKeyboardInput.previousInput) {
-				
-					player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
+			if(keyboardInput->movePlayerKeyboardInput.currentInput != keyboardInput->movePlayerKeyboardInput.previousInput) {
+			
+				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
 
-					if(checkIfPlayerMoveIsValid(phaseManager)) {
-						player->isMoving = TRUE;
-						updateDstBlock(phaseManager);
-						moveCharacter(phaseManager);
+				if(checkIfPlayerMoveIsValid(phaseManager)) {
+					player->isMoving = TRUE;
+					updateDstBlock(phaseManager);
+					moveCharacter(phaseManager);
 
-					}
-
-				} else if(keyboardInput->movePlayerKeyboardInput.currentInput == keyboardInput->movePlayerKeyboardInput.previousInput && keyboardInput->keyPressed) {
-
-					player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
-					if(checkIfPlayerMoveIsValid(phaseManager)) {
-
-						player->isMoving = TRUE;
-						updateDstBlock(phaseManager);
-						moveCharacter(phaseManager);
-
-					}
-				} else if(keyboardInput->keyReleased){
-					player->isMoving = FALSE;
 				}
-			 
+
+			} else if(keyboardInput->movePlayerKeyboardInput.currentInput == keyboardInput->movePlayerKeyboardInput.previousInput && keyboardInput->keyPressed) {
+
+				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
+				if(checkIfPlayerMoveIsValid(phaseManager)) {
+
+					player->isMoving = TRUE;
+					updateDstBlock(phaseManager);
+					moveCharacter(phaseManager);
+
+				}
+			} 
 		} else {
 			moveCharacter(phaseManager);
 			updateCharacterFrame(phaseManager->player);
@@ -194,7 +189,11 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 		if(keyboardInput->keyReleased){
 			return;
 
-		} else if(player->facingSide == keyboardInput->movePlayerKeyboardInput.currentInput) {
+		} else if (keyboardInput->attackKeyboardInput.attack == FIRST_ATTACK){
+			
+			updateAttackState(phaseManager, keyboardInput);
+
+		}else if(player->facingSide == keyboardInput->movePlayerKeyboardInput.currentInput) {
 			
 			if(checkIfPlayerMoveIsValid(phaseManager)) {
 
