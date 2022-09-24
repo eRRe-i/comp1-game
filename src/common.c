@@ -153,8 +153,8 @@ Vector getGlobalPositionFromBoardIndex(BoardIndex boardIndex) {
 
 	Vector vector;
 
-	vector.x = boardIndex.i *32;
-	vector.y = boardIndex.j *32;
+	vector.x = boardIndex.i *32 - 32;
+	vector.y = boardIndex.j *32 - 32;
 
 	return vector;
 }

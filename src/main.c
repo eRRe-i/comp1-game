@@ -481,6 +481,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 				case CHARACTER_DOWN:{
 					fprintf(stderr, "ENTROU BAIXO\n");
 					attackInitialPosition = setVector(playerGlobalPosition.x,playerGlobalPosition.y + BLOCKSIZE);
+					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackInitialPosition);
 					attackMove = setVector(0, ATTACK_SPEED);
 					attackIndex = setBoardIndex(playerIndex.i,playerIndex.j + 1);
 					break;
@@ -488,6 +489,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 				case CHARACTER_UP: {
 					fprintf(stderr, "ENTROU CIMA\n");
 					attackInitialPosition = setVector(playerGlobalPosition.x,playerGlobalPosition.y - BLOCKSIZE);
+					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackInitialPosition);
 					attackMove = setVector(0, -ATTACK_SPEED);
 					attackIndex = setBoardIndex(playerIndex.i, playerIndex.j - 1);
 					break;
@@ -495,6 +497,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 				case CHARACTER_RIGHT: {
 					fprintf(stderr, "ENTROU DIREITA\n");
 					attackInitialPosition = setVector(playerGlobalPosition.x + BLOCKSIZE, playerGlobalPosition.y);
+					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackInitialPosition);
 					attackMove = setVector(ATTACK_SPEED, 0);
 					attackIndex = setBoardIndex(playerIndex.i + 1,playerIndex.j);
 					break;
@@ -502,13 +505,14 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 				case CHARACTER_LEFT: {
 					fprintf(stderr, "ENTROU ESQUERDA\n");
 					attackInitialPosition = setVector(playerGlobalPosition.x - BLOCKSIZE, playerGlobalPosition.y);
+					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackInitialPosition);
 					attackMove = setVector(-ATTACK_SPEED, 0);
 					attackIndex = setBoardIndex(playerIndex.i-1,playerIndex.j);
 					break;
 				}
 			}
-			attackInitialPosition.x -= 350;
-			attackInitialPosition.y -=50;
+			// attackInitialPosition.x -= 350;
+			// attackInitialPosition.y -=50;
 
 			for(int i = 0; i < 5; i++) {
 				if (attackManager->attackList[i] == NULL) {
@@ -543,18 +547,6 @@ void updateAttackPosition(PhaseManager* phaseManager){
 		
 			attack->attackPosition.x += attack->attackMovement.x;
 			attack->attackPosition.y += attack->attackMovement.y;
-			// if(attack->direita == 1){
-			// 	attack->attackPosition.x +=32;
-			// }
-			// if(attack->esquerda == 1){
-			// 	attack->attackPosition.x -=32;
-			// }
-			// if(attack->cima == 1){
-			// 	attack->attackPosition.y -=32;
-			// }
-			// if(attack->baixo == 1){
-			// 	attack->attackPosition.y +=32;
-			// }
 			}
 			else{
 				//TODO: Melhorar forma de destuir ataque
