@@ -17,7 +17,7 @@
 #define MAX_SIZE 100
 #define MAP_DIM_X 32
 #define MAP_DIM_Y 32
-#define IMMOVABLE_BOARD_ID 1
+#define IMMOVABLE_MAP_ID 1
 #define ENEMY_MAP_ID 3
 #define FIRST_ATTACK 1
 
@@ -80,5 +80,7 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key);
 void listenEvent(KeyboardInput* keyboardInput);
 void cleanMovementInput(KeyboardInput* keyboardInput);
 void printKeyboardState(KeyboardInput* input);
+Vector addVector(Vector vec1, Vector vec2);
+Vector setVector(int x, int y);
  
 #endif //COMMON

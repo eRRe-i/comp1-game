@@ -12,6 +12,9 @@ Player* loadPlayerInitialState(CharacterTexture* texture) {
 	player->facingSide = CHARACTER_DOWN;
     player->frame = 0;
 
+	BoardIndex previousBoardPosition;
+	BoardIndex currentBoardPosition;
+
 	player->characterTexture = texture;
 
 	player->moveMultiplier = 1;

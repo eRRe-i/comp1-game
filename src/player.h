@@ -16,6 +16,8 @@ typedef struct Player {
 	int isMoving;
     float moveSpeed;
 
+    Vector movementVector;
+
     int facingSide;
     int frame;
     int moveMultiplier;

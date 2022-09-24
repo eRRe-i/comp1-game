@@ -11,9 +11,13 @@ typedef struct enemy {
 	int isMoving;
     float moveSpeed;
 
+    int xDest;
+    int yDest;
+
     int facingSide;
     int frame;
     int moveMultiplier;
+    BoardIndex boardIndex;
 
     EnemyTexture *enemyTexture;
 } Enemy;
@@ -36,6 +40,6 @@ void updateEnemyFrame(Enemy* enemy);
 void geraPosicao(int (*matrix)[70], Enemy *enemy);
 EnemyManager* loadEnemyManager(int id);
 void loadEnemies(SDL_Renderer* renderer, EnemyManager* enemyManager, int (*matrix)[70]);
-void updateEnemiesPosition(EnemyManager* enemyManager, int x, int y);
+void updateEnemyPosition(Enemy* enemy, int x, int y);
 
 #endif //ENE

@@ -44,9 +44,7 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 		}
 		case SDL_KEYUP:{ 	keyboardInput->keyPressed = 0;
 							keyboardInput->keyReleased = 1;
-							keyboardInput->movePlayerKeyboardInput.currentInput = NO_KEYBOARD_INPUT;
-							break;
-
+							return;
 		}
 	}
 
@@ -79,15 +77,7 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 		}
 		case SDLK_a: {		keyboardInput->attackKeyboardInput.attack = FIRST_ATTACK;
 							keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
-							keyboardInput->movePlayerKeyboardInput.currentInput = NO_KEYBOARD_INPUT;
 							break;
-		}
-		default: {
-
-			keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
-			keyboardInput->movePlayerKeyboardInput.currentInput = NO_KEYBOARD_INPUT;
-			keyboardInput->attackKeyboardInput.attack = NO_KEYBOARD_INPUT;
-
 		}
 	}
 }
@@ -117,4 +107,24 @@ void cleanMovementInput(KeyboardInput* keyboardInput) {
 	keyboardInput->keyReleased = 0;
 
 	return;
+}
+
+Vector addVector(Vector vec1, Vector vec2) {
+
+	Vector v;
+
+	v.x = vec1.x + vec2.x;
+	v.y = vec1.y + vec2.y;
+
+	return v;
+
+}
+
+Vector setVector(int x, int y) {
+
+	Vector v;
+	v.x = x;
+	v.y = y;
+
+	return v;
 }
