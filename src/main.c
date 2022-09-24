@@ -159,14 +159,13 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 					player->isMoving = TRUE;
 					player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
 					updateDstBlock(phaseManager);
-					moveCharacter(phaseManager);					
+					moveCharacter(phaseManager);				
 
 				} else if(keyboardInput->movePlayerKeyboardInput.currentInput == keyboardInput->movePlayerKeyboardInput.previousInput && keyboardInput->keyPressed) {
 					player->isMoving = TRUE;
 					player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
 					updateDstBlock(phaseManager);
 					moveCharacter(phaseManager);
-			
 				} else if(keyboardInput->keyReleased){
 					player->isMoving = FALSE;
 				}

@@ -44,7 +44,7 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 		}
 		case SDL_KEYUP:{ 	keyboardInput->keyPressed = 0;
 							keyboardInput->keyReleased = 1;
-							return;
+							break;
 		}
 	}
 
