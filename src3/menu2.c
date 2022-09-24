@@ -45,7 +45,7 @@ int main(int argc, char ** argv)
 
 
 	SDL_Surface* superficieTexto = TTF_RenderText_Solid(fonteJogo,"Jogo Foda", preto);
-	SDL_Surface * superficieFundo = IMG_Load("menuback.jpeg");
+	SDL_Surface * superficieFundo = IMG_Load("menuback.png");
 	SDL_Surface * superficieNome = IMG_Load("nomejogo.jpeg");
 	SDL_Surface * superficiePlay = IMG_Load("play.jpeg");
 	SDL_Surface * superficieOpcao = IMG_Load("instrucao.png");
