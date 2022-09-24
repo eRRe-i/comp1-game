@@ -48,6 +48,8 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 		}
 	}
 
+
+
 	switch(key->keysym.sym) {
 		case SDLK_ESCAPE: {	keyboardInput->gameStateKeyboardInput.quitGame = 1;
 							break;
@@ -127,4 +129,25 @@ Vector setVector(int x, int y) {
 	v.y = y;
 
 	return v;
+}
+
+Vector getGlobalPositionFromBoardIndex(BoardIndex boardIndex) {
+
+	Vector vector;
+
+	vector.x = boardIndex.i *32;
+	vector.y = boardIndex.j *32;
+
+	return vector;
+}
+
+
+Vector getObjectViewPosfromGlobalPos(Vector viewPos, Vector globalPos) {
+
+	Vector vector;
+
+	vector.x = globalPos.x - viewPos.x;
+	vector.y = globalPos.y - viewPos.y;
+
+	return vector;
 }
