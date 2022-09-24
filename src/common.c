@@ -132,6 +132,16 @@ Vector setVector(int x, int y) {
 	return v;
 }
 
+BoardIndex setBoardIndex(int i, int j) {
+	
+	BoardIndex index;
+	index.i = i;
+	index.j = j;
+
+	return index;
+
+}
+
 Vector getGlobalPositionFromBoardIndex(BoardIndex boardIndex) {
 
 	Vector vector;

@@ -14,29 +14,28 @@ AttackManager* loadAttackManager() {
     return atkManager;
 }
 
-AttackTexture* loadAttackTexture(SDL_Renderer* renderer, const char* imgPath, int displayWidth, int displayHeight) {
+AttackTexture* loadAttackTexture(SDL_Renderer* renderer, const char* imgPath) {
 
 
-    AttackTexture* atktexture = (AttackTexture*)malloc(sizeof(AttackTexture));
+    AttackTexture* atkTexture = (AttackTexture*)malloc(sizeof(AttackTexture));
 
-    atktexture->texture = IMG_LoadTexture(renderer, imgPath);
-    atktexture->displayWidth = displayWidth;
-    atktexture->displayHeight = displayHeight;
+    atkTexture->texture = IMG_LoadTexture(renderer, imgPath);
 
-    return atktexture;
+    return atkTexture;
 
 }
 
-
-Attack* loadAttack(AttackTexture* texture, int atkSpeed, float atkInterval) {
+Attack* loadAttack(AttackTexture* texture, Vector attackPosition, Vector attackMovement, BoardIndex attackBoardPosition) {
 
     Attack* attack = (Attack*)malloc(sizeof(Attack));
 
     attack->atkTexture = texture;
 
-    attack->atkSpeed = atkSpeed;
-    attack->dstRect = fillRect(300, 300, texture->displayWidth, texture->displayHeight);
+    attack->attackPosition = attackPosition;
+    attack->attackMovement = attackMovement;
 
+    attack->boardPosition = attackBoardPosition;
+    
     return attack;
 
 }

@@ -9,9 +9,6 @@ typedef struct attackTexture {
 
     SDL_Texture* texture;
 
-    int displayWidth;
-    int displayHeight;
-
 } AttackTexture;
 
 typedef struct attack {
@@ -20,11 +17,12 @@ typedef struct attack {
 
     AttackTexture* atkTexture;
 
-    int atkSpeed;
     float atkInterval;
 
-    int x;
-    int y;
+    Vector attackPosition;
+    Vector attackMovement;
+
+    BoardIndex boardPosition;
 
     SDL_Rect dstRect;
 
@@ -42,8 +40,8 @@ typedef struct attackManager {
 } AttackManager;
 
 AttackManager* loadAttackManager();
-AttackTexture* loadAttackTexture(SDL_Renderer* renderer, const char* imgPath, int displayWidth, int displayHeight);
-Attack* loadAttack(AttackTexture* texture, int atkSpeed, float atkInterval);
+AttackTexture* loadAttackTexture(SDL_Renderer* renderer, const char* imgPath);
+Attack* loadAttack(AttackTexture* texture, Vector attackPosition, Vector attackMovement, BoardIndex attackBoardPosition);
 
 
 #endif //ATTACK

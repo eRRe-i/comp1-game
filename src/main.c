@@ -25,6 +25,9 @@ int checkIfPlayerMoveIsValid(PhaseManager* phaseManager);
 int checkIfWall(Board* board, int i, int j);
 void moveEnemies(PhaseManager* phaseManager);
 void updateFrameEnemy(Enemy* enemy);
+void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput);
+void renderAttacks(SDL_Renderer* renderer, PhaseManager* phaseManager);
+int checkValidAttack(PhaseManager* phaseManager);
 
 Timer t;
 
@@ -60,7 +63,7 @@ int main (int argc, char *argv[])
 	generateMaps(renderer, mapas);
 
     CharacterTexture* characterTexture = loadCharacterTexture(renderer);
-	AttackTexture* firstAttackTexture = loadAttackTexture(renderer, FIRST_ATK_PATH, 40, 40);
+	AttackTexture* firstAttackTexture = loadAttackTexture(renderer, FIRST_ATK_PATH);
 
 	//chdir("..");
 
@@ -85,6 +88,7 @@ int main (int argc, char *argv[])
 	while (keyboardInput->gameStateKeyboardInput.quitGame == 0) {
 
 		listenEvent(keyboardInput);
+		updateAttackState(phaseManager, keyboardInput);
 		updatePlayerState(phaseManager, keyboardInput);
 		if(keyboardInput->gameStateKeyboardInput.currentMapID != mapIndex){
 			mapIndex = keyboardInput->gameStateKeyboardInput.currentMapID;
@@ -134,6 +138,7 @@ void updateScreen(SDL_Renderer* renderer, PhaseManager* phaseManager) {
 		SDL_RenderClear(renderer);
 
 		updateMap(renderer, phaseManager);
+		renderAttacks(renderer, phaseManager);
 		renderEnemies(renderer, phaseManager);
         SDL_RenderCopy(renderer,
 			player->characterTexture->characterSheet,
@@ -413,29 +418,105 @@ int checkIfWall(Board* board, int i, int j) {
 	return board->map_matrix[i][j] == IMMOVABLE_MAP_ID;
 }
 
-// int attackPositionIsValid(Board* board, int board_x, int board_y) {
 
-// 	if(board->map_matrix[board_x][board_y] == IMMOVABLE_BOARD_ID) {
-// 		return FALSE;
-// 	} else {
-// 		return TRUE;
-// 	}
-// }
+void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput) {
 
-// void checkValidAttack(PhaseManager* phaseManager, KeyboardInput* keyboardInput) {
+	AttackManager* attackManager = phaseManager->attackManager;
+	Map* map = phaseManager->map;
+	Player* player = phaseManager->player;
 
-// 	Player* player = phaseManager->player;
-// 	Board* board = phaseManager->board;
+	int reachedDestination = map->mapDestinationPosition.x == map->mapCurrentPosition.x && map->mapDestinationPosition.y == map->mapCurrentPosition.y;
 
-// 	if(keyboardInput->attackKeyboardInput.attack == FIRST_ATTACK) {
+	if(reachedDestination && keyboardInput->attackKeyboardInput.attack == FIRST_ATTACK) {
 
-// 		switch(player->facingSide) {
+		if(checkValidAttack(phaseManager)) {
 
-// 			case CHARACTER_DOWN: {
+			BoardIndex playerIndex = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
+			BoardIndex attackIndex;
+			Vector playerGlobalPosition = getGlobalPositionFromBoardIndex(playerIndex);
+			Vector attackInitialPosition;
+			Vector attackMove;
 
-// 				if(attackPositionIsValid(p))
-// 			}
-// 		}
-// 	}
+			switch(player->facingSide) {
 
-// }
+				case CHARACTER_DOWN:{	
+					attackInitialPosition = setVector(	playerGlobalPosition.x,
+														playerGlobalPosition.y + BLOCKSIZE);
+					attackMove = setVector(0, 2 * 1);
+					attackIndex = setBoardIndex(	playerIndex.i,
+													playerIndex.j + 1);
+					break;
+				}
+				case CHARACTER_UP: {
+					attackInitialPosition = setVector(	playerGlobalPosition.x,
+														playerGlobalPosition.y + BLOCKSIZE);
+					attackMove = setVector(0, 2 * -1);
+					attackIndex = setBoardIndex(	playerIndex.i,
+													playerIndex.j - 1);	
+					break;
+				}
+				case CHARACTER_RIGHT: {
+					attackInitialPosition = setVector(	playerGlobalPosition.x + BLOCKSIZE,
+														playerGlobalPosition.y);
+					attackMove = setVector(2 * 1, 0);
+					attackIndex = setBoardIndex(	playerIndex.i + 1,
+													playerIndex.j);
+					break;
+				}
+				case CHARACTER_LEFT: {
+					attackInitialPosition = setVector(	playerGlobalPosition.x + BLOCKSIZE,
+														playerGlobalPosition.y);
+					attackMove = setVector(2 * -1, 0);
+					attackIndex = setBoardIndex(	playerIndex.i-1,
+													playerIndex.j);
+					break;
+				}
+			}
+
+			for(int i = 0; i < 5; i++) {
+
+				if (attackManager->attackList[i] == NULL) {
+					
+					attackManager->attackList[i] =	loadAttack(	attackManager->firstAttackTexture,
+												attackInitialPosition,
+												attackMove,
+												attackIndex);
+					break;
+				}
+			}
+		}
+	}
+
+}
+
+void renderAttacks(SDL_Renderer* renderer, PhaseManager* phaseManager) {
+
+	AttackManager* attackManager = phaseManager->attackManager;
+
+	for(int i = 0; i < 5; i++) {
+		if(attackManager->attackList[i] != NULL) {
+
+			Attack* attack = attackManager->attackList[i];
+		
+			SDL_Rect renderRect = 	{	attack->attackPosition.x,
+										attack->attackPosition.y,
+										BLOCKSIZE,
+										BLOCKSIZE
+									};
+
+			SDL_RenderCopy(	renderer,
+							attackManager->attackList[i]->atkTexture->texture,
+							NULL,
+							&renderRect
+							);
+		}
+	}
+	return;
+
+}
+
+int checkValidAttack(PhaseManager* phaseManager) {
+
+	return checkIfPlayerMoveIsValid(phaseManager);
+
+}

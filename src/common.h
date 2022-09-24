@@ -85,5 +85,6 @@ Vector addVector(Vector vec1, Vector vec2);
 Vector setVector(int x, int y);
 Vector getGlobalPositionFromBoardIndex(BoardIndex boardIndex);
 Vector getObjectViewPosfromGlobalPos(Vector viewPos, Vector globalPos);
+BoardIndex setBoardIndex(int i, int j);
  
 #endif //COMMON
