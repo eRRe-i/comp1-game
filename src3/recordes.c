@@ -33,7 +33,8 @@ int main(int argc, char ** argv)
 		SDL_Log("SDL2_ttf foi inicializado corretamente > %s\n", SDL_GetError());
 	}
     //Carregar arquivo fonte e setar o tamanho
-	TTF_Font* fonteJogo = TTF_OpenFont("./fonts/KarmaFuture.ttf",16);
+	TTF_Font* fonteJogo = TTF_OpenFont("./fonts/IMMORTAL.ttf",64);
+    TTF_Font* fonteBotao = TTF_OpenFont("./fonts/ChocoladineDemo.ttf",64);
 	TTF_Font* fonteScore = TTF_OpenFont("./fonts/ka1.ttf",16);
 	TTF_Font* fonteRecord = TTF_OpenFont("./fonts/ArcadeClassic.ttf",32);
 	SDL_Color preto = {0, 0, 0};
@@ -44,7 +45,7 @@ int main(int argc, char ** argv)
 		exit(1);
 	}
 
-
+	SDL_Surface * superficieBotao = IMG_Load("botao.png");
 	SDL_Surface* superficieTexto = TTF_RenderText_Solid(fonteJogo,"Jogo Foda", preto);
 	SDL_Surface* superficieScore = TTF_RenderText_Solid(fonteScore,"Ranking:", branco);
 	SDL_Surface* superficieVolta = TTF_RenderText_Solid(fonteJogo,"voltar", preto);
@@ -55,6 +56,7 @@ int main(int argc, char ** argv)
 	SDL_Texture * nomejogo = IMG_LoadTexture( renderer,"nomejogo.jpeg");
 	SDL_Texture* texturaTexto = SDL_CreateTextureFromSurface(renderer, superficieTexto);
 	SDL_Texture* texturaVolta = SDL_CreateTextureFromSurface(renderer, superficieVolta);
+	SDL_Texture* texturaBotao = SDL_CreateTextureFromSurface( renderer,superficieBotao);
 
 	SDL_Texture* texturaScore = SDL_CreateTextureFromSurface(renderer, superficieScore);
 	SDL_Texture* texturaSeta = SDL_CreateTextureFromSurface(renderer, superficieSeta);
@@ -62,21 +64,23 @@ int main(int argc, char ** argv)
 
 	SDL_FreeSurface(superficieTexto);
 	SDL_FreeSurface(superficieScore);
-	SDL_FreeSurface(superficieVolta);
+	//SDL_FreeSurface(superficieVolta);
 	
 	
 
     SDL_Rect src = { SCREEN_WIDTH/2 - 340/2,50 , 350, 100};// 340/2 - metade da imagem para ficar centralizado
     //SDL_Rect src1 = { SCREEN_WIDTH/2 -340, 148 , 150, 75};
 
-	SDL_Rect srcVolta = { 600 ,450 , 100,75};
-	SDL_Rect rSeta = { 550 ,500 , 20, 20};
+	SDL_Rect srcVolta = { 600 ,450 ,superficieVolta->w,superficieVolta->h};
+	SDL_Rect srcBotao = { 575 ,450 ,225,superficieVolta->h};
+	SDL_Rect rSeta = { 545 ,450 , 65, 80};
 
     SDL_Rect dstrect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
     SDL_RenderCopy(renderer, fundo, NULL, &dstrect);
    // SDL_RenderCopy(renderer, nomejogo, NULL, &src); // Titulo jogo png
     //SDL_RenderCopy(renderer, texturaTexto, NULL, &src);
     SDL_RenderCopy(renderer, texturaScore, NULL, &src);
+    SDL_RenderCopy(renderer, texturaBotao, NULL, &srcBotao);
     SDL_RenderCopy(renderer, texturaVolta, NULL, &srcVolta);
     SDL_RenderCopy(renderer, texturaSeta, NULL, &rSeta);
     
