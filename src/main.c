@@ -150,8 +150,8 @@ void updateScreen(SDL_Renderer* renderer, PhaseManager* phaseManager) {
 			renderEnemies(renderer, phaseManager);
 		Timer t;
 		t.currentTime = 0;
-		t.elapsedTime = int(SDL_GetTicks() / CHARACTER_FRAME_RATE) %4;
-		fprintf(stderr, "tempo = %i", t.elapsedTime);
+		// t.elapsedTime = (int)(SDL_GetTicks() / CHARACTER_FRAME_RATE) %4;
+		// fprintf(stderr, "tempo = %i", t.elapsedTime);
 		// if(t.elapsedTime - t.currentTime > 10000) {
 		// 	t.currentTime = t.elapsedTime;
 		// }
