@@ -154,47 +154,68 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 
 	int reachedDestination = map->mapDestinationPosition.x == map->mapCurrentPosition.x && map->mapDestinationPosition.y == map->mapCurrentPosition.y;
 	
+	//se está se movendo
 	if(player->isMoving) {
 
+		//se chegou no destino
 		if(map->mapDestinationPosition.x == map->mapCurrentPosition.x && map->mapDestinationPosition.y == map->mapCurrentPosition.y) {
-		
-			if(keyboardInput->movePlayerKeyboardInput.currentInput != keyboardInput->movePlayerKeyboardInput.previousInput) {
+			
+			// se um keydown está é uma key diferente
+			if(keyboardInput->movePlayerKeyboardInput.currentInput != keyboardInput->movePlayerKeyboardInput.previousInput && keyboardInput->keyPressed) {
 			
 				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
 
+				//se o move é válido
 				if(checkIfPlayerMoveIsValid(phaseManager)) {
 					player->isMoving = TRUE;
 					updateDstBlock(phaseManager);
 					moveCharacter(phaseManager);
 
-				}
+					// SDL_Log("Case01");
 
+				}
+			//se a keydown é a mesma key
 			} else if(keyboardInput->movePlayerKeyboardInput.currentInput == keyboardInput->movePlayerKeyboardInput.previousInput && keyboardInput->keyPressed) {
 
 				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
+				//se o move é válido
 				if(checkIfPlayerMoveIsValid(phaseManager)) {
 
 					player->isMoving = TRUE;
 					updateDstBlock(phaseManager);
 					moveCharacter(phaseManager);
-
+					// SDL_Log("Case02");
+			
 				}
-			} 
+			// se não há key pressionada no frame
+			} else {
+				player->isMoving = FALSE;
+			}
+		//se ainda não chegou no destino
 		} else {
+
 			moveCharacter(phaseManager);
 			updateCharacterFrame(phaseManager->player);
+			// SDL_Log("Case03");
 		}
+		
+	//se não está se movendo
 	} else {
 		
+		//se qualquer key está solta
 		if(keyboardInput->keyReleased){
 			return;
 
+		//se triggar o ataque
 		} else if (keyboardInput->attackKeyboardInput.attack == FIRST_ATTACK){
-			
+			SDL_Log("Case 04");
 			updateAttackState(phaseManager, keyboardInput);
-
+			SDL_Delay(200);
+		
+		//se o input atual for pro mesmo lado do personagem
 		}else if(player->facingSide == keyboardInput->movePlayerKeyboardInput.currentInput) {
 			
+			//se o move é válido
 			if(checkIfPlayerMoveIsValid(phaseManager)) {
 
 				player->isMoving = TRUE;
@@ -202,30 +223,30 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 				moveCharacter(phaseManager);
 
 			}
-			
-		} else if(player->facingSide != keyboardInput->movePlayerKeyboardInput.currentInput) {
+		//se o input é pra um lado diferente;
+		} else if(player->facingSide != keyboardInput->movePlayerKeyboardInput.currentInput && keyboardInput->keyPressed) {
 
-			if(keyboardInput->keyReleased) {
 
 			player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
 			player->isMoving = FALSE;
 
-			} else if (keyboardInput->keyPressed && keyboardInput->movePlayerKeyboardInput.currentInput != NO_KEYBOARD_INPUT) {
+		//se for outro move que não o input de move
+		} else if (keyboardInput->movePlayerKeyboardInput.currentInput == player->facingSide && keyboardInput->keyPressed) {
 				
-				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
+			player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
 				
-				
-				if(checkIfPlayerMoveIsValid(phaseManager)) {
+			//se o move é válido
+			if(checkIfPlayerMoveIsValid(phaseManager)) {
 
 				player->isMoving = TRUE;
 				updateDstBlock(phaseManager);
 				moveCharacter(phaseManager);
 
-				}
 			}
 		}
 	}
 }
+
 
 void updateDstBlock(PhaseManager* phaseManager) {
 
