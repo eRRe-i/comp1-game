@@ -103,8 +103,8 @@ EnemyTexture* loadEnemyTexture(SDL_Renderer* renderer, int type) {
         }
     }
 
-    enemyTexture->displayRect.w=48;
-    enemyTexture->displayRect.h=41;
+    enemyTexture->displayRect.w=32;
+    enemyTexture->displayRect.h=27;
 
     return enemyTexture;
 }
