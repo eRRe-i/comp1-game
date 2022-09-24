@@ -156,16 +156,26 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 		if(map->mapDestinationPosition.x == map->mapCurrentPosition.x && map->mapDestinationPosition.y == map->mapCurrentPosition.y) {
 		
 				if(keyboardInput->movePlayerKeyboardInput.currentInput != keyboardInput->movePlayerKeyboardInput.previousInput) {
-					player->isMoving = TRUE;
+				
 					player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
-					updateDstBlock(phaseManager);
-					moveCharacter(phaseManager);				
+
+					if(checkIfPlayerMoveIsValid(phaseManager)) {
+						player->isMoving = TRUE;
+						updateDstBlock(phaseManager);
+						moveCharacter(phaseManager);
+
+					}
 
 				} else if(keyboardInput->movePlayerKeyboardInput.currentInput == keyboardInput->movePlayerKeyboardInput.previousInput && keyboardInput->keyPressed) {
-					player->isMoving = TRUE;
+
 					player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
-					updateDstBlock(phaseManager);
-					moveCharacter(phaseManager);
+					if(checkIfPlayerMoveIsValid(phaseManager)) {
+
+						player->isMoving = TRUE;
+						updateDstBlock(phaseManager);
+						moveCharacter(phaseManager);
+
+					}
 				} else if(keyboardInput->keyReleased){
 					player->isMoving = FALSE;
 				}
@@ -181,9 +191,13 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 
 		} else if(player->facingSide == keyboardInput->movePlayerKeyboardInput.currentInput) {
 			
+			if(checkIfPlayerMoveIsValid(phaseManager)) {
+
 				player->isMoving = TRUE;
 				updateDstBlock(phaseManager);
 				moveCharacter(phaseManager);
+
+			}
 			
 		} else if(player->facingSide != keyboardInput->movePlayerKeyboardInput.currentInput) {
 
@@ -193,10 +207,17 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 			player->isMoving = FALSE;
 
 			} else if (keyboardInput->keyPressed && keyboardInput->movePlayerKeyboardInput.currentInput != NO_KEYBOARD_INPUT) {
-				player->isMoving = TRUE;
+				
 				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
+				
+				
+				if(checkIfPlayerMoveIsValid(phaseManager)) {
+
+				player->isMoving = TRUE;
 				updateDstBlock(phaseManager);
 				moveCharacter(phaseManager);
+
+				}
 			}
 		}
 	}
@@ -367,19 +388,19 @@ int checkIfPlayerMoveIsValid(PhaseManager*phaseManager) {
 
 	switch(player->facingSide) {
 		case CHARACTER_DOWN: { 
-			isValid = checkIfWall(board, playerIndex.i, playerIndex.j + 1);
+			isValid = !checkIfWall(board, playerIndex.i, playerIndex.j + 1);
 			break;
 		}
 		case CHARACTER_UP: {
-			isValid = checkIfWall(board, playerIndex.i, playerIndex.j - 1);
+			isValid = !checkIfWall(board, playerIndex.i, playerIndex.j - 1);
 			break;
 		}
 		case CHARACTER_LEFT: {
-			isValid = checkIfWall(board, playerIndex.i - 1, playerIndex.j);
+			isValid = !checkIfWall(board, playerIndex.i - 1, playerIndex.j);
 			break;
 		}
 		case CHARACTER_RIGHT: {
-			isValid = checkIfWall(board, playerIndex.i + 1, playerIndex.j);
+			isValid = !checkIfWall(board, playerIndex.i + 1, playerIndex.j);
 			break;
 		}
 	}
