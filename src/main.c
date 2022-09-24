@@ -167,47 +167,68 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 
 	int reachedDestination = map->mapDestinationPosition.x == map->mapCurrentPosition.x && map->mapDestinationPosition.y == map->mapCurrentPosition.y;
 	
+	//se está se movendo
 	if(player->isMoving) {
 
+		//se chegou no destino
 		if(map->mapDestinationPosition.x == map->mapCurrentPosition.x && map->mapDestinationPosition.y == map->mapCurrentPosition.y) {
-		
-			if(keyboardInput->movePlayerKeyboardInput.currentInput != keyboardInput->movePlayerKeyboardInput.previousInput) {
+			
+			// se um keydown está é uma key diferente
+			if(keyboardInput->movePlayerKeyboardInput.currentInput != keyboardInput->movePlayerKeyboardInput.previousInput && keyboardInput->keyPressed) {
 			
 				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
 
+				//se o move é válido
 				if(checkIfPlayerMoveIsValid(phaseManager)) {
 					player->isMoving = TRUE;
 					updateDstBlock(phaseManager);
 					moveCharacter(phaseManager);
 
-				}
+					// SDL_Log("Case01");
 
+				}
+			//se a keydown é a mesma key
 			} else if(keyboardInput->movePlayerKeyboardInput.currentInput == keyboardInput->movePlayerKeyboardInput.previousInput && keyboardInput->keyPressed) {
 
 				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
+				//se o move é válido
 				if(checkIfPlayerMoveIsValid(phaseManager)) {
 
 					player->isMoving = TRUE;
 					updateDstBlock(phaseManager);
 					moveCharacter(phaseManager);
-
+					// SDL_Log("Case02");
+			
 				}
-			} 
+			// se não há key pressionada no frame
+			} else {
+				player->isMoving = FALSE;
+			}
+		//se ainda não chegou no destino
 		} else {
+
 			moveCharacter(phaseManager);
 			updateCharacterFrame(phaseManager->player);
+			// SDL_Log("Case03");
 		}
+		
+	//se não está se movendo
 	} else {
 		
+		//se qualquer key está solta
 		if(keyboardInput->keyReleased){
 			return;
 
+		//se triggar o ataque
 		// } else if (keyboardInput->attackKeyboardInput.attack == FIRST_ATTACK){
-		// 	fprintf(stderr, "ENTROU NO MAIN\n");
+		// 	SDL_Log("Case 04");
 		// 	updateAttackState(phaseManager, keyboardInput);
-
+		// 	SDL_Delay(200);
+		
+		//se o input atual for pro mesmo lado do personagem
 		}else if(player->facingSide == keyboardInput->movePlayerKeyboardInput.currentInput) {
 			
+			//se o move é válido
 			if(checkIfPlayerMoveIsValid(phaseManager)) {
 
 				player->isMoving = TRUE;
@@ -215,30 +236,30 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 				moveCharacter(phaseManager);
 
 			}
-			
-		} else if(player->facingSide != keyboardInput->movePlayerKeyboardInput.currentInput) {
+		//se o input é pra um lado diferente;
+		} else if(player->facingSide != keyboardInput->movePlayerKeyboardInput.currentInput && keyboardInput->keyPressed) {
 
-			if(keyboardInput->keyReleased) {
 
 			player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
 			player->isMoving = FALSE;
 
-			} else if (keyboardInput->keyPressed && keyboardInput->movePlayerKeyboardInput.currentInput != NO_KEYBOARD_INPUT) {
+		//se for outro move que não o input de move
+		} else if (keyboardInput->movePlayerKeyboardInput.currentInput == player->facingSide && keyboardInput->keyPressed) {
 				
-				player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
+			player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
 				
-				
-				if(checkIfPlayerMoveIsValid(phaseManager)) {
+			//se o move é válido
+			if(checkIfPlayerMoveIsValid(phaseManager)) {
 
 				player->isMoving = TRUE;
 				updateDstBlock(phaseManager);
 				moveCharacter(phaseManager);
 
-				}
 			}
 		}
 	}
 }
+
 
 void updateDstBlock(PhaseManager* phaseManager) {
 
@@ -450,30 +471,36 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 			BoardIndex playerIndex = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
 			BoardIndex attackIndex;
 			Vector playerGlobalPosition = getGlobalPositionFromBoardIndex(playerIndex);
-			Vector attackInitialPosition;
-			Vector attackMove;
+			Vector attackInitialPosition = setVector(800,350);
+			Vector attackMove = setVector(0,0); ;
+			fprintf(stderr, "PlayerPossition X: %i, Y: %i\n", playerGlobalPosition.x, playerGlobalPosition.y);
+			fprintf(stderr, "FACE SIDE %i", player->facingSide);
 
 			switch(player->facingSide) {
 
 				case CHARACTER_DOWN:{
+					fprintf(stderr, "ENTROU BAIXO\n");
 					attackInitialPosition = setVector(playerGlobalPosition.x,playerGlobalPosition.y + BLOCKSIZE);
 					attackMove = setVector(0, ATTACK_SPEED);
 					attackIndex = setBoardIndex(playerIndex.i,playerIndex.j + 1);
 					break;
 				}
 				case CHARACTER_UP: {
+					fprintf(stderr, "ENTROU CIMA\n");
 					attackInitialPosition = setVector(playerGlobalPosition.x,playerGlobalPosition.y - BLOCKSIZE);
 					attackMove = setVector(0, -ATTACK_SPEED);
 					attackIndex = setBoardIndex(playerIndex.i, playerIndex.j - 1);
 					break;
 				}
 				case CHARACTER_RIGHT: {
+					fprintf(stderr, "ENTROU DIREITA\n");
 					attackInitialPosition = setVector(playerGlobalPosition.x + BLOCKSIZE, playerGlobalPosition.y);
 					attackMove = setVector(ATTACK_SPEED, 0);
 					attackIndex = setBoardIndex(playerIndex.i + 1,playerIndex.j);
 					break;
 				}
 				case CHARACTER_LEFT: {
+					fprintf(stderr, "ENTROU ESQUERDA\n");
 					attackInitialPosition = setVector(playerGlobalPosition.x - BLOCKSIZE, playerGlobalPosition.y);
 					attackMove = setVector(-ATTACK_SPEED, 0);
 					attackIndex = setBoardIndex(playerIndex.i-1,playerIndex.j);
@@ -545,6 +572,7 @@ void renderAttacks(SDL_Renderer* renderer, PhaseManager* phaseManager) {
 		if(attackManager->attackList[i] != NULL) {
 
 			Attack* attack = attackManager->attackList[i];
+			// fprintf(stderr, "ATTACK %i x:%i y: %i\n", i, attack->attackPosition.x, attack->attackPosition.y);
 		
 			// if(attack->direita == 1){
 			// 	attack->attackPosition.x +=32;

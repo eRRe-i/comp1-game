@@ -12,7 +12,11 @@ void listenEvent(KeyboardInput* keyboardInput) {
 		
             case SDL_QUIT: keyboardInput->gameStateKeyboardInput.quitGame = 1; break;
             case SDL_KEYDOWN: handleKeyBoardInput(keyboardInput, &event.key); break;
-			case SDL_KEYUP:handleKeyBoardInput(keyboardInput, &event.key); break;
+			case SDL_KEYUP:{
+				keyboardInput->keyPressed = 0;
+				keyboardInput->keyReleased = 1;
+				break;
+			}
             
         }
 		if(event.type == SDL_KEYUP){
@@ -84,6 +88,7 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 		}
 	 default: {
 							keyboardInput->movePlayerKeyboardInput.currentInput = NO_KEYBOARD_INPUT;
+							keyboardInput->attackKeyboardInput.attack = NO_KEYBOARD_INPUT;
 		}
 	}
 }

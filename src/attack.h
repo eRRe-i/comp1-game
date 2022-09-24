@@ -23,10 +23,6 @@ typedef struct attack {
     Vector attackMovement;
 
     BoardIndex boardPosition;
-    int direita;
-    int esquerda;
-    int cima;
-    int baixo;
 
     SDL_Rect dstRect;
 
