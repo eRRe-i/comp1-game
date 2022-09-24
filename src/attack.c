@@ -11,6 +11,7 @@ AttackManager* loadAttackManager() {
 
     atkManager->nextAttackIndex = 0;
 
+
     return atkManager;
 }
 
@@ -35,7 +36,7 @@ Attack* loadAttack(AttackTexture* texture, Vector attackPosition, Vector attackM
     attack->attackMovement = attackMovement;
 
     attack->boardPosition = attackBoardPosition;
-    
+
     return attack;
 
 }

@@ -12,7 +12,11 @@ void listenEvent(KeyboardInput* keyboardInput) {
 		
             case SDL_QUIT: keyboardInput->gameStateKeyboardInput.quitGame = 1; break;
             case SDL_KEYDOWN: handleKeyBoardInput(keyboardInput, &event.key); break;
-			case SDL_KEYUP:handleKeyBoardInput(keyboardInput, &event.key); break;
+			case SDL_KEYUP:{
+				keyboardInput->keyPressed = 0;
+				keyboardInput->keyReleased = 1;
+				break;
+			}
             
         }
 		if(event.type == SDL_KEYUP){
@@ -29,6 +33,11 @@ void listenEvent(KeyboardInput* keyboardInput) {
 					}
 					break;
 				}
+				// case SDLK_a: {
+				// 	fprintf(stderr, "Ataque!\n");
+				// 	keyboardInput->attackKeyboardInput.attack = FIRST_ATTACK;
+				// 	break;
+				// }
 			}
 		}
     }
@@ -79,8 +88,6 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 		}
 		case SDLK_a: {		keyboardInput->attackKeyboardInput.attack = FIRST_ATTACK;
 							break;
-		} default: {
-							keyboardInput->movePlayerKeyboardInput.currentInput = NO_KEYBOARD_INPUT;
 		}
 	}
 }
@@ -146,8 +153,8 @@ Vector getGlobalPositionFromBoardIndex(BoardIndex boardIndex) {
 
 	Vector vector;
 
-	vector.x = boardIndex.i *32;
-	vector.y = boardIndex.j *32;
+	vector.x = boardIndex.i *32 - 32;
+	vector.y = boardIndex.j *32 - 32;
 
 	return vector;
 }

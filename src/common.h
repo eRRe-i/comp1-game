@@ -23,6 +23,7 @@
 
 #define MAP_LIST_SIZE 10
 #define MATRIX_SIZE 70
+#define ATTACK_SPEED 1
 
 typedef struct vector {
     int x;
