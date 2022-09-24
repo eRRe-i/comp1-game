@@ -11,7 +11,7 @@ const int SCREEN_HEIGHT = 600;
 #define MAX_LINE_LENGTH 1000
 
 
-
+	
 
 int main(int argc, char ** argv)
 {
@@ -47,33 +47,38 @@ int main(int argc, char ** argv)
 
 	SDL_Surface* superficieTexto = TTF_RenderText_Solid(fonteJogo,"Jogo Foda", preto);
 	SDL_Surface* superficieScore = TTF_RenderText_Solid(fonteScore,"Ranking:", branco);
-	
+	SDL_Surface* superficieVolta = TTF_RenderText_Solid(fonteJogo,"voltar", preto);
+	SDL_Surface * superficieSeta = IMG_Load("seta.png");
 
 
 	SDL_Texture * fundo = IMG_LoadTexture( renderer,"menuback.jpeg");
 	SDL_Texture * nomejogo = IMG_LoadTexture( renderer,"nomejogo.jpeg");
 	SDL_Texture* texturaTexto = SDL_CreateTextureFromSurface(renderer, superficieTexto);
+	SDL_Texture* texturaVolta = SDL_CreateTextureFromSurface(renderer, superficieVolta);
+
 	SDL_Texture* texturaScore = SDL_CreateTextureFromSurface(renderer, superficieScore);
+	SDL_Texture* texturaSeta = SDL_CreateTextureFromSurface(renderer, superficieSeta);
 	
 
 	SDL_FreeSurface(superficieTexto);
 	SDL_FreeSurface(superficieScore);
+	SDL_FreeSurface(superficieVolta);
 	
-	/*SDL_Rect retangulo;
-	retangulo.x = 10;
-	retangulo.y = 10;
-	retangulo.w = 400;
-	retangulo.h = 100;*/
+	
 
     SDL_Rect src = { SCREEN_WIDTH/2 - 340/2,50 , 350, 100};// 340/2 - metade da imagem para ficar centralizado
     //SDL_Rect src1 = { SCREEN_WIDTH/2 -340, 148 , 150, 75};
-    
+
+	SDL_Rect srcVolta = { 600 ,450 , 100,75};
+	SDL_Rect rSeta = { 550 ,500 , 20, 20};
 
     SDL_Rect dstrect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
     SDL_RenderCopy(renderer, fundo, NULL, &dstrect);
    // SDL_RenderCopy(renderer, nomejogo, NULL, &src); // Titulo jogo png
     //SDL_RenderCopy(renderer, texturaTexto, NULL, &src);
     SDL_RenderCopy(renderer, texturaScore, NULL, &src);
+    SDL_RenderCopy(renderer, texturaVolta, NULL, &srcVolta);
+    SDL_RenderCopy(renderer, texturaSeta, NULL, &rSeta);
     
     SDL_RenderPresent(renderer);
 
