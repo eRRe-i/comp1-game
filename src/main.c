@@ -543,7 +543,7 @@ void updateAttackPosition(PhaseManager* phaseManager){
 										BLOCKSIZE,
 										BLOCKSIZE
 									};
-			if(checkIfObjectInsideRenderArea(phaseManager->map->srcRect, renderRect)){
+			if(checkIfObjectInsideRenderArea(phaseManager->map->dstRect, renderRect)){
 		
 			attack->attackPosition.x += attack->attackMovement.x;
 			attack->attackPosition.y += attack->attackMovement.y;
