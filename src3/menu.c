@@ -51,7 +51,7 @@ int main(int argc, char ** argv)
 	SDL_Surface * superficieSeta = IMG_Load("seta.png");
 
 
-	SDL_Texture * fundo = IMG_LoadTexture( renderer,"menuback.jpeg");
+	SDL_Texture * fundo = IMG_LoadTexture( renderer,"menuback.png");
 	SDL_Texture * nomejogo = IMG_LoadTexture( renderer,"nomejogo.jpeg");
 	SDL_Texture* texturaTexto = SDL_CreateTextureFromSurface(renderer, superficieTexto);
 	SDL_Texture* texturaVolta = SDL_CreateTextureFromSurface(renderer, superficieVolta);

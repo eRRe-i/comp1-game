@@ -11,6 +11,9 @@ typedef struct enemy {
 	int isMoving;
     float moveSpeed;
 
+    int xDest;
+    int yDest;
+
     int facingSide;
     int frame;
     int moveMultiplier;
