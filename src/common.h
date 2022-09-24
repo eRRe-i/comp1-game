@@ -60,6 +60,7 @@ typedef struct keyboardInput {
 
     int keyPressed;
     int keyReleased;
+    int repeatedPress;
 
     GameStateKeyboardInput gameStateKeyboardInput;
     MovePlayerKeyboardInput movePlayerKeyboardInput;
@@ -82,5 +83,7 @@ void cleanMovementInput(KeyboardInput* keyboardInput);
 void printKeyboardState(KeyboardInput* input);
 Vector addVector(Vector vec1, Vector vec2);
 Vector setVector(int x, int y);
+Vector getGlobalPositionFromBoardIndex(BoardIndex boardIndex);
+Vector getObjectViewPosfromGlobalPos(Vector viewPos, Vector globalPos);
  
 #endif //COMMON

@@ -20,8 +20,6 @@ void moveEnemy(Enemy* enemy);
 int checkIfObjectInsideRenderArea(SDL_Rect windowRenderArea, SDL_Rect ObjectRenderArea);
 void renderEnemies(SDL_Renderer* renderer, PhaseManager* phaseManager);
 void setPlayerPosition(PhaseManager* phaseManager);
-Vector getGlobalPositionFromBoardIndex(BoardIndex boardIndex);
-Vector getObjectViewPosfromGlobalPos(Vector viewPos, Vector globalPos);
 BoardIndex getCharacterBoardIndex(Vector mapCurrentPosition);
 int checkIfPlayerMoveIsValid(PhaseManager* phaseManager);
 int checkIfWall(Board* board, int i, int j);
@@ -120,6 +118,8 @@ int main (int argc, char *argv[])
 		// 	fprintf(stderr, "board Index: (%i, %i)\n\n",
 		// 					getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).i,
 		// 					getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).j);
+
+	
 		}
 
 	}
@@ -158,38 +158,13 @@ void updateScreen(SDL_Renderer* renderer, PhaseManager* phaseManager) {
 		SDL_RenderPresent(renderer);
 }
 
-
-// int attackPositionIsValid(Board* board, int board_x, int board_y) {
-
-// 	if(board->map_matrix[board_x][board_y] == IMMOVABLE_BOARD_ID) {
-// 		return FALSE;
-// 	} else {
-// 		return TRUE;
-// 	}
-// }
-
-// void checkValidAttack(PhaseManager* phaseManager, KeyboardInput* keyboardInput) {
-
-// 	Player* player = phaseManager->player;
-// 	Board* board = phaseManager->board;
-
-// 	if(keyboardInput->attackKeyboardInput.attack == FIRST_ATTACK) {
-
-// 		switch(player->facingSide) {
-
-// 			case CHARACTER_DOWN: {
-
-// 				if(attackPositionIsValid(p))
-// 			}
-// 		}
-// 	}
-
-// }
-
 void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput) {
 
 	Map* map = phaseManager->map;
 	Player* player = phaseManager->player;
+
+	int reachedDestination = map->mapDestinationPosition.x == map->mapCurrentPosition.x && map->mapDestinationPosition.y == map->mapCurrentPosition.y;
+
 
 	if(player->isMoving) {
 
@@ -199,8 +174,7 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 					player->isMoving = TRUE;
 					player->facingSide = keyboardInput->movePlayerKeyboardInput.currentInput;
 					updateDstBlock(phaseManager);
-					moveCharacter(phaseManager);
-					SDL_Log("Bug, entra aqui duas vezes quando deveria entrar uma");					
+					moveCharacter(phaseManager);					
 
 				} else if(keyboardInput->movePlayerKeyboardInput.currentInput == keyboardInput->movePlayerKeyboardInput.previousInput && keyboardInput->keyPressed) {
 					player->isMoving = TRUE;
@@ -211,9 +185,7 @@ void updatePlayerState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 				} else if(keyboardInput->keyReleased){
 					player->isMoving = FALSE;
 				}
-			 else {
-				updateCharacterFrame(phaseManager->player);
-			}
+			 
 		} else {
 			moveCharacter(phaseManager);
 			updateCharacterFrame(phaseManager->player);
@@ -395,17 +367,6 @@ void geraMonstrosParaMapa(SDL_Renderer* renderer, PhaseManager* phaseManager){
 	}
 }
 
-Vector getGlobalPositionFromBoardIndex(BoardIndex boardIndex) {
-
-	Vector vector;
-
-	vector.x = boardIndex.i *32;
-	vector.y = boardIndex.j *32;
-
-	return vector;
-}
-
-
 BoardIndex getCharacterBoardIndex(Vector mapCurrentPosition) {
 
 	BoardIndex index;
@@ -414,16 +375,6 @@ BoardIndex getCharacterBoardIndex(Vector mapCurrentPosition) {
 	index.j = mapCurrentPosition.y / 32 + 11;
 
 	return index;
-}
-
-Vector getObjectViewPosfromGlobalPos(Vector viewPos, Vector globalPos) {
-
-	Vector vector;
-
-	vector.x = globalPos.x - viewPos.x;
-	vector.y = globalPos.y - viewPos.y;
-
-	return vector;
 }
 
 int checkIfPlayerMoveIsValid(PhaseManager*phaseManager) {
@@ -461,3 +412,30 @@ int checkIfWall(Board* board, int i, int j) {
 
 	return board->map_matrix[i][j] == IMMOVABLE_MAP_ID;
 }
+
+// int attackPositionIsValid(Board* board, int board_x, int board_y) {
+
+// 	if(board->map_matrix[board_x][board_y] == IMMOVABLE_BOARD_ID) {
+// 		return FALSE;
+// 	} else {
+// 		return TRUE;
+// 	}
+// }
+
+// void checkValidAttack(PhaseManager* phaseManager, KeyboardInput* keyboardInput) {
+
+// 	Player* player = phaseManager->player;
+// 	Board* board = phaseManager->board;
+
+// 	if(keyboardInput->attackKeyboardInput.attack == FIRST_ATTACK) {
+
+// 		switch(player->facingSide) {
+
+// 			case CHARACTER_DOWN: {
+
+// 				if(attackPositionIsValid(p))
+// 			}
+// 		}
+// 	}
+
+// }
