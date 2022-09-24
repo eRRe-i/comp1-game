@@ -2,7 +2,7 @@
 #include "common.h"
 #include "enemy.h"
 #include "textures.h"
-
+#include <time.h>
 /*
 * TYPE = 1 -> BASIC_Enemy
 * TYPE = 2 -> MEDIUM_Enemy
@@ -21,14 +21,15 @@ void generateEnemy(SDL_Renderer* renderer, Enemy* enemy, int type){
     enemy->moveSpeed = 2;    
     enemy->isMoving = TRUE;
 
-    enemy->facingSide = CHARACTER_DOWN;
-    enemy->frame = 1;
+    enemy->facingSide = 1;
+    enemy->frame = 0;
     enemy->moveMultiplier = 1;
 
     enemy->enemyTexture = loadEnemyTexture(renderer, type);
 }
 void geraPosicao(int (*matrix)[MATRIX_SIZE], Enemy *enemy){
 
+    srand(time(0));
     int x = rand() % MATRIX_SIZE;
     int y = rand() % MATRIX_SIZE;
 
@@ -38,6 +39,9 @@ void geraPosicao(int (*matrix)[MATRIX_SIZE], Enemy *enemy){
     }
 
     matrix[x][y] = ENEMY_MAP_ID;
+    fprintf(stderr, "Enemy X: %i, Y: %i\n", x, y);
+    enemy->boardIndex.i = x;
+    enemy->boardIndex.j = y;
     enemy->enemyTexture->displayRect.x= x*MAP_DIM_X;
     enemy->enemyTexture->displayRect.y= y*MAP_DIM_Y;
 }
@@ -50,10 +54,9 @@ EnemyManager* loadEnemyManager(int id){
     int medium = rand() % id;
     int high = rand() % id - 2;
     enemyManager->basicEnemy = basic;
-    if(id == 0){
-        enemyManager->mediumEnemy = 0;
-        enemyManager->highEnemy = 0;
-    }else {
+    enemyManager->mediumEnemy = 0;
+    enemyManager->highEnemy = 0;
+    if(id != 0){
         enemyManager->mediumEnemy = medium;
         if(high>0)
             enemyManager->highEnemy = high;
@@ -66,6 +69,7 @@ EnemyManager* loadEnemyManager(int id){
 }
 
 void loadEnemies(SDL_Renderer* renderer, EnemyManager* enemyManager, int (*matrix)[MATRIX_SIZE]){
+    fprintf(stderr, "BASIC: %i, MEDIO: %i, HIGH: %i\n",enemyManager->basicEnemy,enemyManager->mediumEnemy, enemyManager->highEnemy);
 	for(int i = 0; i < enemyManager->basicEnemy; i++){
         enemyManager->Enemies[i] = (Enemy*)malloc(sizeof(Enemy));
 		generateEnemy(renderer,enemyManager->Enemies[i], 1);
@@ -86,12 +90,15 @@ void loadEnemies(SDL_Renderer* renderer, EnemyManager* enemyManager, int (*matri
 		}
 	}
 }
-void updateEnemiesPosition(EnemyManager* enemyManager, int x, int y){
-    for(int i = 0; i < enemyManager->total_enemy; i++){
-        if(x != 0)
-            enemyManager->Enemies[i]->enemyTexture->displayRect.x +=x;
-        if(y!= 0)
-            enemyManager->Enemies[i]->enemyTexture->displayRect.y +=y;
-        fprintf(stderr, "Inimigo X,Y: (%i, %i)\n\n",enemyManager->Enemies[i]->enemyTexture->displayRect.x, enemyManager->Enemies[i]->enemyTexture->displayRect.y);
-    }
+
+/**
+ * @brief Atualiza a posição x, y dos inimigos
+ * 
+ * @param enemyManager 
+ * @param x 
+ * @param y 
+ */
+void updateEnemyPosition(Enemy* enemy, int x, int y){
+    enemy->enemyTexture->displayRect.x = x;
+    enemy->enemyTexture->displayRect.y = y;
 }
