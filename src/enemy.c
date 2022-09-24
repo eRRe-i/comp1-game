@@ -21,8 +21,8 @@ void generateEnemy(SDL_Renderer* renderer, Enemy* enemy, int type){
     enemy->moveSpeed = 2;    
     enemy->isMoving = TRUE;
 
-    enemy->facingSide = CHARACTER_DOWN;
-    enemy->frame = 1;
+    enemy->facingSide = 1;
+    enemy->frame = 0;
     enemy->moveMultiplier = 1;
 
     enemy->enemyTexture = loadEnemyTexture(renderer, type);
