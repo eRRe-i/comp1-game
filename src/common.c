@@ -118,3 +118,23 @@ void cleanMovementInput(KeyboardInput* keyboardInput) {
 
 	return;
 }
+
+Vector addVector(Vector vec1, Vector vec2) {
+
+	Vector v;
+
+	v.x = vec1.x + vec2.x;
+	v.y = vec1.y + vec2.y;
+
+	return v;
+
+}
+
+Vector setVector(int x, int y) {
+
+	Vector v;
+	v.x = x;
+	v.y = y;
+
+	return v;
+}
