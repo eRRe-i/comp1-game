@@ -37,6 +37,8 @@ void renderScore(SDL_Renderer* renderer, PhaseManager* phaseManager);
 Vector getPlayerPosition(PhaseManager* phaseManager);
 void addLife(PhaseManager* phaseManager);
 void reduzirLife(PhaseManager* phaseManager);
+int checkIfEnemyHit(Board* board, int i, int j);
+int updateEnemyHit(PhaseManager* phaseManager, BoardIndex board);
 
 Timer t;
 Timer t2;
@@ -113,13 +115,13 @@ int main (int argc, char *argv[])
 	loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
 
 
-	for(int i = 0; i < 70; i++) {
-		for (int j = 0; j<70; j++) {
+	// for(int i = 0; i < 70; i++) {
+	// 	for (int j = 0; j<70; j++) {
 
-			printf("%i ", phaseManager->board->map_matrix[i][j]);
-		}
-		printf("\n");
-	}
+	// 		printf("%i ", phaseManager->board->map_matrix[i][j]);
+	// 	}
+	// 	printf("\n");
+	// }
 
 
 	t2.currentTime = 0;
@@ -162,12 +164,12 @@ int main (int argc, char *argv[])
 			moveEnemies(phaseManager);
 
 
-			BoardIndex b = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
-			printf("%i - %i\n", b.i, b.j);
-			printf("Topo: %i | %i\n", checkIfWall(phaseManager->board, b.i, b.j-1), board->map_matrix[b.i][b.j-1]);
-			printf("Baixo:%i | %i\n", checkIfWall(phaseManager->board, b.i, b.j+1), board->map_matrix[b.i][b.j+1]);
-			printf("Dir:  %i | %i\n", checkIfWall(phaseManager->board, b.i+1, b.j), board->map_matrix[b.i+1][b.j]);
-			printf("Esq:  %i | %i\n\n", checkIfWall(phaseManager->board, b.i-1, b.j), board->map_matrix[b.i-1][b.j]);
+			// BoardIndex b = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
+			// printf("%i - %i\n", b.i, b.j);
+			// printf("Topo: %i | %i\n", checkIfWall(phaseManager->board, b.i-1, b.j), board->map_matrix[b.i-1][b.j]);
+			// printf("Baixo:%i | %i\n", checkIfWall(phaseManager->board, b.i+1, b.j), board->map_matrix[b.i+1][b.j]);
+			// printf("Dir:  %i | %i\n", checkIfWall(phaseManager->board, b.i, b.j+1), board->map_matrix[b.i][b.j+1]);
+			// printf("Esq:  %i | %i\n\n", checkIfWall(phaseManager->board, b.i, b.j-1), board->map_matrix[b.i][b.j-1]);
 			// fprintf(stderr, "board Index: (%i, %i)\n\n",
 			// getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).i,
 			// getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).j);
@@ -460,8 +462,8 @@ BoardIndex getCharacterBoardIndex(Vector mapCurrentPosition) {
 
 	BoardIndex index;
 
-	index.i = mapCurrentPosition.x / 32 + 12;
-	index.j = mapCurrentPosition.y / 32 + 10;
+	index.i = mapCurrentPosition.y / 32 + 10;
+	index.j = mapCurrentPosition.x / 32 + 12;
 
 	return index;
 }
@@ -477,19 +479,19 @@ int checkIfPlayerMoveIsValid(PhaseManager*phaseManager) {
 
 	switch(player->facingSide) {
 		case CHARACTER_DOWN: { 
-			isValid = !checkIfWall(board, playerIndex.i, playerIndex.j + 1);
+			isValid = !checkIfWall(board, playerIndex.i+1, playerIndex.j);
 			break;
 		}
 		case CHARACTER_UP: {
-			isValid = !checkIfWall(board, playerIndex.i, playerIndex.j - 1);
+			isValid = !checkIfWall(board, playerIndex.i-1, playerIndex.j);
 			break;
 		}
 		case CHARACTER_LEFT: {
-			isValid = !checkIfWall(board, playerIndex.i - 1, playerIndex.j);
+			isValid = !checkIfWall(board, playerIndex.i, playerIndex.j-1);
 			break;
 		}
 		case CHARACTER_RIGHT: {
-			isValid = !checkIfWall(board, playerIndex.i + 1, playerIndex.j);
+			isValid = !checkIfWall(board, playerIndex.i, playerIndex.j+1);
 			break;
 		}
 	}
@@ -536,7 +538,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 					attackGlobalPosition = setVector(playerGlobalPosition.x,playerGlobalPosition.y + BLOCKSIZE);
 					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackGlobalPosition);
 					attackMove = setVector(0, ATTACK_SPEED);
-					attackIndex = setBoardIndex(playerIndex.i,playerIndex.j + 1);
+					attackIndex = setBoardIndex(playerIndex.i-1,playerIndex.j);
 					break;
 				}
 				case CHARACTER_UP: {
@@ -544,7 +546,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 					attackGlobalPosition = setVector(playerGlobalPosition.x,playerGlobalPosition.y - BLOCKSIZE);
 					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackGlobalPosition);
 					attackMove = setVector(0, -ATTACK_SPEED);
-					attackIndex = setBoardIndex(playerIndex.i, playerIndex.j - 1);
+					attackIndex = setBoardIndex(playerIndex.i-1, playerIndex.j);
 					break;
 				}
 				case CHARACTER_RIGHT: {
@@ -552,7 +554,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 					attackGlobalPosition = setVector(playerGlobalPosition.x + BLOCKSIZE, playerGlobalPosition.y);
 					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackGlobalPosition);
 					attackMove = setVector(ATTACK_SPEED, 0);
-					attackIndex = setBoardIndex(playerIndex.i + 1,playerIndex.j);
+					attackIndex = setBoardIndex(playerIndex.i,playerIndex.j+1);
 
 					break;
 				}
@@ -561,7 +563,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 					attackGlobalPosition = setVector(playerGlobalPosition.x - BLOCKSIZE, playerGlobalPosition.y);
 					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackGlobalPosition);
 					attackMove = setVector(-ATTACK_SPEED, 0);
-					attackIndex = setBoardIndex(playerIndex.i-1,playerIndex.j);
+					attackIndex = setBoardIndex(playerIndex.i,playerIndex.j-1);
 					break;
 				}
 			}
@@ -612,11 +614,12 @@ void updateAttackPosition(PhaseManager* phaseManager){
 				fprintf(stderr,"APAGANDO ataque %i\n", i);
 				attackManager->attackList[i]=NULL;
 
-			// } else if (checkIfEnemy(board, attackIndex.i, attackIndex.j)) {
+			} else if (checkIfEnemyHit(board, attackIndex.i, attackIndex.j)) {
 				
-			// 	upDateEnemyState();
-			// 	fprintf(stderr,"APAGANDO ataque %i\n", i);
-			// 	attackManager->attackList[i]=NULL;
+				if(updateEnemyHit(phaseManager, attackIndex)) {
+					fprintf(stderr,"APAGANDO ataque %i\n", i);
+					attackManager->attackList[i]=NULL;
+				}
 
 			} else {
 			
@@ -700,4 +703,33 @@ void reduzirLife(PhaseManager* phaseManager){
 void addLife(PhaseManager* phaseManager){
 	if(phaseManager->player->life < 5 )
 		phaseManager->player->life +=1;	
+}
+
+int checkIfEnemyHit(Board* board, int i, int j) {
+
+	return board->map_matrix[i][j] == 3;
+}
+
+int updateEnemyHit(PhaseManager* phaseManager, BoardIndex board) {
+
+	EnemyManager* enemyManager = phaseManager->enemyManager;
+	int a, b;
+
+	for(int i=0; i< MAX_ENEMY_ARRAY; i++) {
+
+		if(enemyManager->Enemies[i] != NULL) {
+			
+			a = enemyManager->Enemies[i]->boardIndex.i == board.i;
+			b = enemyManager->Enemies[i]->boardIndex.j == board.j;
+			if(a && b) {
+				printf("%i, %i\n", board.i, enemyManager->Enemies[i]->boardIndex.i);
+				printf("%i, %i\n", board.j, enemyManager->Enemies[i]->boardIndex.j);
+				enemyManager->Enemies[i] = NULL;
+				phaseManager->life += 200;
+				return TRUE;
+			}
+		}
+
+	}
+	return FALSE;
 }
