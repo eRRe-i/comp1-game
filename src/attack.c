@@ -26,16 +26,15 @@ AttackTexture* loadAttackTexture(SDL_Renderer* renderer, const char* imgPath) {
 
 }
 
-Attack* loadAttack(AttackTexture* texture, Vector attackPosition, Vector attackMovement, BoardIndex attackBoardPosition) {
+Attack* loadAttack(AttackTexture* texture, Vector attackPosition, Vector globalPosition, Vector attackMovement) {
 
     Attack* attack = (Attack*)malloc(sizeof(Attack));
 
     attack->atkTexture = texture;
 
     attack->attackPosition = attackPosition;
+    attack->globalPosition = globalPosition;
     attack->attackMovement = attackMovement;
-
-    attack->boardPosition = attackBoardPosition;
 
     return attack;
 

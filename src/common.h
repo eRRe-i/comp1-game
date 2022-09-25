@@ -23,7 +23,7 @@
 
 #define MAP_LIST_SIZE 10
 #define MATRIX_SIZE 70
-#define ATTACK_SPEED 1
+#define ATTACK_SPEED 4
 
 typedef struct vector {
     int x;
@@ -87,5 +87,6 @@ Vector setVector(int x, int y);
 Vector getGlobalPositionFromBoardIndex(BoardIndex boardIndex);
 Vector getObjectViewPosfromGlobalPos(Vector viewPos, Vector globalPos);
 BoardIndex setBoardIndex(int i, int j);
+BoardIndex getBoardIndexFromGlobalPosition(Vector globalPosition);
  
 #endif //COMMON

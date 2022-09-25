@@ -86,6 +86,14 @@ int main (int argc, char *argv[])
 	phaseManager->attackManager->firstAttackTexture = firstAttackTexture;
 	loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
 
+	BoardIndex b = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
+	printf("Topo: %i\n", checkIfWall(phaseManager->board, b.i, b.j-1));
+	printf("Baixo: %i\n", checkIfWall(phaseManager->board, b.i, b.j+1));
+	printf("Dir: %i\n", checkIfWall(phaseManager->board, b.i+1, b.j));
+	printf("Esq: %i\n\n", checkIfWall(phaseManager->board, b.i-1, b.j));
+
+
+
 	t2.currentTime = 0;
 
 	// main loop
@@ -112,13 +120,19 @@ int main (int argc, char *argv[])
 			t.currentTime = t.elapsedTime;
 			moveEnemies(phaseManager);
 
-			fprintf(stderr, "board Index: (%i, %i)\n\n",
-			getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).i,
-			getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).j);
 
-			fprintf(stderr, "currentPoint: (%i, %i)\n\n", 
-					phaseManager->map->mapCurrentPosition.x, 
-					phaseManager->map->mapCurrentPosition.y);
+			BoardIndex b = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
+			printf("Topo: 	%i\n", checkIfWall(phaseManager->board, b.i, b.j-1));
+			printf("Baixo: 	%i\n", checkIfWall(phaseManager->board, b.i, b.j+1));
+			printf("Dir: 	%i\n", checkIfWall(phaseManager->board, b.i+1, b.j));
+			printf("Esq: 	%i\n\n", checkIfWall(phaseManager->board, b.i-1, b.j));
+			// fprintf(stderr, "board Index: (%i, %i)\n\n",
+			// getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).i,
+			// getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).j);
+
+			// fprintf(stderr, "currentPoint: (%i, %i)\n\n", 
+			// 		phaseManager->map->mapCurrentPosition.x, 
+			// 		phaseManager->map->mapCurrentPosition.y);
 		}
 		// t2.elapsedTime = SDL_GetTicks();
 		// if(t2.elapsedTime - t2.currentTime > 100) {
@@ -481,6 +495,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 			Vector playerGlobalPosition = getGlobalPositionFromBoardIndex(playerIndex);
 			Vector attackMove = setVector(0,0);
 			Vector attackInitialPosition;
+			Vector attackGlobalPosition;
 			// fprintf(stderr, "PlayerBoardIndex I: %i, J: %i\n", playerIndex.i, playerIndex.j);
 			// fprintf(stderr, "PlayerGlobalPossition  X: %i, Y: %i\n\n", playerGlobalPosition.x, playerGlobalPosition.y);
 			// fprintf(stderr, "FACE SIDE %i", player->facingSide);
@@ -489,24 +504,24 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 
 				case CHARACTER_DOWN:{
 					fprintf(stderr, "ENTROU BAIXO\n");
-					attackInitialPosition = setVector(playerGlobalPosition.x,playerGlobalPosition.y + BLOCKSIZE);
-					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackInitialPosition);
+					attackGlobalPosition = setVector(playerGlobalPosition.x,playerGlobalPosition.y + BLOCKSIZE);
+					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackGlobalPosition);
 					attackMove = setVector(0, ATTACK_SPEED);
 					attackIndex = setBoardIndex(playerIndex.i,playerIndex.j + 1);
 					break;
 				}
 				case CHARACTER_UP: {
 					fprintf(stderr, "ENTROU CIMA\n");
-					attackInitialPosition = setVector(playerGlobalPosition.x,playerGlobalPosition.y - BLOCKSIZE);
-					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackInitialPosition);
+					attackGlobalPosition = setVector(playerGlobalPosition.x,playerGlobalPosition.y - BLOCKSIZE);
+					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackGlobalPosition);
 					attackMove = setVector(0, -ATTACK_SPEED);
 					attackIndex = setBoardIndex(playerIndex.i, playerIndex.j - 1);
 					break;
 				}
 				case CHARACTER_RIGHT: {
 					fprintf(stderr, "ENTROU DIREITA\n");
-					attackInitialPosition = setVector(playerGlobalPosition.x + BLOCKSIZE, playerGlobalPosition.y);
-					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackInitialPosition);
+					attackGlobalPosition = setVector(playerGlobalPosition.x + BLOCKSIZE, playerGlobalPosition.y);
+					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackGlobalPosition);
 					attackMove = setVector(ATTACK_SPEED, 0);
 					attackIndex = setBoardIndex(playerIndex.i + 1,playerIndex.j);
 
@@ -514,8 +529,8 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 				}
 				case CHARACTER_LEFT: {
 					fprintf(stderr, "ENTROU ESQUERDA\n");
-					attackInitialPosition = setVector(playerGlobalPosition.x - BLOCKSIZE, playerGlobalPosition.y);
-					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackInitialPosition);
+					attackGlobalPosition = setVector(playerGlobalPosition.x - BLOCKSIZE, playerGlobalPosition.y);
+					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackGlobalPosition);
 					attackMove = setVector(-ATTACK_SPEED, 0);
 					attackIndex = setBoardIndex(playerIndex.i-1,playerIndex.j);
 					break;
@@ -529,8 +544,8 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 					fprintf(stderr,"gerando ataque\n");
 					attack = loadAttack(attackManager->firstAttackTexture,
 										attackInitialPosition,
-										attackMove,
-										attackIndex);
+										attackGlobalPosition,
+										attackMove);
 					attackManager->attackList[i] =	attack;
 					break;
 				}
@@ -544,6 +559,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 
 void updateAttackPosition(PhaseManager* phaseManager){
 	AttackManager* attackManager = phaseManager->attackManager;
+	Board* board = phaseManager->board;
 	// fprintf(stderr, "update\n");
 	for(int i = 0; i < 5; i++) {
 		if(attackManager->attackList[i] != NULL) {
@@ -553,15 +569,33 @@ void updateAttackPosition(PhaseManager* phaseManager){
 										BLOCKSIZE,
 										BLOCKSIZE
 									};
-			if(checkIfObjectInsideRenderArea(phaseManager->map->dstRect, renderRect)){
-		
-			attack->attackPosition.x += attack->attackMovement.x;
-			attack->attackPosition.y += attack->attackMovement.y;
-			}
-			else{
-				//TODO: Melhorar forma de destuir ataque
+			BoardIndex attackIndex = getBoardIndexFromGlobalPosition(attack->globalPosition);
+			// fprintf(stderr, "(%i, %i)\n", attackIndex.i, attackIndex.j);
+			// fprintf(stderr, "Wall: %i\n", checkIfWall(board, attackIndex.i, attackIndex.j));
+			// fprintf(stderr, "Wall? %i\n\n", board->map_matrix[attackIndex.i][attackIndex.j]);
+			if(!checkIfObjectInsideRenderArea(phaseManager->map->dstRect, renderRect)) {
+
 				fprintf(stderr,"APAGANDO ataque %i\n", i);
 				attackManager->attackList[i]=NULL;
+
+			} else if(checkIfWall(board, attackIndex.i, attackIndex.j)){
+				
+				fprintf(stderr,"APAGANDO ataque %i\n", i);
+				attackManager->attackList[i]=NULL;
+
+			// } else if (checkIfEnemy(board, attackIndex.i, attackIndex.j)) {
+				
+			// 	upDateEnemyState();
+			// 	fprintf(stderr,"APAGANDO ataque %i\n", i);
+			// 	attackManager->attackList[i]=NULL;
+
+			} else {
+			
+				attack->attackPosition.x += attack->attackMovement.x;
+				attack->attackPosition.y += attack->attackMovement.y;
+				attack->globalPosition.x += attack->attackMovement.x;
+				attack->globalPosition.y += attack->attackMovement.y;
+
 			}
 		}
 	}

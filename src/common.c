@@ -174,3 +174,14 @@ Vector getObjectViewPosfromGlobalPos(Vector viewPos, Vector globalPos) {
 
 	return vector;
 }
+
+BoardIndex getBoardIndexFromGlobalPosition(Vector globalPosition) {
+
+	BoardIndex board;
+
+	board.i = globalPosition.x / 32;
+	board.j = globalPosition.y / 32;
+
+	return board;
+	
+}
