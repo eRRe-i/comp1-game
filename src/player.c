@@ -19,6 +19,8 @@ Player* loadPlayerInitialState(CharacterTexture* texture) {
 
 	player->moveMultiplier = 1;
 	player->moveSpeed = 2;
+	player->life = 3;
+
 
 	return player;
 
