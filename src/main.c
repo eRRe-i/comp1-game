@@ -400,19 +400,26 @@ void moveEnemy(Enemy* enemy, PhaseManager *phaseManager) {
 	if(x == 0){
 		if(frenteTraz == 0){
 			if(phaseManager->board->map_matrix[enemy->boardIndex.i -1][enemy->boardIndex.j] == 0)
+				phaseManager->board->map_matrix[enemy->boardIndex.i][enemy->boardIndex.j] = 0;
 				enemy->boardIndex.i -= 1;
 		}else{
 			if(phaseManager->board->map_matrix[enemy->boardIndex.i +1][enemy->boardIndex.j] == 0)
+				phaseManager->board->map_matrix[enemy->boardIndex.i][enemy->boardIndex.j] = 0;
 				enemy->boardIndex.i += 1;
 		}
+		phaseManager->board->map_matrix[enemy->boardIndex.i][enemy->boardIndex.j] = 3;
 	}else{
 		if(frenteTraz == 0){
 			if(phaseManager->board->map_matrix[enemy->boardIndex.i][enemy->boardIndex.j -1] == 0)
+				phaseManager->board->map_matrix[enemy->boardIndex.i][enemy->boardIndex.j] = 0;
 				enemy->boardIndex.j -= 1;
 		}else{
 			if(phaseManager->board->map_matrix[enemy->boardIndex.i][enemy->boardIndex.j + 1] == 0)
+				phaseManager->board->map_matrix[enemy->boardIndex.i][enemy->boardIndex.j] = 0;
 				enemy->boardIndex.j += 1;
 		}
+		phaseManager->board->map_matrix[enemy->boardIndex.i][enemy->boardIndex.j] = 3;
+
 	}
 }
 
