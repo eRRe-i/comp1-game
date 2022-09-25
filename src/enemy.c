@@ -42,8 +42,8 @@ void geraPosicao(int (*matrix)[MATRIX_SIZE], Enemy *enemy){
     fprintf(stderr, "Enemy X: %i, Y: %i\n", x, y);
     enemy->boardIndex.i = x;
     enemy->boardIndex.j = y;
-    enemy->enemyTexture->displayRect.x= x*MAP_DIM_X;
-    enemy->enemyTexture->displayRect.y= y*MAP_DIM_Y;
+    enemy->enemyTexture->displayRect.x= y*MAP_DIM_X;
+    enemy->enemyTexture->displayRect.y= x*MAP_DIM_Y;
 }
 
 EnemyManager* loadEnemyManager(int id){

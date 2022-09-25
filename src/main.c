@@ -445,10 +445,14 @@ void renderEnemies(SDL_Renderer* renderer, PhaseManager* phaseManager){
 	
 	for(int i = 0; i < phaseManager->enemyManager->total_enemy; i++){
 		Enemy * enemy = phaseManager->enemyManager->Enemies[i];
-		if(checkIfObjectInsideRenderArea(phaseManager->map->srcRect, enemy->enemyTexture->displayRect)){
-			Vector newPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, getGlobalPositionFromBoardIndex(enemy->boardIndex));
-			updateEnemy(renderer, enemy, newPosition);
+		if (enemy != NULL) {
+			if(checkIfObjectInsideRenderArea(phaseManager->map->srcRect, enemy->enemyTexture->displayRect)){
+				Vector newPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, getGlobalPositionFromBoardIndex(enemy->boardIndex));
+				updateEnemy(renderer, enemy, newPosition);
+			}
+
 		}
+		
 	}
 }
 
@@ -625,16 +629,15 @@ void updateAttackPosition(PhaseManager* phaseManager){
 				
 				if(updateEnemyHit(phaseManager, attackIndex)) {
 					fprintf(stderr,"APAGANDO ataque %i\n", i);
-					attackManager->attackList[i]=NULL;
+					attackManager->attackList[i] = NULL;
+					fprintf(stderr,"CHEGUEI\n");
 				}
 
 			} else {
-			
 				attack->attackPosition.x += attack->attackMovement.x;
 				attack->attackPosition.y += attack->attackMovement.y;
 				attack->globalPosition.x += attack->attackMovement.x;
 				attack->globalPosition.y += attack->attackMovement.y;
-
 			}
 		}
 	}
@@ -722,7 +725,7 @@ int updateEnemyHit(PhaseManager* phaseManager, BoardIndex board) {
 	EnemyManager* enemyManager = phaseManager->enemyManager;
 	int a, b;
 
-	for(int i=0; i< MAX_ENEMY_ARRAY; i++) {
+	for(int i=0; i< phaseManager->enemyManager->total_enemy; i++) {
 
 		if(enemyManager->Enemies[i] != NULL) {
 			
