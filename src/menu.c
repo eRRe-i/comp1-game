@@ -7,6 +7,7 @@ const int SCREEN_HEIGHT = 600;
 Menu1* loadMenu1(SDL_Renderer* renderer) {
 
 	Menu1* menu = (Menu1*)malloc(sizeof(Menu1));
+	menu->posicaoCursor = 0;
 	menu->fonteJogo = TTF_OpenFont("fonts/IMMORTAL.ttf", 128);
 	menu->fonteBotao = TTF_OpenFont("fonts/ChocoladineDemo.ttf", 64);
 	menu->fonteScore = TTF_OpenFont("fonts/ka1.ttf",16);
@@ -236,7 +237,9 @@ int listenEventMenu1(Menu1* menu,SDL_Renderer* renderer){
 }
 int loopMenu1(SDL_Renderer* renderer, Menu1* menu){
 	int retorno = 0;
+	fprintf(stderr, "MenuChegou\n");
 	menu->posicaoCursor = 0;
+	fprintf(stderr, "MenuChegou\n");
 	while (retorno == 0)
 	{	
 		retorno = listenEventMenu1(menu, renderer);

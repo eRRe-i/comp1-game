@@ -124,6 +124,7 @@ int main (int argc, char *argv[])
 	// 	printf("\n");
 	// }
 
+	fprintf(stderr, "menu->posCursor == %i\n", menu->posicaoCursor);
 
 	t2.currentTime = 0;
 	int saidaMenu = 0;
