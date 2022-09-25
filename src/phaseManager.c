@@ -6,7 +6,7 @@
 PhaseManager* loadPhaseManager() {
 
     PhaseManager* phaseManager = (PhaseManager*)malloc(sizeof(PhaseManager));
-
+    phaseManager->mapIndex = 0;
     return phaseManager;
 
 }
