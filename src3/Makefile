@@ -1,7 +1,8 @@
-COMPILER = gcc
-
+COMPILER =gcc
+SRCS=$(wildcard $(SRC)/*.c)
+LIBS=$(wildcard $(SRC)/*.h)
 01 : $(OBJS)
-	$(COMPILER) menu.c -g3 -w -lSDL2 -lSDL2_image -lSDL2_ttf -o menu.out
+	$(COMPILER) $(SRCS) $(LIBS) menu1.c -g3 -w -lSDL2 -lSDL2_image -lSDL2_ttf -o menu.out
 	./menu.out
 	rm menu.out
 
