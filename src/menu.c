@@ -93,6 +93,7 @@ Menu1* loadMenu1(SDL_Renderer* renderer) {
 	menu->texturaScore = SDL_CreateTextureFromSurface(renderer, menu->superficieScore);
 	menu->texturaAutores = SDL_CreateTextureFromSurface(renderer, menu->superficieAutores);
 
+	return menu;
 
 }
 
