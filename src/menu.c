@@ -9,8 +9,10 @@ Menu1* loadMenu1(SDL_Renderer* renderer) {
 	Menu1* menu = (Menu1*)malloc(sizeof(Menu1));
 	menu->fonteJogo = TTF_OpenFont("fonts/IMMORTAL.ttf", 128);
 	menu->fonteBotao = TTF_OpenFont("fonts/ChocoladineDemo.ttf", 64);
-
+	menu->fonteScore = TTF_OpenFont("fonts/ka1.ttf",16);
+	menu->fonteRecord = TTF_OpenFont("fonts/ArcadeClassic.ttf",32);
 	SDL_Color preto = {0, 0, 0};
+	SDL_Color branco = {255, 255, 255};
 
 	menu->r.x = SCREEN_WIDTH / 2 -330;
 	menu->r.y = - 330;
@@ -71,6 +73,10 @@ Menu1* loadMenu1(SDL_Renderer* renderer) {
 	menu->superficieSair = TTF_RenderText_Solid(menu->fonteBotao, "Sair", preto);
 	menu->superficieNome = IMG_Load("assets/nomejogo.jpeg");
 	menu->superficieSeta = IMG_Load("assets/seta.png");
+	menu->superficieScore = TTF_RenderText_Solid(menu->fonteScore,"Ranking:", branco);
+	menu->superficieVolta = TTF_RenderText_Solid(menu->fonteJogo,"voltar", preto);
+
+
 	menu->fundo = SDL_CreateTextureFromSurface(renderer, menu->superficieFundo);
 	menu->texturaBotao = SDL_CreateTextureFromSurface(renderer, menu->superficieBotao);
 	menu->nomejogo = SDL_CreateTextureFromSurface(renderer, menu->superficieNome);
@@ -82,6 +88,11 @@ Menu1* loadMenu1(SDL_Renderer* renderer) {
 	menu->texturaRanking = SDL_CreateTextureFromSurface(renderer, menu->superficieRanking);
 	menu->texturaSair = SDL_CreateTextureFromSurface(renderer, menu->superficieSair);
 	menu->texturaSeta = SDL_CreateTextureFromSurface(renderer, menu->superficieSeta);
+	menu->texturaVolta = SDL_CreateTextureFromSurface(renderer, menu->superficieVolta);
+	menu->texturaScore = SDL_CreateTextureFromSurface(renderer, menu->superficieScore);
+	menu->texturaAutores = SDL_CreateTextureFromSurface(renderer, menu->superficieAutores);
+
+
 }
 
 
@@ -173,13 +184,13 @@ void renderMenu1(SDL_Renderer* renderer, Menu1* menu){
 	SDL_RenderCopy(renderer, menu->texturaSeta, NULL, &menu->r);
 }
 
-int listenEventMenu1(Menu1* menu){
+int listenEventMenu1(Menu1* menu,SDL_Renderer* renderer){
 	SDL_Event e;
 	while (SDL_PollEvent(&e) != 0)
 		{
 
 			if (e.type == SDL_QUIT || (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)){
-				return 1;
+				return -1;
 			}
 			else if (e.type == SDL_KEYDOWN){
 				switch (e.key.keysym.sym){
@@ -200,6 +211,21 @@ int listenEventMenu1(Menu1* menu){
 						fprintf(stderr, "MENU 1 OPCAO %i\n", menu->posicaoCursor);
 						if(menu->posicaoCursor == 0)
 							return 1;
+						if(menu->posicaoCursor == 2){
+							// Menu1* menu4 = loadMenu1(renderer);
+							renderMenu4(renderer, menu);
+							loopMenu2(renderer, menu);
+						}
+						if(menu->posicaoCursor == 3){
+							// Menu1* menu2 = loadMenu1(renderer);
+							renderMenu2(renderer, menu);
+							loopMenu2(renderer, menu);
+						}
+						if(menu->posicaoCursor == 4){
+							// Menu1* menu3 = loadMenu1(renderer);
+							renderMenu3(renderer, menu);
+							loopMenu2(renderer, menu);
+						}
 						if(menu->posicaoCursor == 5)
 							return -1;
 					break;
@@ -213,7 +239,7 @@ int loopMenu1(SDL_Renderer* renderer, Menu1* menu){
 	menu->posicaoCursor = 0;
 	while (retorno == 0)
 	{	
-		retorno = listenEventMenu1(menu);
+		retorno = listenEventMenu1(menu, renderer);
 		moveCursor(menu);
 		renderMenu1(renderer, menu);
 		SDL_RenderPresent(renderer);
@@ -238,4 +264,121 @@ int loopMenu1(SDL_Renderer* renderer, Menu1* menu){
 	SDL_FreeSurface(menu->superficieCreditos);
 	SDL_FreeSurface(menu->superficieSair);
 	return retorno;
+}
+void lerRecords(SDL_Renderer* renderer, Menu1* menu){
+	SDL_Color branco = {255, 255, 255};
+	FILE    *textfile;
+    char    line[50];
+
+    textfile = fopen("records.txt", "r");
+    if(textfile == NULL)
+    	return;
+	int i = 1;
+    while(fgets(line, 50, textfile)){
+    	line[strcspn(line, "\n")] = '\0';
+		fprintf(stderr, line);
+    	SDL_Surface* superficieRecords = TTF_RenderText_Solid(menu->fonteRecord,line, branco);
+    	SDL_Texture* texturaRecords= SDL_CreateTextureFromSurface(renderer, superficieRecords);
+    	SDL_Rect src2 = { SCREEN_WIDTH/2 -340/1.4, 98 +(50 * i), superficieRecords->w, superficieRecords->h};
+		i++;
+    	SDL_FreeSurface(superficieRecords);
+    	SDL_RenderCopy(renderer, texturaRecords, NULL, &src2);
+    	SDL_RenderPresent(renderer);
+    }
+    fclose(textfile);
+}
+int listenEventMenu2(Menu1* menu){
+	SDL_Event e;
+	while(SDL_PollEvent( &e ) != 0) {
+		if(e.type == SDL_QUIT || (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)) {
+			return 1;
+		}
+		else if (e.type == SDL_KEYDOWN) {
+			switch( e.key.keysym.sym ) {
+				case SDLK_RETURN:
+					return 1;
+				break;
+			}
+		}
+	}
+}
+void renderMenu2(SDL_Renderer* renderer, Menu1* menu){
+	SDL_Rect r = {545, 450, 40, 40};
+	SDL_Rect srcBotao = { 575 ,450 ,225,80};
+	SDL_RenderClear(renderer);
+	SDL_RenderCopy(renderer, menu->fundo, NULL, &menu->dstrect);
+	lerRecords(renderer, menu);
+	// SDL_RenderCopy(renderer, menu->texturaTexto, NULL, &menu->src);
+	SDL_RenderCopy(renderer, menu->texturaScore, NULL, &menu->src);
+    SDL_RenderCopy(renderer, menu->texturaBotao, NULL, &srcBotao);
+    SDL_RenderCopy(renderer, menu->texturaVolta, NULL, &srcBotao);
+	SDL_RenderCopy(renderer, menu->texturaSeta, NULL, &r);
+}
+
+void renderMenu3(SDL_Renderer* renderer, Menu1* menu){
+	SDL_Rect r = {545, 450, 40, 40};
+	SDL_Rect srcBotao = { 575 ,450 ,225,80};
+	SDL_Color preto = {0,0,0};
+	SDL_Rect srcAutores = { 100, 200, 650, 80};
+	SDL_RenderClear(renderer);
+	SDL_RenderCopy(renderer, menu->fundo, NULL, &menu->dstrect);
+	SDL_Surface* autor1 = TTF_RenderText_Solid(menu->fonteJogo,"LEANDRO BATAGLIA (leandro.bataglia@gmail.com)", preto);
+	SDL_Surface* autor2 = TTF_RenderText_Solid(menu->fonteJogo,"THIAGO FLOSINO (thiagoflosino@gmail.com)", preto);
+	SDL_Texture* tAutor1 = SDL_CreateTextureFromSurface(renderer, autor1);
+	SDL_Texture* tAutor2 = SDL_CreateTextureFromSurface(renderer, autor2);
+	// SDL_RenderCopy(renderer, menu->texturaTexto, NULL, &menu->src);
+	SDL_RenderCopy(renderer, menu->texturaCreditos, NULL, &menu->src);
+    SDL_RenderCopy(renderer, menu->texturaBotao, NULL, &srcBotao);
+    SDL_RenderCopy(renderer, menu->texturaVolta, NULL, &srcBotao);
+	SDL_RenderCopy(renderer, menu->texturaSeta, NULL, &r);
+	SDL_RenderCopy(renderer, tAutor1, NULL, &srcAutores);
+	srcAutores.y += 100;
+	SDL_RenderCopy(renderer, tAutor2, NULL, &srcAutores);
+}
+void renderMenu4(SDL_Renderer* renderer, Menu1* menu){
+	SDL_Rect r = {545, 450, 40, 40};
+	SDL_Rect srcBotao = { 575 ,450 ,225,80};
+	SDL_Color preto = {0,0,0};
+	SDL_Rect srcAutores = { 100, 200, 650, 40};
+	SDL_RenderClear(renderer);
+	SDL_RenderCopy(renderer, menu->fundo, NULL, &menu->dstrect);
+	SDL_Surface* autor1 = TTF_RenderText_Solid(menu->fonteJogo,"Use as setas do teclado para mover o personagem.", preto);
+	SDL_Surface* autor2 = TTF_RenderText_Solid(menu->fonteJogo,"Precione A para atacar.", preto);
+	SDL_Texture* tAutor1 = SDL_CreateTextureFromSurface(renderer, autor1);
+	SDL_Texture* tAutor2 = SDL_CreateTextureFromSurface(renderer, autor2);
+	// SDL_RenderCopy(renderer, menu->texturaTexto, NULL, &menu->src);
+	SDL_RenderCopy(renderer, menu->texturaInstrucao, NULL, &menu->src);
+    SDL_RenderCopy(renderer, menu->texturaBotao, NULL, &srcBotao);
+    SDL_RenderCopy(renderer, menu->texturaVolta, NULL, &srcBotao);
+	SDL_RenderCopy(renderer, menu->texturaSeta, NULL, &r);
+	SDL_RenderCopy(renderer, tAutor1, NULL, &srcAutores);
+	srcAutores.y += 100;
+	SDL_RenderCopy(renderer, tAutor2, NULL, &srcAutores);
+}
+
+int loopMenu2(SDL_Renderer* renderer, Menu1* menu){
+	while (listenEventMenu2(menu) == 0)
+	{
+		SDL_RenderPresent(renderer);
+	}
+	// SDL_DestroyTexture(menu->fundo);
+	// SDL_DestroyTexture(menu->nomejogo);
+	// SDL_DestroyTexture(menu->texturaTexto);
+	// SDL_DestroyTexture(menu->texturaPlay);
+	// SDL_DestroyTexture(menu->texturaOpcao);
+	// SDL_DestroyTexture(menu->texturaInstrucao);
+	// SDL_DestroyTexture(menu->texturaRanking);
+	// SDL_DestroyTexture(menu->texturaCreditos);
+	// SDL_DestroyTexture(menu->texturaSair);
+
+	// SDL_FreeSurface(menu->superficieFundo);
+	// SDL_FreeSurface(menu->superficieNome);
+	// SDL_FreeSurface(menu->superficieTexto);
+	// SDL_FreeSurface(menu->superficiePlay);
+	// SDL_FreeSurface(menu->superficieOpcao);
+	// SDL_FreeSurface(menu->superficieInstrucao);
+	// SDL_FreeSurface(menu->superficieRanking);
+	// SDL_FreeSurface(menu->superficieCreditos);
+	// SDL_FreeSurface(menu->superficieSair);
+	return 1;
 }

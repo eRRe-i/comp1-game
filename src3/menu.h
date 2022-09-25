@@ -16,6 +16,9 @@ typedef struct menu1{
     SDL_Texture *texturaCreditos;
     SDL_Texture *texturaSair;
     SDL_Texture *texturaSeta;
+    SDL_Texture* texturaVolta;
+    SDL_Texture* texturaScore;
+
     SDL_Surface *superficieFundo;
 	SDL_Surface *superficieBotao;
 	SDL_Surface *superficieTexto;
@@ -27,6 +30,8 @@ typedef struct menu1{
 	SDL_Surface *superficieSair;
 	SDL_Surface *superficieNome;
 	SDL_Surface *superficieSeta;
+    SDL_Surface* superficieScore;
+	SDL_Surface* superficieVolta;
 
     SDL_Rect r;
 
@@ -38,8 +43,11 @@ typedef struct menu1{
     SDL_Rect src4;
     SDL_Rect src5;
     SDL_Rect src6;
+    SDL_Rect srcVolta;
     TTF_Font* fonteJogo;
     TTF_Font* fonteBotao;
+    TTF_Font* fonteScore;
+    TTF_Font* fonteRecord;
 } Menu1;
 
 Menu1* loadMenu1(SDL_Renderer* renderer);

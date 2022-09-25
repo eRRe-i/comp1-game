@@ -15,8 +15,11 @@ Menu1* loadMenu1(SDL_Renderer* renderer) {
 	Menu1* menu = (Menu1*)malloc(sizeof(Menu1));
 	menu->fonteJogo = TTF_OpenFont("./fonts/IMMORTAL.ttf", 128);
 	menu->fonteBotao = TTF_OpenFont("./fonts/ChocoladineDemo.ttf", 64);
+	menu->fonteScore = TTF_OpenFont("./fonts/ka1.ttf",16);
+	menu->fonteRecord = TTF_OpenFont("./fonts/ArcadeClassic.ttf",32);
 
 	SDL_Color preto = {0, 0, 0};
+	SDL_Color branco = {255, 255, 255};
 
 	menu->r.x = SCREEN_WIDTH / 2 -330;
 	menu->r.y = - 330;
@@ -64,6 +67,10 @@ Menu1* loadMenu1(SDL_Renderer* renderer) {
 	menu->src6.w = 150;
 	menu->src6.h = 50;
 
+	menu->srcVolta.x= 600;
+	menu->srcVolta.y = 450;
+	menu->srcVolta.w = 150;
+	menu->srcVolta.h = 50;
 
 
 	menu->superficieFundo = IMG_Load("menuback.png");
@@ -77,6 +84,9 @@ Menu1* loadMenu1(SDL_Renderer* renderer) {
 	menu->superficieSair = TTF_RenderText_Solid(menu->fonteBotao, "Sair", preto);
 	menu->superficieNome = IMG_Load("nomejogo.jpeg");
 	menu->superficieSeta = IMG_Load("seta.png");
+	menu->superficieScore = TTF_RenderText_Solid(menu->fonteScore,"Ranking:", branco);
+	menu->superficieVolta = TTF_RenderText_Solid(menu->fonteJogo,"voltar", preto);
+
 	menu->fundo = SDL_CreateTextureFromSurface(renderer, menu->superficieFundo);
 	menu->texturaBotao = SDL_CreateTextureFromSurface(renderer, menu->superficieBotao);
 	menu->nomejogo = SDL_CreateTextureFromSurface(renderer, menu->superficieNome);
@@ -88,6 +98,8 @@ Menu1* loadMenu1(SDL_Renderer* renderer) {
 	menu->texturaRanking = SDL_CreateTextureFromSurface(renderer, menu->superficieRanking);
 	menu->texturaSair = SDL_CreateTextureFromSurface(renderer, menu->superficieSair);
 	menu->texturaSeta = SDL_CreateTextureFromSurface(renderer, menu->superficieSeta);
+	menu->texturaVolta = SDL_CreateTextureFromSurface(renderer, menu->superficieVolta);
+	menu->texturaScore = SDL_CreateTextureFromSurface(renderer, menu->superficieScore);
 }
 
 
@@ -218,6 +230,81 @@ int loopMenu1(Menu1* menu){
 	{
 		moveCursor(menu);
 		renderMenu1(renderer, menu);
+		SDL_RenderPresent(renderer);
+	}
+	SDL_DestroyTexture(menu->fundo);
+	SDL_DestroyTexture(menu->nomejogo);
+	SDL_DestroyTexture(menu->texturaTexto);
+	SDL_DestroyTexture(menu->texturaPlay);
+	SDL_DestroyTexture(menu->texturaOpcao);
+	SDL_DestroyTexture(menu->texturaInstrucao);
+	SDL_DestroyTexture(menu->texturaRanking);
+	SDL_DestroyTexture(menu->texturaCreditos);
+	SDL_DestroyTexture(menu->texturaSair);
+
+	SDL_FreeSurface(menu->superficieFundo);
+	SDL_FreeSurface(menu->superficieNome);
+	SDL_FreeSurface(menu->superficieTexto);
+	SDL_FreeSurface(menu->superficiePlay);
+	SDL_FreeSurface(menu->superficieOpcao);
+	SDL_FreeSurface(menu->superficieInstrucao);
+	SDL_FreeSurface(menu->superficieRanking);
+	SDL_FreeSurface(menu->superficieCreditos);
+	SDL_FreeSurface(menu->superficieSair);
+	return 1;
+}
+void lerRecords(SDL_Renderer* renderer, Menu1* menu){
+	SDL_Color branco = {255, 255, 255};
+	FILE    *textfile;
+    char    line[50];
+
+    textfile = fopen("records.txt", "r");
+    if(textfile == NULL)
+    	return 1;
+
+    while(fgets(line, 50, textfile)){
+    	line[strcspn(line, "\n")] = '\0';
+    	SDL_Surface* superficieRecords = TTF_RenderText_Solid(menu->fonteRecord,line, branco);
+    	SDL_Texture* texturaRecords= SDL_CreateTextureFromSurface(renderer, superficieRecords);
+    	SDL_Rect src2 = { 50, 200, 700, 400};
+    	SDL_FreeSurface(superficieRecords);
+    	SDL_RenderCopy(renderer, texturaRecords, NULL, &src2);
+    	SDL_RenderPresent(renderer);
+    }
+    fclose(textfile);
+}
+int listenEventMenu2(Menu1* menu){
+	SDL_Event e;
+	while(SDL_PollEvent( &e ) != 0) {
+		if(e.type == SDL_QUIT || (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)) {
+			return 1;
+		}
+		else if (e.type == SDL_KEYDOWN) {
+			switch( e.key.keysym.sym ) {
+				case SDLK_RETURN:
+					return 1;
+				break;
+			}
+		}
+	}
+}
+void renderMenu2(SDL_Renderer* renderer, Menu1* menu){
+	menu->r.x = 545;
+	menu->r.y = 450;
+	SDL_Rect srcBotao = { 575 ,450 ,225,80};
+	SDL_RenderClear(renderer);
+	lerRecords(renderer, menu);
+	SDL_RenderCopy(renderer, menu->fundo, NULL, &menu->dstrect);
+	// SDL_RenderCopy(renderer, menu->texturaTexto, NULL, &menu->src);
+	SDL_RenderCopy(renderer, menu->texturaScore, NULL, &menu->src);
+    SDL_RenderCopy(renderer, menu->texturaBotao, NULL, &srcBotao);
+    SDL_RenderCopy(renderer, menu->texturaVolta, NULL, &menu->srcVolta);
+	SDL_RenderCopy(renderer, menu->texturaSeta, NULL, &menu->r);
+}
+
+int loopMenu2(SDL_Renderer* renderer, Menu1* menu){
+	while (listenEventMenu2(menu) == 0)
+	{
 		SDL_RenderPresent(renderer);
 	}
 	SDL_DestroyTexture(menu->fundo);
