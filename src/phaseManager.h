@@ -4,7 +4,8 @@
 #include "attack.h"
 #include "board.h"
 #include "enemy.h"
-
+#include "score.h"
+#include "life.h"
 
 typedef struct phaseManager {
     
@@ -13,6 +14,8 @@ typedef struct phaseManager {
     Player* player;
     AttackManager* attackManager;
     EnemyManager* enemyManager;
+    Life* life;
+    Score* score;
 
 } PhaseManager;
 

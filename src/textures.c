@@ -108,3 +108,29 @@ EnemyTexture* loadEnemyTexture(SDL_Renderer* renderer, int type) {
 
     return enemyTexture;
 }
+
+LifeTexture* loadLifeTexture(SDL_Renderer* renderer, int i){
+    LifeTexture* lifeTexture = (LifeTexture*)malloc(sizeof(LifeTexture));
+   
+    lifeTexture->spriteWidth  = 300;
+    lifeTexture->spriteHeight = 0;
+    i +=1;
+    for(int j=0; j<2; j++) {
+        lifeTexture->spritePosition[0][j].x = lifeTexture->spriteWidth*j;
+        lifeTexture->spritePosition[0][j].y = lifeTexture->spriteHeight;
+        lifeTexture->spritePosition[0][j].w = 300;
+        lifeTexture->spritePosition[0][j].h = 300;
+    }
+
+    // lifeTexture->displayRect.x = 50 + (i*13);
+    // lifeTexture->displayRect.y = 50;
+    lifeTexture->displayRect.w = 25;
+    lifeTexture->displayRect.h = 25;
+    lifeTexture->x = 25 + (i*30);
+    lifeTexture->y = 25;
+    lifeTexture->frame = 0;
+
+    lifeTexture->texture = loadImage(renderer, "assets/life.png");
+
+    return lifeTexture;
+}

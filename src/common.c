@@ -33,11 +33,18 @@ void listenEvent(KeyboardInput* keyboardInput) {
 					}
 					break;
 				}
-				// case SDLK_a: {
-				// 	fprintf(stderr, "Ataque!\n");
-				// 	keyboardInput->attackKeyboardInput.attack = FIRST_ATTACK;
-				// 	break;
-				// }
+				case SDLK_s: {
+					keyboardInput->gameStateKeyboardInput.score = 1;
+					break;
+				}
+				case SDLK_g: {
+					keyboardInput->gameStateKeyboardInput.redLife = 1;
+					break;
+				}
+				case SDLK_h: {
+					keyboardInput->gameStateKeyboardInput.addLife = 1;
+					break;
+				}
 			}
 		}
     }

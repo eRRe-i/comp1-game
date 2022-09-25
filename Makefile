@@ -12,7 +12,7 @@ BIN = bin/main
 
 COMPILER_FLAGS = 
 
-LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2main
+LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2main -lSDL2_ttf
 
 RM = 
 

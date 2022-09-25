@@ -42,6 +42,11 @@ typedef struct gameStateKeyboardInput {
     int pauseGame;
     int currentMapID;
 
+    // TODO: PARA TESTE, REMOVER
+    int score;
+    int addLife;
+    int redLife;
+
 } GameStateKeyboardInput;
 
 typedef struct attackKeyboardInput {

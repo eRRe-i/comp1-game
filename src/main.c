@@ -6,6 +6,9 @@
 #include "enemy.h"
 #include "phaseManager.h"
 #include "board.h"
+#include "life.h"
+#include "score.h"
+
 
 int waiting(void);
 void updateScreen(SDL_Renderer* renderer, PhaseManager* phaseManager);
@@ -29,9 +32,19 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 void renderAttacks(SDL_Renderer* renderer, PhaseManager* phaseManager);
 int checkValidAttack(PhaseManager* phaseManager);
 void updateAttackPosition(PhaseManager* phaseManager);
+void renderLife(SDL_Renderer* renderer, PhaseManager* phaseManager);
+void renderScore(SDL_Renderer* renderer, PhaseManager* phaseManager);
+Vector getPlayerPosition(PhaseManager* phaseManager);
+void addLife(PhaseManager* phaseManager);
+void reduzirLife(PhaseManager* phaseManager);
 
 Timer t;
 Timer t2;
+char score[MAX_SIZE];
+TTF_Font* fonteJogo = NULL;
+TTF_Font* fonteBotao = NULL;
+SDL_Color preto = {0, 0, 0};
+SDL_Color branco = {255, 255, 255};
 
 int main (int argc, char *argv[])
 {
@@ -53,9 +66,17 @@ int main (int argc, char *argv[])
 		SDL_Log("ERROR : SDL Initialization > %s\n", SDL_GetError());
 		return 1;
 	}
-	
+	if(TTF_Init() == -1){
+    		SDL_Log("ERROR : SDL2_ttf não foi possível inicializar > %s\n", SDL_GetError());
+	} else{
+		SDL_Log("SDL2_ttf foi inicializado corretamente > %s\n", SDL_GetError());
+	}
+
 	win = SDL_CreateWindow("Image Loading", 100, 100, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
 	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	fonteJogo = TTF_OpenFont("fonts/IMMORTAL.ttf",128);
+	
+	// SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
 	/**
 	 * @brief Load informacoes de mapa
@@ -76,12 +97,17 @@ int main (int argc, char *argv[])
 	PhaseManager* phaseManager = loadPhaseManager();
 	Board* board = loadBoardInitialState(mapIndex);
 	EnemyManager* enemyManager = loadEnemyManager(mapIndex);
+	Life* life = loadLife(renderer, player->life);
+
+	Score* score = loadScore(renderer, fonteJogo, branco);
 
 	phaseManager->map = mapas[mapIndex];
 	phaseManager->player = player;
 	phaseManager->attackManager = attackManager;
 	phaseManager->board = board;
 	phaseManager->enemyManager = enemyManager;
+	phaseManager->score = score;
+	phaseManager->life = life;
 
 	phaseManager->attackManager->firstAttackTexture = firstAttackTexture;
 	loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
@@ -110,9 +136,22 @@ int main (int argc, char *argv[])
 			loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
 			phaseManager->board = loadBoardInitialState(mapIndex);
 		}
+		// TODO: REMOVER QUANDO IMPLEMENTAR A LOGICA DE AUMENTAR O SCORE
+		if(keyboardInput->gameStateKeyboardInput.score == 1){
+			addScore(renderer, phaseManager->score, 10);
+			keyboardInput->gameStateKeyboardInput.score = 0;
+		}
+		if(keyboardInput->gameStateKeyboardInput.addLife == 1){
+			addLife(phaseManager);
+			keyboardInput->gameStateKeyboardInput.addLife = 0;
+		}
+		if(keyboardInput->gameStateKeyboardInput.redLife == 1){
+			reduzirLife(phaseManager);
+			keyboardInput->gameStateKeyboardInput.redLife = 0;
+		}
 		updateAttackState(phaseManager, keyboardInput);
         updateScreen(renderer, phaseManager);
-
+	
 		/**
 		 * @brief Atualiza o moviento do inimigo a cada 1 segundo
 		 * 
@@ -137,22 +176,6 @@ int main (int argc, char *argv[])
 			// 		phaseManager->map->mapCurrentPosition.x, 
 			// 		phaseManager->map->mapCurrentPosition.y);
 		}
-		// t2.elapsedTime = SDL_GetTicks();
-		// if(t2.elapsedTime - t2.currentTime > 100) {
-		// 	t2.currentTime = t2.elapsedTime;
-		// 	updateAttackPosition(phaseManager);
-		// }
-		
-		// 	fprintf(stderr, "currentPoint: (%i, %i)\n dstPoint: (%i, %i)\n", 
-		// 					phaseManager->map->mapCurrentPosition.x, 
-		// 					phaseManager->map->mapCurrentPosition.y,
-		// 					phaseManager->map->mapDestinationPosition.x, 
-		// 					phaseManager->map->mapDestinationPosition.y);
-
-
-	
-		// }
-
 	}
 
 	free(keyboardInput);
@@ -175,6 +198,9 @@ void updateScreen(SDL_Renderer* renderer, PhaseManager* phaseManager) {
 		renderEnemies(renderer, phaseManager);
 		renderAttacks(renderer, phaseManager);
 		updateAttackPosition(phaseManager);
+		renderScore(renderer, phaseManager);
+		renderLife(renderer, phaseManager);
+		
         SDL_RenderCopy(renderer,
 			player->characterTexture->characterSheet,
 			&player->characterTexture->spritePosition[player->facingSide][player->frame],
@@ -611,25 +637,6 @@ void renderAttacks(SDL_Renderer* renderer, PhaseManager* phaseManager) {
 		if(attackManager->attackList[i] != NULL) {
 
 			Attack* attack = attackManager->attackList[i];
-			// fprintf(stderr, "ATTACK %i x:%i y: %i\n", i, attack->attackPosition.x, attack->attackPosition.y);
-		
-			// if(attack->direita == 1){
-			// 	attack->attackPosition.x +=32;
-			// }
-			// if(attack->esquerda == 1){
-			// 	attack->attackPosition.x -=32;
-			// }
-			// if(attack->cima == 1){
-			// 	attack->attackPosition.y -=32;
-			// }
-			// if(attack->baixo == 1){
-			// 	attack->attackPosition.y +=32;
-			// }
-
-			// if(attack->atkTexture == NULL){
-			// 	fprintf(stderr, "Ataque sem textura");
-			// 	// attack->atkTexture = loadAttackTexture(renderer, FIRST_ATK_PATH);
-			// }
 
 			SDL_Rect renderRect = 	{	attack->attackPosition.x,
 										attack->attackPosition.y,
@@ -653,4 +660,44 @@ int checkValidAttack(PhaseManager* phaseManager) {
 
 	return checkIfPlayerMoveIsValid(phaseManager);
 
+}
+void renderLife(SDL_Renderer* renderer, PhaseManager* phaseManager){
+	Vector playerPosition = getPlayerPosition(phaseManager);
+	Vector lifePosition = setVector(playerPosition.x-400,playerPosition.y -335);
+	Vector newPosition = getObjectViewPosfromGlobalPos(phaseManager->map->mapCurrentPosition, lifePosition);
+	for(int i = 0;i<phaseManager->player->life;i++){
+
+		if(phaseManager->life->lifes[i] == NULL)
+			phaseManager->life->lifes[i] = loadLifeTexture(renderer, i);
+		phaseManager->life->lifes[i]->displayRect.x = phaseManager->life->lifes[i]->x + newPosition.x;
+		phaseManager->life->lifes[i]->displayRect.y = phaseManager->life->lifes[i]->y + newPosition.y;
+		SDL_RenderCopy(renderer, 
+				phaseManager->life->lifes[i]->texture,
+				&phaseManager->life->lifes[i]->spritePosition[0][0], 
+				&phaseManager->life->lifes[i]->displayRect);
+	}
+}
+
+void renderScore(SDL_Renderer* renderer, PhaseManager* phaseManager){
+	Vector playerPosition = getPlayerPosition(phaseManager);
+	Vector renderPosition = setVector(playerPosition.x+300,playerPosition.y-315);
+	Vector newPosition = getObjectViewPosfromGlobalPos(phaseManager->map->mapCurrentPosition, renderPosition);
+	phaseManager->score->display.x = newPosition.x;
+	phaseManager->score->display.y = newPosition.y;
+	// fprintf(stderr, phaseManager->score->score);
+	SDL_RenderCopy(renderer, phaseManager->score->texture, NULL, &phaseManager->score->display);
+
+}
+Vector getPlayerPosition(PhaseManager* phaseManager){
+	
+	BoardIndex playerIndex = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
+	return getGlobalPositionFromBoardIndex(playerIndex);
+}
+void reduzirLife(PhaseManager* phaseManager){
+	if(phaseManager->player->life > 0)
+		phaseManager->player->life -=1;	
+}
+void addLife(PhaseManager* phaseManager){
+	if(phaseManager->player->life < 5 )
+		phaseManager->player->life +=1;	
 }

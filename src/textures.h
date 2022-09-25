@@ -63,6 +63,20 @@ typedef struct enemyTexture {
 
 } EnemyTexture;
 
+typedef struct lifeTexture {
+
+	SDL_Texture* texture;
+    SDL_Rect spritePosition[1][2];
+    int frame;
+    int x;
+    int y;
+
+    int spriteWidth;
+    int spriteHeight;
+
+    SDL_Rect displayRect;
+
+} LifeTexture;
 
 
 
@@ -71,6 +85,6 @@ CharacterTexture* loadCharacterTexture(SDL_Renderer* renderer);
 SDL_Texture* loadImage(SDL_Renderer* renderer, const char* imgPath);
 SDL_Rect fillRect(int x, int y, int w, int h);
 EnemyTexture* loadEnemyTexture(SDL_Renderer* renderer, int type);
-
+LifeTexture* loadLifeTexture(SDL_Renderer* renderer, int i);
 
 #endif //TEXTURES
