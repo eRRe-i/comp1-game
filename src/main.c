@@ -387,9 +387,13 @@ void updateEnemy(SDL_Renderer* renderer, Enemy* enemy, Vector newPosition){
 
 void moveEnemies(PhaseManager* phaseManager){
 	for(int i = 0; i < phaseManager->enemyManager->total_enemy; i++){
-		Enemy * enemy = phaseManager->enemyManager->Enemies[i];
-		if(checkIfObjectInsideRenderArea(phaseManager->map->srcRect, enemy->enemyTexture->displayRect)){
-			moveEnemy(enemy, phaseManager);
+
+		if(phaseManager->enemyManager->Enemies[i] != NULL) {
+			Enemy * enemy = phaseManager->enemyManager->Enemies[i];
+			if(checkIfObjectInsideRenderArea(phaseManager->map->srcRect, enemy->enemyTexture->displayRect)){
+				moveEnemy(enemy, phaseManager);
+			}
+		
 		}
 	}
 }
@@ -697,7 +701,6 @@ void renderScore(SDL_Renderer* renderer, PhaseManager* phaseManager){
 	Vector newPosition = getObjectViewPosfromGlobalPos(phaseManager->map->mapCurrentPosition, renderPosition);
 	phaseManager->score->display.x = newPosition.x;
 	phaseManager->score->display.y = newPosition.y;
-	// fprintf(stderr, phaseManager->score->score);
 	SDL_RenderCopy(renderer, phaseManager->score->texture, NULL, &phaseManager->score->display);
 
 }
@@ -735,7 +738,7 @@ int updateEnemyHit(PhaseManager* phaseManager, BoardIndex board) {
 				printf("%i, %i\n", board.i, enemyManager->Enemies[i]->boardIndex.i);
 				printf("%i, %i\n", board.j, enemyManager->Enemies[i]->boardIndex.j);
 				enemyManager->Enemies[i] = NULL;
-				phaseManager->life += 200;
+				phaseManager->player->life -= 1;
 				return TRUE;
 			}
 		}
