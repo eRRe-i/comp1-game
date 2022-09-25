@@ -40,6 +40,8 @@ void addLife(PhaseManager* phaseManager);
 void reduzirLife(PhaseManager* phaseManager);
 int checkIfEnemyHit(Board* board, int i, int j);
 int updateEnemyHit(PhaseManager* phaseManager, BoardIndex board);
+int updateIfPlayerHit(BoardIndex playerIndex, BoardIndex enemyIndex);
+
 
 Timer t;
 Timer t2;
@@ -405,6 +407,10 @@ void moveEnemies(PhaseManager* phaseManager){
 			if(checkIfObjectInsideRenderArea(phaseManager->map->srcRect, enemy->enemyTexture->displayRect)){
 				moveEnemy(enemy, phaseManager);
 			}
+			if(updateIfPlayerHit(getCharacterBoardIndex(phaseManager->map->mapCurrentPosition), enemy->boardIndex)) {
+				enemy = NULL;
+				phaseManager->player->life -= 1;
+			}
 		
 		}
 	}
@@ -768,4 +774,12 @@ int updateEnemyHit(PhaseManager* phaseManager, BoardIndex board) {
 
 	}
 	return FALSE;
+}
+int updateIfPlayerHit(BoardIndex playerIndex, BoardIndex enemyIndex) {
+
+	int pointI = playerIndex.i == enemyIndex.j;
+	int pointJ = playerIndex.j == enemyIndex.j;
+
+	return pointI && pointJ;
+
 }
