@@ -16,6 +16,7 @@ typedef struct phaseManager {
     EnemyManager* enemyManager;
     Life* life;
     Score* score;
+    int mapIndex;
 
 } PhaseManager;
 

@@ -61,5 +61,9 @@ void renderMenu2(SDL_Renderer* renderer, Menu1* menu);
 void renderMenu3(SDL_Renderer* renderer, Menu1* menu);
 void renderMenu4(SDL_Renderer* renderer, Menu1* menu);
 int loopMenu2(SDL_Renderer* renderer, Menu1* menu);
-
+void renderEndGame(SDL_Renderer* renderer, Menu1* menu, int score);
+void renderNameInput(SDL_Renderer* renderer, Menu1 * menu, char *name);
+int listenEventGameOver(Menu1* menu, char* name, int i);
+int loopGameOver(SDL_Renderer* renderer, Menu1* menu, int score);
+void salvaScore(char *name, int score);
 #endif // DEBUG

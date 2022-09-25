@@ -118,16 +118,6 @@ int main (int argc, char *argv[])
 	loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
 
 
-	// for(int i = 0; i < 70; i++) {
-	// 	for (int j = 0; j<70; j++) {
-
-	// 		printf("%i ", phaseManager->board->map_matrix[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
-
-	fprintf(stderr, "menu->posCursor == %i\n", menu->posicaoCursor);
-
 	t2.currentTime = 0;
 	int saidaMenu = 0;
 	// main loop
@@ -139,12 +129,38 @@ int main (int argc, char *argv[])
 		if(saidaMenu == -1){
 			keyboardInput->gameStateKeyboardInput.quitGame = 1;
 		}
+		if(phaseManager->player->life <= 0){
+			saidaMenu = loopGameOver(renderer, menu, phaseManager->score->scoreValue);
+			generateMaps(renderer, mapas);
+			mapIndex = 0;
+			phaseManager = loadPhaseManager();
+			phaseManager->attackManager = loadAttackManager();
+			phaseManager->attackManager->firstAttackTexture = firstAttackTexture;
+			phaseManager->board = loadBoardInitialState(mapIndex);
+			phaseManager->player = loadPlayerInitialState(characterTexture);
+			phaseManager->player->life = 3;
+			phaseManager->life = loadLife(renderer, phaseManager->player->life);
+			phaseManager->enemyManager = loadEnemyManager(mapIndex);
+			loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
+			phaseManager->score = loadScore(renderer, fonteJogo, preto);
+			phaseManager->map = mapas[mapIndex];
+			keyboardInput->gameStateKeyboardInput.currentMapID = mapIndex;
+		}
 		if(saidaMenu==1){
 
 			listenEvent(keyboardInput);
 			updatePlayerState(phaseManager, keyboardInput);
 			if(keyboardInput->gameStateKeyboardInput.currentMapID != mapIndex){
 				mapIndex = keyboardInput->gameStateKeyboardInput.currentMapID;
+				phaseManager->map = mapas[mapIndex];
+				phaseManager->enemyManager = loadEnemyManager(mapIndex);
+				loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
+				phaseManager->board = loadBoardInitialState(mapIndex);
+			}
+			if( phaseManager->mapIndex != mapIndex){
+				fprintf(stderr, "mudou de mapa pq não tem inimigos\n");
+				keyboardInput->gameStateKeyboardInput.currentMapID = phaseManager->mapIndex;
+				mapIndex = phaseManager->mapIndex;
 				phaseManager->map = mapas[mapIndex];
 				phaseManager->enemyManager = loadEnemyManager(mapIndex);
 				loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
@@ -174,27 +190,13 @@ int main (int argc, char *argv[])
 			if(t.elapsedTime - t.currentTime > 1000) {			
 				t.currentTime = t.elapsedTime;
 				moveEnemies(phaseManager);
-
-
-				// BoardIndex b = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
-				// printf("%i - %i\n", b.i, b.j);
-				// printf("Topo: %i | %i\n", checkIfWall(phaseManager->board, b.i-1, b.j), board->map_matrix[b.i-1][b.j]);
-				// printf("Baixo:%i | %i\n", checkIfWall(phaseManager->board, b.i+1, b.j), board->map_matrix[b.i+1][b.j]);
-				// printf("Dir:  %i | %i\n", checkIfWall(phaseManager->board, b.i, b.j+1), board->map_matrix[b.i][b.j+1]);
-				// printf("Esq:  %i | %i\n\n", checkIfWall(phaseManager->board, b.i, b.j-1), board->map_matrix[b.i][b.j-1]);
-				// fprintf(stderr, "board Index: (%i, %i)\n\n",
-				// getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).i,
-				// getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).j);
-
-				// fprintf(stderr, "currentPoint: (%i, %i)\n\n", 
-				// 		phaseManager->map->mapCurrentPosition.x, 
-				// 		phaseManager->map->mapCurrentPosition.y);
 			}
 
 		}
 	}
 
 	free(keyboardInput);
+	// SDL_FlushEvents();
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(win);
 	
@@ -574,9 +576,6 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 			Vector attackMove = setVector(0,0);
 			Vector attackInitialPosition;
 			Vector attackGlobalPosition;
-			// fprintf(stderr, "PlayerBoardIndex I: %i, J: %i\n", playerIndex.i, playerIndex.j);
-			// fprintf(stderr, "PlayerGlobalPossition  X: %i, Y: %i\n\n", playerGlobalPosition.x, playerGlobalPosition.y);
-			// fprintf(stderr, "FACE SIDE %i", player->facingSide);
 
 			switch(player->facingSide) {
 
@@ -614,9 +613,6 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 					break;
 				}
 			}
-			// fprintf(stderr, "AttackBoardIndex:    I: %i, J: %i \n", attackIndex.i, attackIndex.j);
-			// fprintf(stderr, "AttackBoardPosition: X: %i, J: %i\n\n", attackInitialPosition.x, attackInitialPosition.y);
-
 			for(int i = 0; i < 5; i++) {
 				if (attackManager->attackList[i] == NULL) {
 					fprintf(stderr,"gerando ataque\n");
@@ -630,7 +626,6 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 			}
 		}
 		keyboardInput->attackKeyboardInput.attack = 0;
-		// renderAttacks(renderer, phaseManager);
 	}
 
 }
@@ -648,9 +643,7 @@ void updateAttackPosition(PhaseManager* phaseManager){
 										BLOCKSIZE
 									};
 			BoardIndex attackIndex = getBoardIndexFromGlobalPosition(attack->globalPosition);
-			// fprintf(stderr, "(%i, %i)\n", attackIndex.i, attackIndex.j);
-			// fprintf(stderr, "Wall: %i\n", checkIfWall(board, attackIndex.i, attackIndex.j));
-			// fprintf(stderr, "Wall? %i\n\n", board->map_matrix[attackIndex.i][attackIndex.j]);
+
 			if(!checkIfObjectInsideRenderArea(phaseManager->map->dstRect, renderRect)) {
 
 				fprintf(stderr,"APAGANDO ataque %i\n", i);
@@ -730,7 +723,6 @@ void renderLife(SDL_Renderer* renderer, PhaseManager* phaseManager){
 void renderScore(SDL_Renderer* renderer, PhaseManager* phaseManager){
 
 	if(phaseManager->score->update == 1){
-			fprintf(stderr,"ADD SCORE\n");
 		addScore(renderer, phaseManager->score, phaseManager->score->scoreValue);
 		phaseManager->score->update = 0;
 	}
@@ -768,24 +760,28 @@ int updateEnemyHit(PhaseManager* phaseManager, BoardIndex board) {
 	EnemyManager* enemyManager = phaseManager->enemyManager;
 	int a, b;
 
+	int haveEnemy = 0;
+
 	for(int i=0; i< phaseManager->enemyManager->total_enemy; i++) {
 
 		if(enemyManager->Enemies[i] != NULL) {
-			
+			haveEnemy +=1;
 			a = enemyManager->Enemies[i]->boardIndex.i == board.i;
 			b = enemyManager->Enemies[i]->boardIndex.j == board.j;
 			if(a && b) {
 				printf("%i, %i\n", board.i, enemyManager->Enemies[i]->boardIndex.i);
 				printf("%i, %i\n", board.j, enemyManager->Enemies[i]->boardIndex.j);
 				enemyManager->Enemies[i] = NULL;
-				if(phaseManager->player->life >0 && phaseManager->player->life < 5)
-					phaseManager->player->life += 1;
 				phaseManager->score->scoreValue += 200;
 				phaseManager->score->update = 1;
 				return TRUE;
 			}
 		}
 
+	}
+	if(haveEnemy == 0 ){
+		fprintf(stderr, "SEM INIMIGOS\n");
+		phaseManager->mapIndex +=1;
 	}
 	return FALSE;
 }

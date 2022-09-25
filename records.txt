@@ -1,3 +1,3 @@
-THIAGO           9999999
-LEANDRO          9999999
-ZE               0000000
+teste          1000
+teste record          6000
+teste          0
