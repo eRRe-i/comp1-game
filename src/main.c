@@ -86,12 +86,14 @@ int main (int argc, char *argv[])
 	phaseManager->attackManager->firstAttackTexture = firstAttackTexture;
 	loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
 
-	BoardIndex b = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
-	printf("Topo: %i\n", checkIfWall(phaseManager->board, b.i, b.j-1));
-	printf("Baixo: %i\n", checkIfWall(phaseManager->board, b.i, b.j+1));
-	printf("Dir: %i\n", checkIfWall(phaseManager->board, b.i+1, b.j));
-	printf("Esq: %i\n\n", checkIfWall(phaseManager->board, b.i-1, b.j));
 
+	for(int i = 0; i < 70; i++) {
+		for (int j = 0; j<70; j++) {
+
+			printf("%i ", phaseManager->board->map_matrix[i][j]);
+		}
+		printf("\n");
+	}
 
 
 	t2.currentTime = 0;
@@ -122,10 +124,11 @@ int main (int argc, char *argv[])
 
 
 			BoardIndex b = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
-			printf("Topo: 	%i\n", checkIfWall(phaseManager->board, b.i, b.j-1));
-			printf("Baixo: 	%i\n", checkIfWall(phaseManager->board, b.i, b.j+1));
-			printf("Dir: 	%i\n", checkIfWall(phaseManager->board, b.i+1, b.j));
-			printf("Esq: 	%i\n\n", checkIfWall(phaseManager->board, b.i-1, b.j));
+			printf("%i - %i\n", b.i, b.j);
+			printf("Topo: %i | %i\n", checkIfWall(phaseManager->board, b.i, b.j-1), board->map_matrix[b.i][b.j-1]);
+			printf("Baixo:%i | %i\n", checkIfWall(phaseManager->board, b.i, b.j+1), board->map_matrix[b.i][b.j+1]);
+			printf("Dir:  %i | %i\n", checkIfWall(phaseManager->board, b.i+1, b.j), board->map_matrix[b.i+1][b.j]);
+			printf("Esq:  %i | %i\n\n", checkIfWall(phaseManager->board, b.i-1, b.j), board->map_matrix[b.i-1][b.j]);
 			// fprintf(stderr, "board Index: (%i, %i)\n\n",
 			// getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).i,
 			// getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).j);
