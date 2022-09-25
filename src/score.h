@@ -14,6 +14,7 @@ typedef struct score {
     SDL_Surface* surface;
 	SDL_Rect display;
     SDL_Color color;
+    int update;
 
 } Score;
 

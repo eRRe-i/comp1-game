@@ -14,12 +14,13 @@ Score* loadScore(SDL_Renderer* renderer,TTF_Font* fonte, SDL_Color color){
     score->display.y =0;
     score->display.w =100;
     score->display.h =40;
+    score->update = 0;
     return score;
 }
 void addScore(SDL_Renderer* renderer, Score* score, int valor){
-    score->scoreValue +=valor;
     char scoreText[100];
-    sprintf(scoreText, "SCORE: %i",score->scoreValue);
+    sprintf(scoreText, "SCORE: %i",valor);
     score->surface = TTF_RenderText_Solid(score->fonte,scoreText, score->color);
 	score->texture = SDL_CreateTextureFromSurface(renderer, score->surface);
 }
+

@@ -398,9 +398,13 @@ void updateEnemy(SDL_Renderer* renderer, Enemy* enemy, Vector newPosition){
 
 void moveEnemies(PhaseManager* phaseManager){
 	for(int i = 0; i < phaseManager->enemyManager->total_enemy; i++){
-		Enemy * enemy = phaseManager->enemyManager->Enemies[i];
-		if(checkIfObjectInsideRenderArea(phaseManager->map->srcRect, enemy->enemyTexture->displayRect)){
-			moveEnemy(enemy, phaseManager);
+
+		if(phaseManager->enemyManager->Enemies[i] != NULL) {
+			Enemy * enemy = phaseManager->enemyManager->Enemies[i];
+			if(checkIfObjectInsideRenderArea(phaseManager->map->srcRect, enemy->enemyTexture->displayRect)){
+				moveEnemy(enemy, phaseManager);
+			}
+		
 		}
 	}
 }
@@ -703,12 +707,19 @@ void renderLife(SDL_Renderer* renderer, PhaseManager* phaseManager){
 }
 
 void renderScore(SDL_Renderer* renderer, PhaseManager* phaseManager){
+
+	if(phaseManager->score->update == 1){
+			fprintf(stderr,"ADD SCORE\n");
+		addScore(renderer, phaseManager->score, phaseManager->score->scoreValue);
+		phaseManager->score->update = 0;
+	}
+
+
 	Vector playerPosition = getPlayerPosition(phaseManager);
 	Vector renderPosition = setVector(playerPosition.x+300,playerPosition.y-315);
 	Vector newPosition = getObjectViewPosfromGlobalPos(phaseManager->map->mapCurrentPosition, renderPosition);
 	phaseManager->score->display.x = newPosition.x;
 	phaseManager->score->display.y = newPosition.y;
-	// fprintf(stderr, phaseManager->score->score);
 	SDL_RenderCopy(renderer, phaseManager->score->texture, NULL, &phaseManager->score->display);
 
 }
@@ -746,7 +757,10 @@ int updateEnemyHit(PhaseManager* phaseManager, BoardIndex board) {
 				printf("%i, %i\n", board.i, enemyManager->Enemies[i]->boardIndex.i);
 				printf("%i, %i\n", board.j, enemyManager->Enemies[i]->boardIndex.j);
 				enemyManager->Enemies[i] = NULL;
-				phaseManager->life += 200;
+				if(phaseManager->player->life >0 && phaseManager->player->life < 5)
+					phaseManager->player->life += 1;
+				phaseManager->score->scoreValue += 200;
+				phaseManager->score->update = 1;
 				return TRUE;
 			}
 		}
