@@ -139,7 +139,6 @@ int main (int argc, char *argv[])
 		if(saidaMenu == -1){
 			keyboardInput->gameStateKeyboardInput.quitGame = 1;
 		}
-<<<<<<< develop
 		if(saidaMenu==1){
 
 			listenEvent(keyboardInput);
@@ -192,35 +191,6 @@ int main (int argc, char *argv[])
 				// 		phaseManager->map->mapCurrentPosition.y);
 			}
 
-=======
-		if(keyboardInput->gameStateKeyboardInput.redLife == 1){
-			reduzirLife(phaseManager);
-			keyboardInput->gameStateKeyboardInput.redLife = 0;
-		}
-		updateAttackState(phaseManager, keyboardInput);
-        updateScreen(renderer, phaseManager);
-	
-		/**
-		 * @brief Atualiza o moviento do inimigo a cada 1 segundo
-		 * 
-		 */
-		t.elapsedTime = SDL_GetTicks();
-		if(t.elapsedTime - t.currentTime > 1000) {			
-			t.currentTime = t.elapsedTime;
-			moveEnemies(phaseManager);
-
-
-			// BoardIndex b = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
-			// printf("%i - %i\n", b.i, b.j);
-			// printf("Topo: %i | %i\n", checkIfWall(phaseManager->board, b.i-1, b.j), board->map_matrix[b.i-1][b.j]);
-			// printf("Baixo:%i | %i\n", checkIfWall(phaseManager->board, b.i+1, b.j), board->map_matrix[b.i+1][b.j]);
-			// printf("Dir:  %i | %i\n", checkIfWall(phaseManager->board, b.i, b.j+1), board->map_matrix[b.i][b.j+1]);
-			// printf("Esq:  %i | %i\n\n", checkIfWall(phaseManager->board, b.i, b.j-1), board->map_matrix[b.i][b.j-1]);
-
-			// fprintf(stderr, "currentPoint: (%i, %i)\n\n", 
-			// 		phaseManager->map->mapCurrentPosition.x, 
-			// 		phaseManager->map->mapCurrentPosition.y);
->>>>>>> colision player/enemy detected
 		}
 	}
 
