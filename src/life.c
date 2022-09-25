@@ -13,6 +13,7 @@ Life* loadLife(SDL_Renderer* renderer,int qtde){
         if(i<qtde)
            life->lifes[i] = loadLifeTexture(renderer, i);
     }
+    life->frameLife = IMG_LoadTexture(renderer,  FRAME_PATH);
     return life;
 }
 

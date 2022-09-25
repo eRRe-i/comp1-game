@@ -9,7 +9,7 @@ typedef struct life {
     
     LifeTexture *lifes[5];
     
-
+    SDL_Texture* frameLife;
     BoardIndex boardIndex;
 } Life;
 
