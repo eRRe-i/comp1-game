@@ -132,7 +132,7 @@ int main (int argc, char *argv[])
 			keyboardInput->gameStateKeyboardInput.quitGame = 1;
 		}
 		if(phaseManager->player->life <= 0){
-			saidaMenu = loopGameOver(renderer, menu, phaseManager->score->scoreValue);
+			saidaMenu = loopGameOver(renderer, menu, phaseManager->score->scoreValue, 0);
 			generateMaps(renderer, mapas);
 			mapIndex = 0;
 			phaseManager = loadPhaseManager();
@@ -152,21 +152,39 @@ int main (int argc, char *argv[])
 
 			listenEvent(keyboardInput);
 			updatePlayerState(phaseManager, keyboardInput);
-			if(keyboardInput->gameStateKeyboardInput.currentMapID != mapIndex){
-				mapIndex = keyboardInput->gameStateKeyboardInput.currentMapID;
-				phaseManager->map = mapas[mapIndex];
-				phaseManager->enemyManager = loadEnemyManager(mapIndex);
-				loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
-				phaseManager->board = loadBoardInitialState(mapIndex);
-			}
+			// if(keyboardInput->gameStateKeyboardInput.currentMapID != mapIndex){
+			// 	mapIndex = keyboardInput->gameStateKeyboardInput.currentMapID;
+			// 	phaseManager->map = mapas[mapIndex];
+			// 	phaseManager->enemyManager = loadEnemyManager(mapIndex);
+			// 	loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
+			// 	phaseManager->board = loadBoardInitialState(mapIndex);
+			// }
 			if( phaseManager->mapIndex != mapIndex){
-				fprintf(stderr, "mudou de mapa pq não tem inimigos\n");
-				keyboardInput->gameStateKeyboardInput.currentMapID = phaseManager->mapIndex;
-				mapIndex = phaseManager->mapIndex;
-				phaseManager->map = mapas[mapIndex];
-				phaseManager->enemyManager = loadEnemyManager(mapIndex);
-				loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
-				phaseManager->board = loadBoardInitialState(mapIndex);
+				if(phaseManager->mapIndex >= MAP_LIST_SIZE){
+					saidaMenu = loopGameOver(renderer, menu, phaseManager->score->scoreValue, 1);
+					generateMaps(renderer, mapas);
+					mapIndex = 0;
+					phaseManager = loadPhaseManager();
+					phaseManager->attackManager = loadAttackManager();
+					phaseManager->attackManager->firstAttackTexture = firstAttackTexture;
+					phaseManager->board = loadBoardInitialState(mapIndex);
+					phaseManager->player = loadPlayerInitialState(characterTexture);
+					phaseManager->player->life = 3;
+					phaseManager->life = loadLife(renderer, phaseManager->player->life);
+					phaseManager->enemyManager = loadEnemyManager(mapIndex);
+					loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
+					phaseManager->score = loadScore(renderer, fonteJogo, preto);
+					phaseManager->map = mapas[mapIndex];
+					keyboardInput->gameStateKeyboardInput.currentMapID = mapIndex;
+				}else {
+					keyboardInput->gameStateKeyboardInput.currentMapID = phaseManager->mapIndex;
+					mapIndex = phaseManager->mapIndex;
+					phaseManager->map = mapas[mapIndex];
+					phaseManager->enemyManager = loadEnemyManager(mapIndex);
+					loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
+					phaseManager->board = loadBoardInitialState(mapIndex);
+
+				}
 			}
 			// TODO: REMOVER QUANDO IMPLEMENTAR A LOGICA DE AUMENTAR O SCORE
 			if(keyboardInput->gameStateKeyboardInput.score == 1){
@@ -486,6 +504,7 @@ int checkIfObjectInsideRenderArea(SDL_Rect windowRenderArea, SDL_Rect ObjectRend
 void renderEnemies(SDL_Renderer* renderer, PhaseManager* phaseManager){
 
 	Map* map = phaseManager->map;
+	int haveEnemy = 0;
 	
 	for(int i = 0; i < phaseManager->enemyManager->total_enemy; i++){
 		Enemy * enemy = phaseManager->enemyManager->Enemies[i];
@@ -494,9 +513,12 @@ void renderEnemies(SDL_Renderer* renderer, PhaseManager* phaseManager){
 				Vector newPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, getGlobalPositionFromBoardIndex(enemy->boardIndex));
 				updateEnemy(renderer, enemy, newPosition);
 			}
-
+			haveEnemy += 1;
 		}
 		
+	}
+	if(haveEnemy == 0 ){
+		phaseManager->mapIndex +=1;
 	}
 }
 
@@ -573,7 +595,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 
 	if(reachedDestination && keyboardInput->attackKeyboardInput.attack == FIRST_ATTACK) {
 
-		fprintf(stderr,"ATAQUE STATE\n");
+		//fprintf(stderr,"ATAQUE STATE\n");
 		if(checkValidAttack(phaseManager)) {
 			// getGlobalPositionFromBoardIndex
 			BoardIndex playerIndex = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
@@ -586,7 +608,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 			switch(player->facingSide) {
 
 				case CHARACTER_DOWN:{
-					fprintf(stderr, "ENTROU BAIXO\n");
+					//fprintf(stderr, "ENTROU BAIXO\n");
 					attackGlobalPosition = setVector(playerGlobalPosition.x,playerGlobalPosition.y + BLOCKSIZE);
 					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackGlobalPosition);
 					attackMove = setVector(0, ATTACK_SPEED);
@@ -594,7 +616,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 					break;
 				}
 				case CHARACTER_UP: {
-					fprintf(stderr, "ENTROU CIMA\n");
+					//fprintf(stderr, "ENTROU CIMA\n");
 					attackGlobalPosition = setVector(playerGlobalPosition.x,playerGlobalPosition.y - BLOCKSIZE);
 					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackGlobalPosition);
 					attackMove = setVector(0, -ATTACK_SPEED);
@@ -602,7 +624,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 					break;
 				}
 				case CHARACTER_RIGHT: {
-					fprintf(stderr, "ENTROU DIREITA\n");
+					//fprintf(stderr, "ENTROU DIREITA\n");
 					attackGlobalPosition = setVector(playerGlobalPosition.x + BLOCKSIZE, playerGlobalPosition.y);
 					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackGlobalPosition);
 					attackMove = setVector(ATTACK_SPEED, 0);
@@ -611,7 +633,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 					break;
 				}
 				case CHARACTER_LEFT: {
-					fprintf(stderr, "ENTROU ESQUERDA\n");
+					//fprintf(stderr, "ENTROU ESQUERDA\n");
 					attackGlobalPosition = setVector(playerGlobalPosition.x - BLOCKSIZE, playerGlobalPosition.y);
 					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackGlobalPosition);
 					attackMove = setVector(-ATTACK_SPEED, 0);
@@ -621,7 +643,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 			}
 			for(int i = 0; i < 5; i++) {
 				if (attackManager->attackList[i] == NULL) {
-					fprintf(stderr,"gerando ataque\n");
+					//fprintf(stderr,"gerando ataque\n");
 					attack = loadAttack(attackManager->firstAttackTexture,
 										attackInitialPosition,
 										attackGlobalPosition,
@@ -639,7 +661,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 void updateAttackPosition(PhaseManager* phaseManager){
 	AttackManager* attackManager = phaseManager->attackManager;
 	Board* board = phaseManager->board;
-	// fprintf(stderr, "update\n");
+	// //fprintf(stderr, "update\n");
 	for(int i = 0; i < 5; i++) {
 		if(attackManager->attackList[i] != NULL) {
 			Attack* attack = attackManager->attackList[i];
@@ -652,20 +674,20 @@ void updateAttackPosition(PhaseManager* phaseManager){
 
 			if(!checkIfObjectInsideRenderArea(phaseManager->map->dstRect, renderRect)) {
 
-				fprintf(stderr,"APAGANDO ataque %i\n", i);
+				//fprintf(stderr,"APAGANDO ataque %i\n", i);
 				attackManager->attackList[i]=NULL;
 
 			} else if(checkIfWall(board, attackIndex.i, attackIndex.j)){
 				
-				fprintf(stderr,"APAGANDO ataque %i\n", i);
+				//fprintf(stderr,"APAGANDO ataque %i\n", i);
 				attackManager->attackList[i]=NULL;
 
 			} else if (checkIfEnemyHit(board, attackIndex.i, attackIndex.j)) {
 				
 				if(updateEnemyHit(phaseManager, attackIndex)) {
-					fprintf(stderr,"APAGANDO ataque %i\n", i);
+					//fprintf(stderr,"APAGANDO ataque %i\n", i);
 					attackManager->attackList[i] = NULL;
-					fprintf(stderr,"CHEGUEI\n");
+					//fprintf(stderr,"CHEGUEI\n");
 				}
 
 			} else {
@@ -769,8 +791,6 @@ int updateEnemyHit(PhaseManager* phaseManager, BoardIndex board) {
 			a = enemyManager->Enemies[i]->boardIndex.i == board.i;
 			b = enemyManager->Enemies[i]->boardIndex.j == board.j;
 			if(a && b) {
-				printf("%i, %i\n", board.i, enemyManager->Enemies[i]->boardIndex.i);
-				printf("%i, %i\n", board.j, enemyManager->Enemies[i]->boardIndex.j);
 				enemyManager->Enemies[i] = NULL;
 				phaseManager->score->scoreValue += 200;
 				phaseManager->score->update = 1;
@@ -779,10 +799,11 @@ int updateEnemyHit(PhaseManager* phaseManager, BoardIndex board) {
 		}
 
 	}
-	if(haveEnemy == 0 ){
-		fprintf(stderr, "SEM INIMIGOS\n");
-		phaseManager->mapIndex +=1;
-	}
+	// if(haveEnemy == 0 ){
+	// 	fprintf(stderr, "SEM INIMIGOS\n");
+	// 	phaseManager->mapIndex +=1;
+	// }
+	// fprintf(stderr, "faltam x: %i /%i \n", haveEnemy,phaseManager->enemyManager->total_enemy);
 	return FALSE;
 }
 int updateIfObjectsHit(SDL_Rect playerRect, SDL_Rect enemyRect) {

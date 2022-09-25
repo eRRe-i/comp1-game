@@ -178,9 +178,9 @@ int listenEventMenu1(Menu1* menu,SDL_Renderer* renderer){
 						fprintf(stderr, "MENU 1 OPCAO %i\n", menu->posicaoCursor);
 						if(menu->posicaoCursor == 0)
 							return 1;
-						if(menu->posicaoCursor == 1){
-							loopGameOver(renderer, menu, 85487);
-						}
+						// if(menu->posicaoCursor == 1){
+						// 	loopGameOver(renderer, menu, 85487);
+						// }
 						if(menu->posicaoCursor == 2){
 							renderMenu4(renderer, menu);
 							loopMenu2(renderer, menu);
@@ -203,9 +203,7 @@ int listenEventMenu1(Menu1* menu,SDL_Renderer* renderer){
 }
 int loopMenu1(SDL_Renderer* renderer, Menu1* menu){
 	int retorno = 0;
-	fprintf(stderr, "MenuChegou\n");
 	menu->posicaoCursor = 0;
-	fprintf(stderr, "MenuChegou\n");
 	while (retorno == 0)
 	{	
 		retorno = listenEventMenu1(menu, renderer);
@@ -322,11 +320,12 @@ void renderMenu4(SDL_Renderer* renderer, Menu1* menu){
 	srcAutores.y += 100;
 	SDL_RenderCopy(renderer, tAutor2, NULL, &srcAutores);
 }
-void renderEndGame(SDL_Renderer* renderer, Menu1* menu, int score){
+void renderEndGame(SDL_Renderer* renderer, Menu1* menu, int score, int win){
 
 	SDL_Rect r = {580, 450, 40, 40};
 	SDL_Rect srcBotao = { 625,450,150,45};
 	SDL_Color preto = {0,0,0};
+	SDL_Color branco = {255,255,255};
 	SDL_Rect srcAutores = { 100, 200, 100, 40};
 
 	char scoreTextValue[100];
@@ -334,8 +333,13 @@ void renderEndGame(SDL_Renderer* renderer, Menu1* menu, int score){
 
 	SDL_RenderClear(renderer);
 	SDL_RenderCopy(renderer, menu->fundo, NULL, &menu->dstrect);
+	SDL_Surface* titulo;
+	if(win != 0){
+		titulo= TTF_RenderText_Solid(menu->fonteJogo,"VOCE VENCEU!!!", branco);
+	}else {
+		titulo= TTF_RenderText_Solid(menu->fonteJogo,"GAME OVER", preto);
+	}
 
-	SDL_Surface* titulo = TTF_RenderText_Solid(menu->fonteJogo,"GAME OVER", preto);
 	SDL_Surface* nameSurface = TTF_RenderText_Solid(menu->fonteJogo,"NAME:", preto);
 	SDL_Surface* scoreText = TTF_RenderText_Solid(menu->fonteJogo,scoreTextValue, preto);
 	SDL_Surface* ok = TTF_RenderText_Solid(menu->fonteJogo,"OK", preto);
@@ -380,12 +384,12 @@ int loopMenu2(SDL_Renderer* renderer, Menu1* menu){
 	return 1;
 }
 
-int loopGameOver(SDL_Renderer* renderer, Menu1* menu, int score){
+int loopGameOver(SDL_Renderer* renderer, Menu1* menu, int score, int win){
 	char* name = (char*)calloc(100,sizeof(char));
 	int i = 0;
 	do{
 		i = listenEventGameOver(menu, name, i);
-		renderEndGame(renderer, menu, score);
+		renderEndGame(renderer, menu, score, win);
 		renderNameInput(renderer, menu, name);
 		SDL_RenderPresent(renderer);
 
