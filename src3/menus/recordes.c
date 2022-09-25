@@ -15,7 +15,8 @@ const int SCREEN_HEIGHT = 600;
 
 int main(int argc, char ** argv)
 {
-
+	int j = 0;
+	int v[] = {0,1,2,3};
 	SDL_Event e;
 
 	SDL_Init(SDL_INIT_VIDEO);
@@ -85,9 +86,87 @@ int main(int argc, char ** argv)
     
     SDL_RenderPresent(renderer);
 
-    while(listenEventMenu2(menu) == 0) {
+    //ler arquivo record nome
+    int i = 1;
+    FILE    *textfile;
+    char    line[MAX_LINE_LENGTH];
 
-		
+    textfile = fopen("recordnome.txt", "r");
+    if(textfile == NULL)
+    	return 1;
+
+    while(fgets(line, MAX_LINE_LENGTH, textfile)){
+    	line[strcspn(line, "\n")] = '\0';
+    	SDL_Surface* superficieRecords = TTF_RenderText_Solid(fonteRecord,line, branco);
+    	SDL_Texture* texturaRecords= SDL_CreateTextureFromSurface(renderer, superficieRecords);
+    	SDL_Rect src2 = { SCREEN_WIDTH/2 -340/1.4, 98 +(50 * i), superficieRecords->w, superficieRecords->h};
+    	i++;
+    	SDL_FreeSurface(superficieRecords);
+
+    	SDL_RenderCopy(renderer, texturaRecords, NULL, &src2);
+    	SDL_RenderPresent(renderer);
+
+    }
+
+
+    fclose(textfile);
+    //ler arquivo record score
+    i = 1;
+
+    textfile = fopen("recordscore.txt", "r");
+    if(textfile == NULL)
+    	return 1;
+
+    while(fgets(line, MAX_LINE_LENGTH, textfile)){
+    	line[strcspn(line, "\n")] = '\0';
+    	SDL_Surface* superficieRecords = TTF_RenderText_Solid(fonteRecord,line, branco);
+    	SDL_Texture* texturaRecords= SDL_CreateTextureFromSurface(renderer, superficieRecords);
+    	SDL_Rect src2 = { SCREEN_WIDTH/2 +340/2, 98 +(50 * i), superficieRecords->w, superficieRecords->h};
+    	i++;
+    	SDL_FreeSurface(superficieRecords);
+    	SDL_RenderCopy(renderer, texturaRecords, NULL, &src2);
+    	SDL_RenderPresent(renderer);
+
+    }
+
+
+    fclose(textfile);
+
+
+
+    bool quit = false;
+
+    while(!quit) {
+
+		while(SDL_PollEvent( &e ) != 0) {
+
+			if(e.type == SDL_QUIT || (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)) {
+				quit = true;
+			}
+			else if (e.type == SDL_KEYDOWN) {
+
+				switch( e.key.keysym.sym ) {
+
+					case SDLK_UP:
+					if(j == 0 ){
+						j = 3;
+						printf("j - 1");
+					}else{
+						j -= 1;
+					}
+					break;
+
+					case SDLK_DOWN:
+					if(j == 3){
+						j = 0;
+						printf("j + 1");
+					}else{
+						j += 1;
+					}
+					break;
+				}
+			}
+		}
 	}
 
     SDL_Quit();
@@ -99,42 +178,4 @@ int main(int argc, char ** argv)
     TTF_CloseFont(fonteJogo);
 
     return 0;
-}
-
-int listenEventMenu2(Menu menu){
-	SDL_Event e;
-	while(SDL_PollEvent( &e ) != 0) {
-		if(e.type == SDL_QUIT || (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)) {
-			return 1;
-		}
-		else if (e.type == SDL_KEYDOWN) {
-			switch( e.key.keysym.sym ) {
-				case SDLK_RETURN:
-					return 1;
-				break;
-			}
-		}
-	}
-}
-
-
-void lerRecords(SDL_Renderer* renderer, Menu* menu){
-	SDL_Color branco = {255, 255, 255};
-	FILE    *textfile;
-    char    line[MAX_LINE_LENGTH];
-
-    textfile = fopen("records.txt", "r");
-    if(textfile == NULL)
-    	return 1;
-
-    while(fgets(line, MAX_LINE_LENGTH, textfile)){
-    	line[strcspn(line, "\n")] = '\0';
-    	SDL_Surface* superficieRecords = TTF_RenderText_Solid(menu->fonteRecord,line, branco);
-    	SDL_Texture* texturaRecords= SDL_CreateTextureFromSurface(renderer, menu->superficieRecords);
-    	SDL_Rect src2 = { 50, 200, 700, 400};
-    	SDL_FreeSurface(menu->superficieRecords);
-    	SDL_RenderCopy(renderer, texturaRecords, NULL, &src2);
-    	SDL_RenderPresent(renderer);
-    }
-    fclose(textfile);
 }

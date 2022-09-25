@@ -8,6 +8,7 @@
 #include "board.h"
 #include "life.h"
 #include "score.h"
+#include "menu.h"
 
 
 int waiting(void);
@@ -74,7 +75,7 @@ int main (int argc, char *argv[])
 		SDL_Log("SDL2_ttf foi inicializado corretamente > %s\n", SDL_GetError());
 	}
 
-	win = SDL_CreateWindow("Image Loading", 100, 100, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
+	win = SDL_CreateWindow("AA COMP 1", 100, 100, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
 	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	fonteJogo = TTF_OpenFont("fonts/IMMORTAL.ttf",128);
 	
@@ -91,7 +92,7 @@ int main (int argc, char *argv[])
 	AttackTexture* firstAttackTexture = loadAttackTexture(renderer, FIRST_ATK_PATH);
 
 	//chdir("..");
-
+	Menu1* menu = loadMenu1(renderer);
 	KeyboardInput* keyboardInput = loadKeyBoardInput();
 	Player* player = loadPlayerInitialState(characterTexture);
 	AttackManager* attackManager = loadAttackManager();
@@ -125,60 +126,68 @@ int main (int argc, char *argv[])
 
 
 	t2.currentTime = 0;
-
+	int saidaMenu = 0;
 	// main loop
 	while (keyboardInput->gameStateKeyboardInput.quitGame == 0) {
 
-		listenEvent(keyboardInput);
-		updatePlayerState(phaseManager, keyboardInput);
-		if(keyboardInput->gameStateKeyboardInput.currentMapID != mapIndex){
-			mapIndex = keyboardInput->gameStateKeyboardInput.currentMapID;
-			phaseManager->map = mapas[mapIndex];
-			phaseManager->enemyManager = loadEnemyManager(mapIndex);
-			loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
-			phaseManager->board = loadBoardInitialState(mapIndex);
+		if(saidaMenu == 0){
+			saidaMenu = loopMenu1(renderer, menu);
 		}
-		// TODO: REMOVER QUANDO IMPLEMENTAR A LOGICA DE AUMENTAR O SCORE
-		if(keyboardInput->gameStateKeyboardInput.score == 1){
-			phaseManager->score->scoreValue +=200;
-			phaseManager->score->update = 1;
-			// addScore(renderer, phaseManager->score, 10);
-			keyboardInput->gameStateKeyboardInput.score = 0;
+		if(saidaMenu == -1){
+			keyboardInput->gameStateKeyboardInput.quitGame = 1;
 		}
-		if(keyboardInput->gameStateKeyboardInput.addLife == 1){
-			addLife(phaseManager);
-			keyboardInput->gameStateKeyboardInput.addLife = 0;
-		}
-		if(keyboardInput->gameStateKeyboardInput.redLife == 1){
-			reduzirLife(phaseManager);
-			keyboardInput->gameStateKeyboardInput.redLife = 0;
-		}
-		updateAttackState(phaseManager, keyboardInput);
-        updateScreen(renderer, phaseManager);
-	
-		/**
-		 * @brief Atualiza o moviento do inimigo a cada 1 segundo
-		 * 
-		 */
-		t.elapsedTime = SDL_GetTicks();
-		if(t.elapsedTime - t.currentTime > 1000) {			
-			t.currentTime = t.elapsedTime;
-			moveEnemies(phaseManager);
+		if(saidaMenu==1){
+
+			listenEvent(keyboardInput);
+			updatePlayerState(phaseManager, keyboardInput);
+			if(keyboardInput->gameStateKeyboardInput.currentMapID != mapIndex){
+				mapIndex = keyboardInput->gameStateKeyboardInput.currentMapID;
+				phaseManager->map = mapas[mapIndex];
+				phaseManager->enemyManager = loadEnemyManager(mapIndex);
+				loadEnemies(renderer, phaseManager->enemyManager, phaseManager->board->map_matrix);
+				phaseManager->board = loadBoardInitialState(mapIndex);
+			}
+			// TODO: REMOVER QUANDO IMPLEMENTAR A LOGICA DE AUMENTAR O SCORE
+			if(keyboardInput->gameStateKeyboardInput.score == 1){
+				addScore(renderer, phaseManager->score, 10);
+				keyboardInput->gameStateKeyboardInput.score = 0;
+			}
+			if(keyboardInput->gameStateKeyboardInput.addLife == 1){
+				addLife(phaseManager);
+				keyboardInput->gameStateKeyboardInput.addLife = 0;
+			}
+			if(keyboardInput->gameStateKeyboardInput.redLife == 1){
+				reduzirLife(phaseManager);
+				keyboardInput->gameStateKeyboardInput.redLife = 0;
+			}
+			updateAttackState(phaseManager, keyboardInput);
+			updateScreen(renderer, phaseManager);
+		
+			/**
+			 * @brief Atualiza o moviento do inimigo a cada 1 segundo
+			 * 
+			 */
+			t.elapsedTime = SDL_GetTicks();
+			if(t.elapsedTime - t.currentTime > 1000) {			
+				t.currentTime = t.elapsedTime;
+				moveEnemies(phaseManager);
 
 
-			// BoardIndex b = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
-			// printf("%i - %i\n", b.i, b.j);
-			// printf("Topo: %i | %i\n", checkIfWall(phaseManager->board, b.i-1, b.j), board->map_matrix[b.i-1][b.j]);
-			// printf("Baixo:%i | %i\n", checkIfWall(phaseManager->board, b.i+1, b.j), board->map_matrix[b.i+1][b.j]);
-			// printf("Dir:  %i | %i\n", checkIfWall(phaseManager->board, b.i, b.j+1), board->map_matrix[b.i][b.j+1]);
-			// printf("Esq:  %i | %i\n\n", checkIfWall(phaseManager->board, b.i, b.j-1), board->map_matrix[b.i][b.j-1]);
-			// fprintf(stderr, "board Index: (%i, %i)\n\n",
-			// getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).i,
-			// getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).j);
+				// BoardIndex b = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
+				// printf("%i - %i\n", b.i, b.j);
+				// printf("Topo: %i | %i\n", checkIfWall(phaseManager->board, b.i-1, b.j), board->map_matrix[b.i-1][b.j]);
+				// printf("Baixo:%i | %i\n", checkIfWall(phaseManager->board, b.i+1, b.j), board->map_matrix[b.i+1][b.j]);
+				// printf("Dir:  %i | %i\n", checkIfWall(phaseManager->board, b.i, b.j+1), board->map_matrix[b.i][b.j+1]);
+				// printf("Esq:  %i | %i\n\n", checkIfWall(phaseManager->board, b.i, b.j-1), board->map_matrix[b.i][b.j-1]);
+				// fprintf(stderr, "board Index: (%i, %i)\n\n",
+				// getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).i,
+				// getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).j);
 
-			// fprintf(stderr, "currentPoint: (%i, %i)\n\n", 
-			// 		phaseManager->map->mapCurrentPosition.x, 
-			// 		phaseManager->map->mapCurrentPosition.y);
+				// fprintf(stderr, "currentPoint: (%i, %i)\n\n", 
+				// 		phaseManager->map->mapCurrentPosition.x, 
+				// 		phaseManager->map->mapCurrentPosition.y);
+			}
+
 		}
 	}
 
