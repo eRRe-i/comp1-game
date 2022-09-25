@@ -111,6 +111,14 @@ int main (int argc, char *argv[])
 		if(t.elapsedTime - t.currentTime > 1000) {			
 			t.currentTime = t.elapsedTime;
 			moveEnemies(phaseManager);
+
+			fprintf(stderr, "board Index: (%i, %i)\n\n",
+			getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).i,
+			getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).j);
+
+			fprintf(stderr, "currentPoint: (%i, %i)\n\n", 
+					phaseManager->map->mapCurrentPosition.x, 
+					phaseManager->map->mapCurrentPosition.y);
 		}
 		// t2.elapsedTime = SDL_GetTicks();
 		// if(t2.elapsedTime - t2.currentTime > 100) {
@@ -123,9 +131,7 @@ int main (int argc, char *argv[])
 		// 					phaseManager->map->mapCurrentPosition.y,
 		// 					phaseManager->map->mapDestinationPosition.x, 
 		// 					phaseManager->map->mapDestinationPosition.y);
-		// 	fprintf(stderr, "board Index: (%i, %i)\n\n",
-		// 					getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).i,
-		// 					getCharacterBoardIndex(phaseManager->map->mapCurrentPosition).j);
+
 
 	
 		// }
@@ -411,8 +417,8 @@ BoardIndex getCharacterBoardIndex(Vector mapCurrentPosition) {
 
 	BoardIndex index;
 
-	index.i = mapCurrentPosition.x / 32 + 13;
-	index.j = mapCurrentPosition.y / 32 + 11;
+	index.i = mapCurrentPosition.x / 32 + 12;
+	index.j = mapCurrentPosition.y / 32 + 10;
 
 	return index;
 }
@@ -473,10 +479,11 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 			BoardIndex playerIndex = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
 			BoardIndex attackIndex;
 			Vector playerGlobalPosition = getGlobalPositionFromBoardIndex(playerIndex);
-			Vector attackInitialPosition = setVector(800,350);
-			Vector attackMove = setVector(0,0); ;
-			fprintf(stderr, "PlayerPossition X: %i, Y: %i\n", playerGlobalPosition.x, playerGlobalPosition.y);
-			fprintf(stderr, "FACE SIDE %i", player->facingSide);
+			Vector attackMove = setVector(0,0);
+			Vector attackInitialPosition;
+			// fprintf(stderr, "PlayerBoardIndex I: %i, J: %i\n", playerIndex.i, playerIndex.j);
+			// fprintf(stderr, "PlayerGlobalPossition  X: %i, Y: %i\n\n", playerGlobalPosition.x, playerGlobalPosition.y);
+			// fprintf(stderr, "FACE SIDE %i", player->facingSide);
 
 			switch(player->facingSide) {
 
@@ -502,6 +509,7 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 					attackInitialPosition = getObjectViewPosfromGlobalPos(map->mapCurrentPosition, attackInitialPosition);
 					attackMove = setVector(ATTACK_SPEED, 0);
 					attackIndex = setBoardIndex(playerIndex.i + 1,playerIndex.j);
+
 					break;
 				}
 				case CHARACTER_LEFT: {
@@ -513,8 +521,8 @@ void updateAttackState(PhaseManager* phaseManager, KeyboardInput* keyboardInput)
 					break;
 				}
 			}
-			// attackInitialPosition.x -= 350;
-			// attackInitialPosition.y -=50;
+			// fprintf(stderr, "AttackBoardIndex:    I: %i, J: %i \n", attackIndex.i, attackIndex.j);
+			// fprintf(stderr, "AttackBoardPosition: X: %i, J: %i\n\n", attackInitialPosition.x, attackInitialPosition.y);
 
 			for(int i = 0; i < 5; i++) {
 				if (attackManager->attackList[i] == NULL) {
