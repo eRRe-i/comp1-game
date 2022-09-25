@@ -40,7 +40,7 @@ void addLife(PhaseManager* phaseManager);
 void reduzirLife(PhaseManager* phaseManager);
 int checkIfEnemyHit(Board* board, int i, int j);
 int updateEnemyHit(PhaseManager* phaseManager, BoardIndex board);
-int updateIfPlayerHit(BoardIndex playerIndex, BoardIndex enemyIndex);
+int updateIfObjectsHit(SDL_Rect playerRect, SDL_Rect enemyRect);
 
 
 Timer t;
@@ -139,6 +139,7 @@ int main (int argc, char *argv[])
 		if(saidaMenu == -1){
 			keyboardInput->gameStateKeyboardInput.quitGame = 1;
 		}
+<<<<<<< develop
 		if(saidaMenu==1){
 
 			listenEvent(keyboardInput);
@@ -191,6 +192,35 @@ int main (int argc, char *argv[])
 				// 		phaseManager->map->mapCurrentPosition.y);
 			}
 
+=======
+		if(keyboardInput->gameStateKeyboardInput.redLife == 1){
+			reduzirLife(phaseManager);
+			keyboardInput->gameStateKeyboardInput.redLife = 0;
+		}
+		updateAttackState(phaseManager, keyboardInput);
+        updateScreen(renderer, phaseManager);
+	
+		/**
+		 * @brief Atualiza o moviento do inimigo a cada 1 segundo
+		 * 
+		 */
+		t.elapsedTime = SDL_GetTicks();
+		if(t.elapsedTime - t.currentTime > 1000) {			
+			t.currentTime = t.elapsedTime;
+			moveEnemies(phaseManager);
+
+
+			// BoardIndex b = getCharacterBoardIndex(phaseManager->map->mapCurrentPosition);
+			// printf("%i - %i\n", b.i, b.j);
+			// printf("Topo: %i | %i\n", checkIfWall(phaseManager->board, b.i-1, b.j), board->map_matrix[b.i-1][b.j]);
+			// printf("Baixo:%i | %i\n", checkIfWall(phaseManager->board, b.i+1, b.j), board->map_matrix[b.i+1][b.j]);
+			// printf("Dir:  %i | %i\n", checkIfWall(phaseManager->board, b.i, b.j+1), board->map_matrix[b.i][b.j+1]);
+			// printf("Esq:  %i | %i\n\n", checkIfWall(phaseManager->board, b.i, b.j-1), board->map_matrix[b.i][b.j-1]);
+
+			// fprintf(stderr, "currentPoint: (%i, %i)\n\n", 
+			// 		phaseManager->map->mapCurrentPosition.x, 
+			// 		phaseManager->map->mapCurrentPosition.y);
+>>>>>>> colision player/enemy detected
 		}
 	}
 
@@ -368,6 +398,8 @@ void moveCharacter(PhaseManager* phaseManager) {
 
 	Map* map = phaseManager->map;
 	Player* player = phaseManager->player;
+	EnemyManager* enemyManager = phaseManager->enemyManager;
+
 	if(map->mapCurrentPosition.x != map->mapDestinationPosition.x) {
 		player->movementVector = setVector(player->moveMultiplier * player->moveSpeed, 0);
 		map->mapCurrentPosition = addVector(map->mapCurrentPosition, player->movementVector);
@@ -376,6 +408,19 @@ void moveCharacter(PhaseManager* phaseManager) {
 		player->movementVector = setVector(0, player->moveMultiplier * player->moveSpeed);
 		map->mapCurrentPosition = addVector(map->mapCurrentPosition, player->movementVector);
 		map->srcRect = fillRect(map->mapCurrentPosition.x, map->mapCurrentPosition.y, WINDOW_WIDTH, WINDOW_HEIGHT);
+	}
+
+	for(int i = 0; i < enemyManager->total_enemy; i++) {
+
+		Enemy* enemy = enemyManager->Enemies[i];
+		if(enemy != NULL) {
+			if(checkIfObjectInsideRenderArea(phaseManager->map->srcRect, enemy->enemyTexture->displayRect)) {
+				if(updateIfObjectsHit(phaseManager->player->characterTexture->displayRect, enemy->displayRectinMapView)) {
+					enemyManager->Enemies[i] = NULL;
+					phaseManager->player->life -= 1;
+				}
+			}
+		}
 	}
 }
 void updateMap(SDL_Renderer* renderer, PhaseManager* phaseManager){
@@ -392,7 +437,8 @@ void updateMap(SDL_Renderer* renderer, PhaseManager* phaseManager){
 
 void updateEnemy(SDL_Renderer* renderer, Enemy* enemy, Vector newPosition){
 	updateFrameEnemy(enemy);
-	SDL_Rect renderRect = {newPosition.x, newPosition.y, enemy->enemyTexture->displayRect.w,enemy->enemyTexture->displayRect.h}; 
+	SDL_Rect renderRect = {newPosition.x, newPosition.y, enemy->enemyTexture->displayRect.w,enemy->enemyTexture->displayRect.h};
+	enemy->displayRectinMapView = renderRect;
 	SDL_RenderCopy(renderer, 
 			enemy->enemyTexture->Enemiesheet,
 			&enemy->enemyTexture->spritePosition[enemy->facingSide][enemy->frame], 
@@ -404,13 +450,11 @@ void moveEnemies(PhaseManager* phaseManager){
 
 		if(phaseManager->enemyManager->Enemies[i] != NULL) {
 			Enemy * enemy = phaseManager->enemyManager->Enemies[i];
+
 			if(checkIfObjectInsideRenderArea(phaseManager->map->srcRect, enemy->enemyTexture->displayRect)){
 				moveEnemy(enemy, phaseManager);
 			}
-			if(updateIfPlayerHit(getCharacterBoardIndex(phaseManager->map->mapCurrentPosition), enemy->boardIndex)) {
-				enemy = NULL;
-				phaseManager->player->life -= 1;
-			}
+			
 		
 		}
 	}
@@ -775,11 +819,7 @@ int updateEnemyHit(PhaseManager* phaseManager, BoardIndex board) {
 	}
 	return FALSE;
 }
-int updateIfPlayerHit(BoardIndex playerIndex, BoardIndex enemyIndex) {
+int updateIfObjectsHit(SDL_Rect playerRect, SDL_Rect enemyRect) {
 
-	int pointI = playerIndex.i == enemyIndex.j;
-	int pointJ = playerIndex.j == enemyIndex.j;
-
-	return pointI && pointJ;
-
+	return checkIfObjectInsideRenderArea(playerRect, enemyRect);
 }

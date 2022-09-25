@@ -18,6 +18,7 @@ typedef struct enemy {
     int frame;
     int moveMultiplier;
     BoardIndex boardIndex;
+    SDL_Rect displayRectinMapView;
 
     EnemyTexture *enemyTexture;
 } Enemy;
