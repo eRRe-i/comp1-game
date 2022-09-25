@@ -5,6 +5,7 @@
 #define BASIC_Enemy_PATH "assets/basic_monster.png"
 #define MEDIUM_Enemy_PATH "assets/medium_monster.png"
 #define HIGH_Enemy_PATH "assets/high_monster.png"
+#define FRAME_PATH "assets/frames-game-gold.png"
 #define NO_KEYBOARD_INPUT -1
 #define CHARACTER_DOWN 0
 #define CHARACTER_UP 1
