@@ -140,7 +140,9 @@ int main (int argc, char *argv[])
 		}
 		// TODO: REMOVER QUANDO IMPLEMENTAR A LOGICA DE AUMENTAR O SCORE
 		if(keyboardInput->gameStateKeyboardInput.score == 1){
-			addScore(renderer, phaseManager->score, 10);
+			phaseManager->score->scoreValue +=200;
+			phaseManager->score->update = 1;
+			// addScore(renderer, phaseManager->score, 10);
 			keyboardInput->gameStateKeyboardInput.score = 0;
 		}
 		if(keyboardInput->gameStateKeyboardInput.addLife == 1){
@@ -696,6 +698,14 @@ void renderLife(SDL_Renderer* renderer, PhaseManager* phaseManager){
 }
 
 void renderScore(SDL_Renderer* renderer, PhaseManager* phaseManager){
+
+	if(phaseManager->score->update == 1){
+			fprintf(stderr,"ADD SCORE\n");
+		addScore(renderer, phaseManager->score, phaseManager->score->scoreValue);
+		phaseManager->score->update = 0;
+	}
+
+
 	Vector playerPosition = getPlayerPosition(phaseManager);
 	Vector renderPosition = setVector(playerPosition.x+300,playerPosition.y-315);
 	Vector newPosition = getObjectViewPosfromGlobalPos(phaseManager->map->mapCurrentPosition, renderPosition);
@@ -738,7 +748,10 @@ int updateEnemyHit(PhaseManager* phaseManager, BoardIndex board) {
 				printf("%i, %i\n", board.i, enemyManager->Enemies[i]->boardIndex.i);
 				printf("%i, %i\n", board.j, enemyManager->Enemies[i]->boardIndex.j);
 				enemyManager->Enemies[i] = NULL;
-				phaseManager->player->life -= 1;
+				if(phaseManager->player->life >0 && phaseManager->player->life < 5)
+					phaseManager->player->life += 1;
+				phaseManager->score->scoreValue += 200;
+				phaseManager->score->update = 1;
 				return TRUE;
 			}
 		}
