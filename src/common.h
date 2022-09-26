@@ -21,7 +21,7 @@
 #define ENEMY_MAP_ID 3
 #define FIRST_ATTACK 1
 
-#define MAP_LIST_SIZE 10
+#define MAP_LIST_SIZE 2
 #define MATRIX_SIZE 70
 #define ATTACK_SPEED 4
 
