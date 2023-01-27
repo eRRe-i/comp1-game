@@ -12,7 +12,7 @@ BIN = bin/main
 
 COMPILER_FLAGS = 
 
-LINKER_FLAGS = -lSDL2 -lSDL2_image
+LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2main -lSDL2_ttf
 
 RM = 
 
@@ -23,7 +23,7 @@ RM =
 all : $(BIN) run clean
 
 
-$(BIN): $(SRCS) $(LIBS)
+$(BIN):  $(SRCS) $(LIBS)
 	$(CC) $(SRCS) $(LIBS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $@
 
 

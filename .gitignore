@@ -1,1 +1,6 @@
 *.code-workspace
+.VSCodeCounter
+.vscode
+src/SDL2
+SDL*/
+SDL.h

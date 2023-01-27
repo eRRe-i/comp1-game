@@ -1,8 +1,8 @@
 #include "common.h"
+#include "textures.h"
 
 void listenEvent(KeyboardInput* keyboardInput) {
 
-	cleanMovementInput(keyboardInput);
 
     SDL_Event event;
 
@@ -12,9 +12,41 @@ void listenEvent(KeyboardInput* keyboardInput) {
 		
             case SDL_QUIT: keyboardInput->gameStateKeyboardInput.quitGame = 1; break;
             case SDL_KEYDOWN: handleKeyBoardInput(keyboardInput, &event.key); break;
-            case SDL_KEYUP: handleKeyBoardInput(keyboardInput, &event.key); break;
+			case SDL_KEYUP:{
+				keyboardInput->keyPressed = 0;
+				keyboardInput->keyReleased = 1;
+				break;
+			}
+            
         }
-		// printKeyboardState(keyboardInput);
+		if(event.type == SDL_KEYUP){
+			switch(event.key.keysym.sym) {
+				case SDLK_F1:{
+					if(keyboardInput->gameStateKeyboardInput.currentMapID > 0){
+						keyboardInput->gameStateKeyboardInput.currentMapID = keyboardInput->gameStateKeyboardInput.currentMapID - 1;
+					}
+					break;
+				}
+				case SDLK_F2:{
+					if(keyboardInput->gameStateKeyboardInput.currentMapID < MAP_LIST_SIZE-1){
+						keyboardInput->gameStateKeyboardInput.currentMapID = keyboardInput->gameStateKeyboardInput.currentMapID + 1;
+					}
+					break;
+				}
+				case SDLK_s: {
+					keyboardInput->gameStateKeyboardInput.score = 1;
+					break;
+				}
+				case SDLK_g: {
+					keyboardInput->gameStateKeyboardInput.redLife = 1;
+					break;
+				}
+				case SDLK_h: {
+					keyboardInput->gameStateKeyboardInput.addLife = 1;
+					break;
+				}
+			}
+		}
     }
 }
 
@@ -26,36 +58,49 @@ void handleKeyBoardInput(KeyboardInput* keyboardInput, SDL_KeyboardEvent* key) {
 							keyboardInput->keyReleased = 0;
 							break;
 		}
-		case SDL_KEYUP: {	keyboardInput->keyReleased = 1;
-							keyboardInput->keyPressed = 0;
+		case SDL_KEYUP:{ 	keyboardInput->keyPressed = 0;
+							keyboardInput->keyReleased = 1;
 							break;
 		}
 	}
+
+
 
 	switch(key->keysym.sym) {
 		case SDLK_ESCAPE: {	keyboardInput->gameStateKeyboardInput.quitGame = 1;
 							break;
 		}
 		case SDLK_SPACE: {	keyboardInput->gameStateKeyboardInput.pauseGame = 1;
-							SDL_Log("SpacePressed");
 							break;
 		}
-		case SDLK_UP: 	{	keyboardInput->movePlayerKeyboardInput.up = 1;
-							SDL_Log("UpPressed");
+		case SDLK_UP: 	{	keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
+							keyboardInput->movePlayerKeyboardInput.currentInput = CHARACTER_UP;
+							keyboardInput->attackKeyboardInput.attack = NO_KEYBOARD_INPUT;
 							break;
 		}
-		case SDLK_DOWN: {	keyboardInput->movePlayerKeyboardInput.down = 1;
-							SDL_Log("DownPressed"); 
+		case SDLK_DOWN: {	keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
+							keyboardInput->movePlayerKeyboardInput.currentInput = CHARACTER_DOWN;
+							keyboardInput->attackKeyboardInput.attack = NO_KEYBOARD_INPUT;
 							break;
 		}
-		case SDLK_LEFT: {	keyboardInput->movePlayerKeyboardInput.left = 1;
-							SDL_Log("LeftPressed");
+		case SDLK_LEFT: {	keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
+							keyboardInput->movePlayerKeyboardInput.currentInput = CHARACTER_LEFT;
+							keyboardInput->attackKeyboardInput.attack = NO_KEYBOARD_INPUT;
 							break;
 		}
-		case SDLK_RIGHT:{	keyboardInput->movePlayerKeyboardInput.right = 1;
-							SDL_Log("RightPressed");
+		case SDLK_RIGHT:{	keyboardInput->movePlayerKeyboardInput.previousInput = keyboardInput->movePlayerKeyboardInput.currentInput;
+							keyboardInput->movePlayerKeyboardInput.currentInput = CHARACTER_RIGHT;
+							keyboardInput->attackKeyboardInput.attack = NO_KEYBOARD_INPUT;
 							break;
-		} 
+		}
+		case SDLK_a: {		keyboardInput->attackKeyboardInput.attack = FIRST_ATTACK;
+							keyboardInput->movePlayerKeyboardInput.currentInput = NO_KEYBOARD_INPUT;
+							break;
+		}
+		default: {
+			keyboardInput->movePlayerKeyboardInput.currentInput = NO_KEYBOARD_INPUT;
+			break;
+		}
 	}
 }
 
@@ -63,28 +108,87 @@ KeyboardInput* loadKeyBoardInput() {
 
 	KeyboardInput* keyboardInput = (KeyboardInput*)malloc(sizeof(KeyboardInput));
 
+	keyboardInput->gameStateKeyboardInput.pauseGame = 0;
+	keyboardInput->gameStateKeyboardInput.quitGame=0;
+	keyboardInput->gameStateKeyboardInput.currentMapID=0;
+	keyboardInput->movePlayerKeyboardInput.currentInput=0;
+	keyboardInput->movePlayerKeyboardInput.previousInput=0;
+	keyboardInput->attackKeyboardInput.attack=0;
+
+
+
 	return keyboardInput;
 
 }
 
 void cleanMovementInput(KeyboardInput* keyboardInput) {
 
-	keyboardInput->movePlayerKeyboardInput.up = 0;
-	keyboardInput->movePlayerKeyboardInput.down = 0;
-	keyboardInput->movePlayerKeyboardInput.right = 0;
-	keyboardInput->movePlayerKeyboardInput.left = 0;
+	keyboardInput->movePlayerKeyboardInput.currentInput = 0;
+	keyboardInput->movePlayerKeyboardInput.previousInput=0;
 	keyboardInput->keyPressed = 0;
 	keyboardInput->keyReleased = 0;
 
 	return;
 }
 
-void printKeyboardState(KeyboardInput* input) {
+Vector addVector(Vector vec1, Vector vec2) {
 
-	printf("KEYBOARDSTATE:\n KEY PRESSED: %i\n UP: %i\n DOWN: %i\n LEFT: %i\n RIGHT: %i\n", input->keyPressed,
-																			input->movePlayerKeyboardInput.up, 
-																			input->movePlayerKeyboardInput.down,
-																			input->movePlayerKeyboardInput.left, 
-																			input->movePlayerKeyboardInput.right);
+	Vector v;
 
+	v.x = vec1.x + vec2.x;
+	v.y = vec1.y + vec2.y;
+
+	return v;
+
+}
+
+Vector setVector(int x, int y) {
+
+	Vector v;
+	v.x = x;
+	v.y = y;
+
+	return v;
+}
+
+BoardIndex setBoardIndex(int i, int j) {
+	
+	BoardIndex index;
+	index.i = i;
+	index.j = j;
+
+	return index;
+
+}
+
+Vector getGlobalPositionFromBoardIndex(BoardIndex boardIndex) {
+
+	Vector vector;
+
+	vector.x = boardIndex.j *32;
+	vector.y = boardIndex.i *32;
+
+	return vector;
+}
+
+
+Vector getObjectViewPosfromGlobalPos(Vector viewPos, Vector globalPos) {
+
+	Vector vector;
+
+	vector.x = globalPos.x - viewPos.x;
+	vector.y = globalPos.y - viewPos.y;
+
+	return vector;
+}
+
+BoardIndex getBoardIndexFromGlobalPosition(Vector globalPosition) {
+
+	BoardIndex board;
+
+	board.i = globalPosition.y / 32;
+	board.j = globalPosition.x / 32;
+
+	return board;
+	
 }
